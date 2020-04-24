@@ -8,7 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './product.reducer';
 import { IProduct } from 'app/shared/model/product.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
+import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
 export interface IProductDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -17,7 +18,7 @@ export const ProductDetail = (props: IProductDetailProps) => {
     props.getEntity(props.match.params.id);
   }, []);
 
-  const { productEntity } = props;
+  const { productEntity, isAdmin } = props;
   return (
     <Row>
       <Col md="8">
@@ -59,20 +60,29 @@ export const ProductDetail = (props: IProductDetailProps) => {
           <dt>Product Category</dt>
           <dd>{productEntity.productCategory ? productEntity.productCategory.name : ''}</dd>
         </dl>
-        <Button tag={Link} to="/product" replace color="info">
-          <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
-        </Button>
-        &nbsp;
-        <Button tag={Link} to={`/product/${productEntity.id}/edit`} replace color="primary">
-          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-        </Button>
+        {isAdmin ? (
+          <>
+            <Button tag={Link} to="/product" replace color="info">
+              <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
+            </Button>
+            &nbsp;
+            <Button tag={Link} to={`/product/${productEntity.id}/edit`} replace color="primary">
+              <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+            </Button>
+          </>
+        ) : (
+          <Button tag={Link} to="/" replace color="info">
+            <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
+          </Button>
+        )}
       </Col>
     </Row>
   );
 };
 
-const mapStateToProps = ({ product }: IRootState) => ({
-  productEntity: product.entity
+const mapStateToProps = ({ product, authentication }: IRootState) => ({
+  productEntity: product.entity,
+  isAdmin: hasAnyAuthority(authentication.account.authorities, [AUTHORITIES.ADMIN])
 });
 
 const mapDispatchToProps = { getEntity };
