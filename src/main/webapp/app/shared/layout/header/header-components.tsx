@@ -28,3 +28,12 @@ export const Home = props => (
     </NavLink>
   </NavItem>
 );
+
+export const Cart = props => (
+  <NavItem>
+    <NavLink tag={Link} to="/cart" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="shopping-cart" />
+      <span>My Cart</span>
+    </NavLink>
+  </NavItem>
+);

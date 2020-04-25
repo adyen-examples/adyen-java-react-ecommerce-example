@@ -1,22 +1,18 @@
 package com.adyen.demo.store.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
-import java.util.Objects;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
-
+import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import com.adyen.demo.store.domain.enumeration.OrderStatus;
-
 import com.adyen.demo.store.domain.enumeration.PaymentMethod;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * A ShoppingCart.
@@ -108,6 +104,10 @@ public class ShoppingCart implements Serializable {
         this.totalPrice = totalPrice;
     }
 
+    public void calculateTotalPrice() {
+        this.setTotalPrice(this.orders.stream().map(ProductOrder::getTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+    }
+
     public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
@@ -127,23 +127,27 @@ public class ShoppingCart implements Serializable {
 
     public ShoppingCart orders(Set<ProductOrder> productOrders) {
         this.orders = productOrders;
+        calculateTotalPrice();
         return this;
     }
 
     public ShoppingCart addOrder(ProductOrder productOrder) {
         this.orders.add(productOrder);
         productOrder.setCart(this);
+        calculateTotalPrice();
         return this;
     }
 
     public ShoppingCart removeOrder(ProductOrder productOrder) {
         this.orders.remove(productOrder);
         productOrder.setCart(null);
+        calculateTotalPrice();
         return this;
     }
 
     public void setOrders(Set<ProductOrder> productOrders) {
         this.orders = productOrders;
+        calculateTotalPrice();
     }
 
     public CustomerDetails getCustomerDetails() {
@@ -159,6 +163,18 @@ public class ShoppingCart implements Serializable {
         this.customerDetails = customerDetails;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+
+
+    public ShoppingCart() {
+    }
+
+    public ShoppingCart(@NotNull final Instant placedDate, @NotNull final OrderStatus status, @NotNull @DecimalMin(value = "0") final BigDecimal totalPrice, @NotNull final PaymentMethod paymentMethod, @NotNull final CustomerDetails customerDetails) {
+        this.placedDate = placedDate;
+        this.status = status;
+        this.totalPrice = totalPrice;
+        this.paymentMethod = paymentMethod;
+        this.customerDetails = customerDetails;
+    }
 
     @Override
     public boolean equals(Object o) {

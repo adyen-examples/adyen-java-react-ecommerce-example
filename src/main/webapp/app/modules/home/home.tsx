@@ -2,19 +2,19 @@ import './home.scss';
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
 import { connect } from 'react-redux';
 import { Row, Col, Alert, Button } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getSortState, JhiItemCount, JhiPagination, TextFormat } from 'react-jhipster';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntities } from 'app/entities/product/product.reducer';
+import { addProduct } from 'app/entities/shopping-cart/shopping-cart.reducer';
 import { IProductProps } from 'app/entities/product/product';
-import { getSortState, JhiItemCount, JhiPagination, TextFormat } from 'react-jhipster';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import { IProduct } from 'app/shared/model/product.model';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export interface IHomeProp extends IProductProps, StateProps {}
+export interface IHomeProp extends IProductProps, StateProps, DispatchProps {}
 
 export const Home = (props: IHomeProp) => {
   const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE));
@@ -43,7 +43,7 @@ export const Home = (props: IHomeProp) => {
     });
   };
 
-  const filter = (p: IProduct) => p.name && (p.name.toLowerCase() + p.description?.toLowerCase()).includes(filterState.toLowerCase());
+  const filter = (p: IProduct) => p.name && (p.name?.toLowerCase() + p.description?.toLowerCase()).includes(filterState.toLowerCase());
 
   const handlePagination = currentPage =>
     setPaginationState({
@@ -53,7 +53,7 @@ export const Home = (props: IHomeProp) => {
 
   const handleFilter = evt => setFilterState(evt.target.value);
 
-  const addToCart = (p: IProduct) => () => {};
+  const addToCart = (p: IProduct) => () => props.addProduct(p);
 
   const { account, productList, match, loading, totalItems } = props;
 
@@ -129,8 +129,8 @@ export const Home = (props: IHomeProp) => {
                               <TextFormat value={product.price as any} type="number" format={'$ 0,0.00'} />
                             </p>
                             <div>
-                              <Button onClick={addToCart(product)} color="primary" size="sm">
-                                <FontAwesomeIcon icon="plus" /> <span className="d-none d-md-inline">Add to Cart</span>
+                              <Button onClick={addToCart(product)} color="secondary" size="sm">
+                                <FontAwesomeIcon icon="cart-plus" /> <span className="d-none d-md-inline">Add to Cart</span>
                               </Button>
                             </div>
                           </div>
@@ -139,18 +139,29 @@ export const Home = (props: IHomeProp) => {
                     </a>
                   ))}
                 </div>
-                <div className={productList && productList.length > 0 ? '' : 'd-none'}>
-                  <Row className="justify-content-center">
-                    <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} />
-                  </Row>
-                  <Row className="justify-content-center">
-                    <JhiPagination
-                      activePage={paginationState.activePage}
-                      onSelect={handlePagination}
-                      maxButtons={5}
-                      itemsPerPage={paginationState.itemsPerPage}
-                      totalItems={props.totalItems}
-                    />
+                <div className={productList && productList.length > 0 ? 'p-4' : 'd-none'}>
+                  <Row>
+                    <Col className="d-flex flex-column align-items-start justify-content-center">
+                      <Row className="justify-content-start">
+                        <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} />
+                      </Row>
+                      <Row className="justify-content-start">
+                        <JhiPagination
+                          activePage={paginationState.activePage}
+                          onSelect={handlePagination}
+                          maxButtons={5}
+                          itemsPerPage={paginationState.itemsPerPage}
+                          totalItems={props.totalItems}
+                        />
+                      </Row>
+                    </Col>
+                    <Col className="d-flex align-items-center justify-content-end">
+                      <Row className="justify-content-end">
+                        <Button tag={Link} to={`/cart`} color="primary" size="lg">
+                          <FontAwesomeIcon icon="shopping-cart" /> <span className="d-none d-md-inline">View Cart</span>
+                        </Button>
+                      </Row>
+                    </Col>
                   </Row>
                 </div>
               </>
@@ -193,9 +204,11 @@ const mapStateToProps = ({ product, authentication }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getEntities,
+  addProduct
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction } from 'react-jhipster';
+import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction, ICrudSearchAction } from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IShoppingCart, defaultValue } from 'app/shared/model/shopping-cart.model';
+import { IProduct } from 'app/shared/model/product.model';
 
 export const ACTION_TYPES = {
   FETCH_SHOPPINGCART_LIST: 'shoppingCart/FETCH_SHOPPINGCART_LIST',
@@ -12,6 +13,8 @@ export const ACTION_TYPES = {
   CREATE_SHOPPINGCART: 'shoppingCart/CREATE_SHOPPINGCART',
   UPDATE_SHOPPINGCART: 'shoppingCart/UPDATE_SHOPPINGCART',
   DELETE_SHOPPINGCART: 'shoppingCart/DELETE_SHOPPINGCART',
+  ADD_PRODUCT: 'shoppingCart/ADD_PRODUCT',
+  REMOVE_PRODUCT: 'shoppingCart/REMOVE_PRODUCT',
   RESET: 'shoppingCart/RESET'
 };
 
@@ -41,6 +44,8 @@ export default (state: ShoppingCartState = initialState, action): ShoppingCartSt
     case REQUEST(ACTION_TYPES.CREATE_SHOPPINGCART):
     case REQUEST(ACTION_TYPES.UPDATE_SHOPPINGCART):
     case REQUEST(ACTION_TYPES.DELETE_SHOPPINGCART):
+    case REQUEST(ACTION_TYPES.ADD_PRODUCT):
+    case REQUEST(ACTION_TYPES.REMOVE_PRODUCT):
       return {
         ...state,
         errorMessage: null,
@@ -52,6 +57,8 @@ export default (state: ShoppingCartState = initialState, action): ShoppingCartSt
     case FAILURE(ACTION_TYPES.CREATE_SHOPPINGCART):
     case FAILURE(ACTION_TYPES.UPDATE_SHOPPINGCART):
     case FAILURE(ACTION_TYPES.DELETE_SHOPPINGCART):
+    case FAILURE(ACTION_TYPES.ADD_PRODUCT):
+    case FAILURE(ACTION_TYPES.REMOVE_PRODUCT):
       return {
         ...state,
         loading: false,
@@ -73,6 +80,8 @@ export default (state: ShoppingCartState = initialState, action): ShoppingCartSt
       };
     case SUCCESS(ACTION_TYPES.CREATE_SHOPPINGCART):
     case SUCCESS(ACTION_TYPES.UPDATE_SHOPPINGCART):
+    case SUCCESS(ACTION_TYPES.ADD_PRODUCT):
+    case SUCCESS(ACTION_TYPES.REMOVE_PRODUCT):
       return {
         ...state,
         updating: false,
@@ -112,6 +121,14 @@ export const getEntity: ICrudGetAction<IShoppingCart> = id => {
   };
 };
 
+export const getEntityForCurrentUser: ICrudSearchAction<IShoppingCart> = () => {
+  const requestUrl = `${apiUrl}/current-user`;
+  return {
+    type: ACTION_TYPES.FETCH_SHOPPINGCART,
+    payload: axios.get<IShoppingCart>(requestUrl)
+  };
+};
+
 export const createEntity: ICrudPutAction<IShoppingCart> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.CREATE_SHOPPINGCART,
@@ -133,6 +150,23 @@ export const deleteEntity: ICrudDeleteAction<IShoppingCart> = id => async dispat
   const requestUrl = `${apiUrl}/${id}`;
   const result = await dispatch({
     type: ACTION_TYPES.DELETE_SHOPPINGCART,
+    payload: axios.delete(requestUrl)
+  });
+  return result;
+};
+
+export const addProduct: ICrudPutAction<IProduct> = entity => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.ADD_PRODUCT,
+    payload: axios.put(`${apiUrl}/add-product/${entity?.id}`)
+  });
+  return result;
+};
+
+export const removeOrder: ICrudDeleteAction<IShoppingCart> = id => async dispatch => {
+  const requestUrl = `${apiUrl}/remove-order/${id}`;
+  const result = await dispatch({
+    type: ACTION_TYPES.REMOVE_PRODUCT,
     payload: axios.delete(requestUrl)
   });
   return result;

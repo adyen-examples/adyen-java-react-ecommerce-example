@@ -1,8 +1,5 @@
 package com.adyen.demo.store.config;
 
-import com.adyen.demo.store.security.*;
-import com.adyen.demo.store.security.jwt.*;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
@@ -18,6 +15,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.filter.CorsFilter;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
+import com.adyen.demo.store.security.AuthoritiesConstants;
+import com.adyen.demo.store.security.jwt.JWTConfigurer;
+import com.adyen.demo.store.security.jwt.TokenProvider;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -82,6 +82,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             .antMatchers("/api/activate").permitAll()
             .antMatchers("/api/account/reset-password/init").permitAll()
             .antMatchers("/api/account/reset-password/finish").permitAll()
+            .antMatchers("/api/customer-details").hasAuthority(AuthoritiesConstants.ADMIN)
+            .antMatchers("/api/product-categories").hasAuthority(AuthoritiesConstants.ADMIN)
+            .antMatchers("/api/product-orders").hasAuthority(AuthoritiesConstants.ADMIN)
             .antMatchers("/api/**").authenticated()
             .antMatchers("/management/health").permitAll()
             .antMatchers("/management/info").permitAll()
