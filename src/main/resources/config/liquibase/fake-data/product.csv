@@ -1,11 +1,11 @@
 id;name;description;price;size;image;image_content_type;product_category_id
-1;Generic Steel Tuna;website calculating;57374;M;../fake-data/blob/hipster.png;image/png;1
-2;Chilean Peso Unidades de fomento Handmade Legacy;deposit Sri Lanka Rupee THX;28913;S;../fake-data/blob/hipster.png;image/png;2
-3;Centers Steel Credit Card Account;networks infomediaries;57853;L;../fake-data/blob/hipster.png;image/png;3
-4;transmitting intermediate withdrawal;green Credit Card Account;51217;L;../fake-data/blob/hipster.png;image/png;4
-5;neutral;Rustic Concrete Car;78661;XL;../fake-data/blob/hipster.png;image/png;5
-6;aggregate throughput Practical;mobile distributed Dynamic;80377;XXL;../fake-data/blob/hipster.png;image/png;6
-7;Personal Loan Account yellow;Cape Verde;40746;L;../fake-data/blob/hipster.png;image/png;7
-8;Crossroad invoice;Liaison;22423;XXL;../fake-data/blob/hipster.png;image/png;8
-9;Ergonomic Concrete Ball SMS;Gorgeous Rubber Cheese quantifying;16934;XXL;../fake-data/blob/hipster.png;image/png;9
-10;project Stand-alone Computer;Arizona Buckinghamshire;94611;M;../fake-data/blob/hipster.png;image/png;10
+1;JHipster T-Shirt;T-Shirt with JHipster logo;12;S;../fake-data/blob/shirt3.jpg;image/png;1
+2;JHipster T-Shirt;T-Shirt with JHipster logo;15;M;../fake-data/blob/shirt3.jpg;image/png;1
+3;JHipster T-Shirt;T-Shirt with JHipster logo;18;L;../fake-data/blob/shirt3.jpg;image/png;1
+4;Special Spring T-Shirt;T-Shirt with Spring logo;20;XL;../fake-data/blob/shirt3.jpg;image/png;1
+5;Special Spring T-Shirt;T-Shirt with Spring logo;20;S;../fake-data/blob/shirt2.jpg;image/png;5
+6;Special Spring T-Shirt;T-Shirt with Spring logo;22;M;../fake-data/blob/shirt2.jpg;image/png;5
+7;Special Spring T-Shirt;T-Shirt with Spring logo;25;L;../fake-data/blob/shirt2.jpg;image/png;5
+8;Special Spring T-Shirt;T-Shirt with Spring logo;20;S;../fake-data/blob/shirt1.jpg;image/png;6
+9;Special Spring T-Shirt;T-Shirt with Spring logo;22;M;../fake-data/blob/shirt1.jpg;image/png;6
+10;Special Spring T-Shirt;T-Shirt with Spring logo;25;L;../fake-data/blob/shirt1.jpg;image/png;6

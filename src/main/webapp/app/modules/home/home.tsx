@@ -106,7 +106,7 @@ export const Home = (props: IHomeProp) => {
                       <div className="row">
                         <div className="col-2 col-xs-12 justify-content-center">
                           {product.image ? (
-                            <img src={`data:${product.imageContentType};base64,${product.image}`} style={{ maxHeight: '30px' }} />
+                            <img src={`data:${product.imageContentType};base64,${product.image}`} style={{ maxHeight: '130px' }} />
                           ) : null}
                         </div>
                         <div className="col col-xs-12">
@@ -125,9 +125,7 @@ export const Home = (props: IHomeProp) => {
                             </small>
                           </p>
                           <div className="d-flex w-100 justify-content-between">
-                            <p className="mb-1">
-                              <TextFormat value={product.price as any} type="number" format={'$ 0,0.00'} />
-                            </p>
+                            <p className="mb-1">€ {product.price}</p>
                             <div>
                               <Button onClick={addToCart(product)} color="secondary" size="sm">
                                 <FontAwesomeIcon icon="cart-plus" /> <span className="d-none d-md-inline">Add to Cart</span>

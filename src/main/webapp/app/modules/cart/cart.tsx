@@ -40,7 +40,7 @@ export const Cart = (props: ICartProp) => {
                           {order.product && order.product.image ? (
                             <img
                               src={`data:${order.product.imageContentType};base64,${order.product.image}`}
-                              style={{ maxHeight: '30px' }}
+                              style={{ maxHeight: '130px' }}
                             />
                           ) : null}
                         </div>
@@ -57,14 +57,10 @@ export const Cart = (props: ICartProp) => {
                             </small>
                           </div>
                           <p>
-                            <small>
-                              Item Cost: <TextFormat value={order.product?.price as any} type="number" format={'$ 0,0.00'} />
-                            </small>
+                            <small>Item Cost: € {order.product?.price}</small>
                           </p>
                           <div className="d-flex w-100 justify-content-between">
-                            <p className="mb-1">
-                              Total cost: <TextFormat value={order.totalPrice as any} type="number" format={'$ 0,0.00'} />
-                            </p>
+                            <p className="mb-1">Total cost: € {order.totalPrice}</p>
                             <div>
                               <Button onClick={remove(order?.id)} color="danger" size="sm">
                                 <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Remove</span>
@@ -77,9 +73,7 @@ export const Cart = (props: ICartProp) => {
                   ))}
                 </div>
                 <div className="d-flex justify-content-between py-4">
-                  <h3>
-                    Total price: <TextFormat value={cart.totalPrice as any} type="number" format={'$ 0,0.00'} />
-                  </h3>
+                  <h3>Total price: € {cart.totalPrice}</h3>
                   <Button tag={Link} to={`/checkout`} color="primary" size="lg">
                     <FontAwesomeIcon icon="cart-arrow-down" /> <span className="d-none d-md-inline">Checkout</span>
                   </Button>
