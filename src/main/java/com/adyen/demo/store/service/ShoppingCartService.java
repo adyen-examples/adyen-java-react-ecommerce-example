@@ -84,21 +84,21 @@ public class ShoppingCartService {
         shoppingCartRepository.deleteById(id);
     }
 
-    public Optional<ShoppingCart> findActiveCartByUser(String user) {
+    public ShoppingCart findActiveCartByUser(String user) {
         Optional<ShoppingCart> oCart = shoppingCartRepository.findFirstByCustomerDetailsUserLoginAndStatusOrderByIdAsc(user, OrderStatus.PENDING);
-        // also serves as lazy init of orders
-        oCart.ifPresent(cart -> log.info("Cart for user {} has {} orders", user, cart.getOrders().size()));
-        return oCart;
-    }
-
-    public ShoppingCart addProductForUser(Long id, String user) throws EntityNotFoundException {
-        Optional<ShoppingCart> carts = findActiveCartByUser(user);
-        ShoppingCart activeCart = carts.orElseGet(() -> {
+        ShoppingCart activeCart = oCart.orElseGet(() -> {
             Optional<CustomerDetails> customer = customerDetailsRepository.findOneByUserLogin(user);
             return shoppingCartRepository.save(new ShoppingCart(
                 Instant.now(), OrderStatus.PENDING, BigDecimal.ZERO, PaymentMethod.CREDIT_CARD, customer.get()
             ));
         });
+        // also serves as lazy init of orders
+        log.info("Cart for user {} has {} orders", user, activeCart.getOrders().size());
+        return activeCart;
+    }
+
+    public ShoppingCart addProductForUser(Long id, String user) throws EntityNotFoundException {
+        ShoppingCart activeCart = findActiveCartByUser(user);
         Product product = productService.findOne(id).orElseThrow(() -> new EntityNotFoundException("Product not found"));
         ProductOrder order;
         List<ProductOrder> orders = activeCart.getOrders().stream().filter(productOrder -> productOrder.getProduct().getId().equals(id)).collect(Collectors.toList());
@@ -114,13 +114,13 @@ public class ShoppingCartService {
             order.setQuantity(order.getQuantity() + 1);
             order.setTotalPrice(product.getPrice().multiply(new BigDecimal(order.getQuantity())));
         }
+        activeCart.calculateTotalPrice();
         productOrderService.save(order);
         return shoppingCartRepository.save(activeCart);
     }
 
     public ShoppingCart removeProductOrderForUser(final Long id, final String user) {
-        Optional<ShoppingCart> carts = findActiveCartByUser(user);
-        ShoppingCart activeCart = carts.orElseThrow(() -> new EntityNotFoundException("Shopping cart not found"));
+        ShoppingCart activeCart = findActiveCartByUser(user);
         List<ProductOrder> orders = activeCart.getOrders().stream().filter(productOrder -> productOrder.getId().equals(id)).collect(Collectors.toList());
         if (orders.isEmpty()) {
             throw new EntityNotFoundException("Product order not found in cart");

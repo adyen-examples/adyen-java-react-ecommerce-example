@@ -50,8 +50,8 @@ export const ProductOrder = (props: IProductOrderProps) => {
                   </td>
                   <td>{productOrder.quantity}</td>
                   <td>{productOrder.totalPrice}</td>
-                  <td>{productOrder.product ? <Link to={`product/${productOrder.product.id}`}>{productOrder.product.id}</Link> : ''}</td>
-                  <td>{productOrder.cart ? <Link to={`shopping-cart/${productOrder.cart.id}`}>{productOrder.cart.id}</Link> : ''}</td>
+                  <td>{productOrder.product ? <Link to={`product/${productOrder.product.id}`}>{productOrder.product.name}</Link> : ''}</td>
+                  <td>{productOrder.cart ? <Link to={`shopping-cart/${productOrder.cart.id}`}>{productOrder.cart.customerDetails?.user?.login}</Link> : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${productOrder.id}`} color="info" size="sm">

@@ -23,7 +23,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="product_id" type="bigint">
-                <constraints nullable="true" />
+                <constraints nullable="false" />
             </column>
             <column name="cart_id" type="bigint">
                 <constraints nullable="false" />

@@ -2,6 +2,7 @@ package com.adyen.demo.store.web.rest;
 
 import com.adyen.demo.store.StoreApp;
 import com.adyen.demo.store.domain.ProductOrder;
+import com.adyen.demo.store.domain.Product;
 import com.adyen.demo.store.domain.ShoppingCart;
 import com.adyen.demo.store.repository.ProductOrderRepository;
 import com.adyen.demo.store.service.ProductOrderService;
@@ -64,6 +65,16 @@ public class ProductOrderResourceIT {
             .quantity(DEFAULT_QUANTITY)
             .totalPrice(DEFAULT_TOTAL_PRICE);
         // Add required entity
+        Product product;
+        if (TestUtil.findAll(em, Product.class).isEmpty()) {
+            product = ProductResourceIT.createEntity(em);
+            em.persist(product);
+            em.flush();
+        } else {
+            product = TestUtil.findAll(em, Product.class).get(0);
+        }
+        productOrder.setProduct(product);
+        // Add required entity
         ShoppingCart shoppingCart;
         if (TestUtil.findAll(em, ShoppingCart.class).isEmpty()) {
             shoppingCart = ShoppingCartResourceIT.createEntity(em);
@@ -85,6 +96,16 @@ public class ProductOrderResourceIT {
         ProductOrder productOrder = new ProductOrder()
             .quantity(UPDATED_QUANTITY)
             .totalPrice(UPDATED_TOTAL_PRICE);
+        // Add required entity
+        Product product;
+        if (TestUtil.findAll(em, Product.class).isEmpty()) {
+            product = ProductResourceIT.createUpdatedEntity(em);
+            em.persist(product);
+            em.flush();
+        } else {
+            product = TestUtil.findAll(em, Product.class).get(0);
+        }
+        productOrder.setProduct(product);
         // Add required entity
         ShoppingCart shoppingCart;
         if (TestUtil.findAll(em, ShoppingCart.class).isEmpty()) {

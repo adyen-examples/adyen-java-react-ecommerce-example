@@ -113,16 +113,23 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
               </AvGroup>
               <AvGroup>
                 <Label for="product-order-product">Product</Label>
-                <AvInput id="product-order-product" type="select" className="form-control" name="product.id">
-                  <option value="" key="0" />
+                <AvInput
+                  id="product-order-product"
+                  type="select"
+                  className="form-control"
+                  name="product.id"
+                  value={isNew ? products[0] && products[0].id : productOrderEntity?.product?.id}
+                  required
+                >
                   {products
                     ? products.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
-                          {otherEntity.id}
+                          {otherEntity.name}
                         </option>
                       ))
                     : null}
                 </AvInput>
+                <AvFeedback>This field is required.</AvFeedback>
               </AvGroup>
               <AvGroup>
                 <Label for="product-order-cart">Cart</Label>
@@ -131,7 +138,7 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
                   type="select"
                   className="form-control"
                   name="cart.id"
-                  value={isNew ? shoppingCarts[0] && shoppingCarts[0].id : productOrderEntity.cart.id}
+                  value={isNew ? shoppingCarts[0] && shoppingCarts[0].id : productOrderEntity?.cart?.id}
                   required
                 >
                   {shoppingCarts

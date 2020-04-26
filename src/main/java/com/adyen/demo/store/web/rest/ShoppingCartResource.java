@@ -133,8 +133,7 @@ public class ShoppingCartResource {
     public ResponseEntity<ShoppingCart> getActiveShoppingCartByUser() {
         String user = SecurityUtils.getCurrentUserLogin().orElse("");
         log.debug("REST request to get ShoppingCart for user: {}", user);
-        Optional<ShoppingCart> shoppingCart = shoppingCartService.findActiveCartByUser(user);
-        return ResponseUtil.wrapOrNotFound(shoppingCart);
+        return ResponseEntity.ok().body(shoppingCartService.findActiveCartByUser(user));
     }
 
 

@@ -34,9 +34,9 @@ export const ProductOrderDetail = (props: IProductOrderDetailProps) => {
           </dt>
           <dd>{productOrderEntity.totalPrice}</dd>
           <dt>Product</dt>
-          <dd>{productOrderEntity.product ? productOrderEntity.product.id : ''}</dd>
+          <dd>{productOrderEntity.product ? productOrderEntity.product.name : ''}</dd>
           <dt>Cart</dt>
-          <dd>{productOrderEntity.cart ? productOrderEntity.cart.id : ''}</dd>
+          <dd>{productOrderEntity.cart ? productOrderEntity.cart.customerDetails?.user?.login : ''}</dd>
         </dl>
         <Button tag={Link} to="/product-order" replace color="info">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

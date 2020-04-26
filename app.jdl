@@ -69,7 +69,7 @@ relationship OneToOne {
 }
 
 relationship ManyToOne {
-    ProductOrder{product} to Product
+    ProductOrder{product(name) required} to Product
 }
 
 relationship OneToMany {
