@@ -108,7 +108,7 @@ public class CheckoutResource {
         paymentRequest.setShopperLocale("nl-NL");
         paymentRequest.setChannel(PaymentsRequest.ChannelEnum.WEB);
         URL refURL = new URL(referer);
-        String originalHost = refURL.getProtocol() + "://" + refURL.getHost() + (refURL.getPort() != 0 ? ":" + refURL.getPort() : "");
+        String originalHost = refURL.getProtocol() + "://" + refURL.getHost() + (refURL.getPort() >= 80 ? ":" + refURL.getPort() : "");
         String returnUrl = originalHost + "/api/checkout/redirect";
         paymentRequest.setReturnUrl(returnUrl);
         paymentRequest.setReference(Instant.now().toString());

@@ -6,6 +6,7 @@ buildscript {
         maven { url "https://repo.spring.io/plugins-release" }
     }
     dependencies {
+        classpath "gradle.plugin.com.heroku.sdk:heroku-gradle:1.0.4"
         //jhipster-needle-gradle-buildscript-dependency - JHipster will add additional gradle build script plugins here
     }
 }
@@ -39,6 +40,7 @@ assert System.properties["java.specification.version"] == "1.8" || "11" || "12" 
 
 apply from: "gradle/docker.gradle"
 apply from: "gradle/sonar.gradle"
+apply from: 'gradle/heroku.gradle'
 //jhipster-needle-gradle-apply-from - JHipster will add additional gradle scripts to be applied here
 
 if (project.hasProperty("prod") || project.hasProperty("gae")) {
@@ -277,6 +279,8 @@ dependencies {
     testRuntimeOnly "com.tngtech.archunit:archunit-junit5-engine:${archunit_junit5_version}"
     testImplementation "com.h2database:h2"
     liquibaseRuntime "com.h2database:h2"
+    compile "org.springframework.cloud:spring-cloud-localconfig-connector"
+    compile "org.springframework.cloud:spring-cloud-heroku-connector"
     //jhipster-needle-gradle-dependency - JHipster will add additional dependencies here
 }
 

@@ -37,7 +37,9 @@
     "entitySuffix": "",
     "dtoSuffix": "DTO",
     "otherModules": [],
-    "blueprints": []
+    "blueprints": [],
+    "herokuAppName": "adyen-demo-store",
+    "herokuDeployType": "jar"
   },
   "entities": ["Product", "ProductCategory", "CustomerDetails", "ShoppingCart", "ProductOrder"]
 }
