@@ -48,7 +48,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
         ...customerDetailsEntity,
         ...values
       };
-      entity.user = users[values.user];
+      entity.user = values.user;
 
       if (isNew) {
         props.createEntity(entity);
@@ -158,7 +158,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                   type="select"
                   className="form-control"
                   name="user.id"
-                  value={isNew ? users[0] && users[0].id : customerDetailsEntity.user.id}
+                  value={isNew ? users[0] && users[0].id : customerDetailsEntity.user?.id}
                   required
                 >
                   {users

@@ -1,14 +1,13 @@
 package com.adyen.demo.store.service.dto;
 
-import com.adyen.demo.store.config.Constants;
-
-import com.adyen.demo.store.domain.Authority;
-import com.adyen.demo.store.domain.User;
-
-import javax.validation.constraints.*;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.constraints.*;
+import com.adyen.demo.store.config.Constants;
+import com.adyen.demo.store.domain.Authority;
+import com.adyen.demo.store.domain.User;
+import com.adyen.demo.store.domain.enumeration.Gender;
 
 /**
  * A DTO representing a user, with his authorities.
@@ -49,6 +48,18 @@ public class UserDTO {
     private Instant lastModifiedDate;
 
     private Set<String> authorities;
+
+    private Gender gender;
+
+    private String phone;
+
+    private String addressLine1;
+
+    private String addressLine2;
+
+    private String city;
+
+    private String country;
 
     public UserDTO() {
         // Empty constructor needed for Jackson.
@@ -176,6 +187,60 @@ public class UserDTO {
         this.authorities = authorities;
     }
 
+    public Gender getGender() {
+        return gender;
+    }
+
+    public UserDTO setGender(final Gender gender) {
+        this.gender = gender;
+        return this;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public UserDTO setPhone(final String phone) {
+        this.phone = phone;
+        return this;
+    }
+
+    public String getAddressLine1() {
+        return addressLine1;
+    }
+
+    public UserDTO setAddressLine1(final String addressLine1) {
+        this.addressLine1 = addressLine1;
+        return this;
+    }
+
+    public String getAddressLine2() {
+        return addressLine2;
+    }
+
+    public UserDTO setAddressLine2(final String addressLine2) {
+        this.addressLine2 = addressLine2;
+        return this;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public UserDTO setCity(final String city) {
+        this.city = city;
+        return this;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public UserDTO setCountry(final String country) {
+        this.country = country;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "UserDTO{" +
@@ -186,11 +251,17 @@ public class UserDTO {
             ", imageUrl='" + imageUrl + '\'' +
             ", activated=" + activated +
             ", langKey='" + langKey + '\'' +
-            ", createdBy=" + createdBy +
+            ", createdBy='" + createdBy + '\'' +
             ", createdDate=" + createdDate +
             ", lastModifiedBy='" + lastModifiedBy + '\'' +
             ", lastModifiedDate=" + lastModifiedDate +
             ", authorities=" + authorities +
-            "}";
+            ", gender=" + gender +
+            ", phone='" + phone + '\'' +
+            ", addressLine1='" + addressLine1 + '\'' +
+            ", addressLine2='" + addressLine2 + '\'' +
+            ", city='" + city + '\'' +
+            ", country='" + country + '\'' +
+            '}';
     }
 }

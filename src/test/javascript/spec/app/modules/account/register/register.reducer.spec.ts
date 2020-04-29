@@ -88,7 +88,7 @@ describe('Creating account tests', () => {
           meta
         }
       ];
-      await store.dispatch(handleRegister('', '', '')).then(() => expect(store.getActions()).toEqual(expectedActions));
+      await store.dispatch(handleRegister({})).then(() => expect(store.getActions()).toEqual(expectedActions));
     });
     it('dispatches ACTION_TYPES.RESET actions', async () => {
       const expectedActions = [

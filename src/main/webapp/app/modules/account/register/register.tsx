@@ -5,7 +5,6 @@ import { AvForm, AvField } from 'availity-reactstrap-validation';
 import { Row, Col, Alert, Button } from 'reactstrap';
 
 import PasswordStrengthBar from 'app/shared/layout/password/password-strength-bar';
-import { IRootState } from 'app/shared/reducers';
 import { handleRegister, reset } from './register.reducer';
 
 export type IRegisterProps = DispatchProps;
@@ -13,10 +12,15 @@ export type IRegisterProps = DispatchProps;
 export const RegisterPage = (props: IRegisterProps) => {
   const [password, setPassword] = useState('');
 
-  useEffect(() => () => props.reset(), []);
+  useEffect(
+    () => () => {
+      props.reset();
+    },
+    []
+  );
 
   const handleValidSubmit = (event, values) => {
-    props.handleRegister(values.username, values.email, values.firstPassword);
+    props.handleRegister(values);
     event.preventDefault();
   };
 
@@ -77,6 +81,61 @@ export const RegisterPage = (props: IRegisterProps) => {
                 minLength: { value: 4, errorMessage: 'Your confirmation password is required to be at least 4 characters.' },
                 maxLength: { value: 50, errorMessage: 'Your confirmation password cannot be longer than 50 characters.' },
                 match: { value: 'firstPassword', errorMessage: 'The password and its confirmation do not match!' }
+              }}
+            />
+            <AvField
+              name="firstName"
+              label="First Name"
+              type="text"
+              validate={{
+                required: { value: true, errorMessage: 'This field is required.' }
+              }}
+            />
+            <AvField
+              name="lastName"
+              label="Last Name"
+              type="text"
+              validate={{
+                required: { value: true, errorMessage: 'This field is required.' }
+              }}
+            />
+            <AvField name="gender" label="Gender" type="select">
+              <option value=""></option>
+              <option value="MALE">MALE</option>
+              <option value="FEMALE">FEMALE</option>
+              <option value="OTHER">OTHER</option>
+            </AvField>
+            <AvField
+              name="phone"
+              label="Phone"
+              type="text"
+              validate={{
+                required: { value: true, errorMessage: 'This field is required.' }
+              }}
+            />
+            <AvField
+              name="addressLine1"
+              label="Address Line 1"
+              type="text"
+              validate={{
+                required: { value: true, errorMessage: 'This field is required.' }
+              }}
+            />
+            <AvField type="text" label="Address Line 2" name="addressLine2" />
+            <AvField
+              name="city"
+              label="City"
+              type="text"
+              validate={{
+                required: { value: true, errorMessage: 'This field is required.' }
+              }}
+            />
+            <AvField
+              name="country"
+              label="Country"
+              type="text"
+              validate={{
+                required: { value: true, errorMessage: 'This field is required.' }
               }}
             />
             <Button id="register-submit" color="primary" type="submit">

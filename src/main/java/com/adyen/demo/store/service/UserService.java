@@ -1,16 +1,9 @@
 package com.adyen.demo.store.service;
 
-import com.adyen.demo.store.config.Constants;
-import com.adyen.demo.store.domain.Authority;
-import com.adyen.demo.store.domain.User;
-import com.adyen.demo.store.repository.AuthorityRepository;
-import com.adyen.demo.store.repository.UserRepository;
-import com.adyen.demo.store.security.AuthoritiesConstants;
-import com.adyen.demo.store.security.SecurityUtils;
-import com.adyen.demo.store.service.dto.UserDTO;
-
-import io.github.jhipster.security.RandomUtil;
-
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.CacheManager;
@@ -20,11 +13,17 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.adyen.demo.store.config.Constants;
+import com.adyen.demo.store.domain.Authority;
+import com.adyen.demo.store.domain.CustomerDetails;
+import com.adyen.demo.store.domain.User;
+import com.adyen.demo.store.repository.AuthorityRepository;
+import com.adyen.demo.store.repository.UserRepository;
+import com.adyen.demo.store.security.AuthoritiesConstants;
+import com.adyen.demo.store.security.SecurityUtils;
+import com.adyen.demo.store.service.dto.UserDTO;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.stream.Collectors;
+import io.github.jhipster.security.RandomUtil;
 
 /**
  * Service class for managing users.
@@ -41,12 +40,15 @@ public class UserService {
 
     private final AuthorityRepository authorityRepository;
 
+    private final CustomerDetailsService customerDetailsService;
+
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, final CustomerDetailsService customerDetailsService, CacheManager cacheManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
+        this.customerDetailsService = customerDetailsService;
         this.cacheManager = cacheManager;
     }
 
@@ -119,7 +121,16 @@ public class UserService {
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
+        CustomerDetails customer = new CustomerDetails();
+        customer.setGender(userDTO.getGender());
+        customer.setPhone(userDTO.getPhone());
+        customer.setAddressLine1(userDTO.getAddressLine1());
+        customer.setAddressLine2(userDTO.getAddressLine2());
+        customer.setCity(userDTO.getCity());
+        customer.setCountry(userDTO.getCountry());
+        customer.setUser(newUser);
         userRepository.save(newUser);
+        customerDetailsService.save(customer);
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
@@ -127,7 +138,7 @@ public class UserService {
 
     private boolean removeNonActivatedUser(User existingUser) {
         if (existingUser.getActivated()) {
-             return false;
+            return false;
         }
         userRepository.delete(existingUser);
         userRepository.flush();
@@ -290,6 +301,7 @@ public class UserService {
 
     /**
      * Gets a list of all the authorities.
+     *
      * @return a list of all the authorities.
      */
     public List<String> getAuthorities() {
