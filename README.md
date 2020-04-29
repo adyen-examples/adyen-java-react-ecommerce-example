@@ -2,6 +2,14 @@
 
 This application was generated using JHipster 6.8.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v6.8.0](https://www.jhipster.tech/documentation-archive/v6.8.0).
 
+The below environment variables must be set in order for the application to work properly and also for tests to run
+
+```shell
+export ADYEN_API_KEY=yourAdyenApiKey
+export ADYEN_MERCHANT_ACCOUNT=yourAdyenMerchantAccount
+export ADYEN_ORIGIN_KEY=yourAdyenOriginKey
+```
+
 ## Development
 
 Before you can build this project, you must install and configure the following dependencies on your machine:

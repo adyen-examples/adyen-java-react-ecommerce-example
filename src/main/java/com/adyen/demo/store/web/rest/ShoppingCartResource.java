@@ -174,4 +174,23 @@ public class ShoppingCartResource {
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
+
+    /**
+     * {@code PUT  /close/:paymentType} : Close an existing shoppingCart.
+     *
+     * @param paymentType the payment type used.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated shoppingCart,
+     * or with status {@code 400 (Bad Request)} if the shoppingCart is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the shoppingCart couldn't be updated.
+     * @throws EntityNotFoundException if the order is not found.
+     */
+    @PutMapping("/shopping-carts/close/{paymentType}")
+    public ResponseEntity<ShoppingCart> closeShoppingCart(@PathVariable String paymentType) throws EntityNotFoundException {
+        log.debug("REST request to update ShoppingCart");
+        String user = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User not found"));
+        ShoppingCart result = shoppingCartService.closeCartForUser(user, paymentType);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
 }

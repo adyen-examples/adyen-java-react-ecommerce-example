@@ -1,0 +1,25 @@
+
+.status-container {
+  .status {
+    text-align: center;
+    .status-image {
+      display: inline-block;
+      width: 100%;
+      height: 120px;
+      &.failed{
+        background: url('../../../content/images/failed.svg') no-repeat center top;
+      }
+      &.success{
+        background: url('../../../content/images/success.svg') no-repeat center top;
+      }
+      &.thank-you{
+        background: url('../../../content/images/thank-you.svg') no-repeat center top;
+      }
+      background-size: contain;
+    }
+
+    .status-message {
+      text-align: center;
+    }
+  }
+}

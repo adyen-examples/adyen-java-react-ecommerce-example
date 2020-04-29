@@ -31,6 +31,7 @@ import shoppingCart, {
 import productOrder, {
   ProductOrderState
 } from 'app/entities/product-order/product-order.reducer';
+import checkout, { CheckoutState } from 'app/modules/checkout/checkout.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 export interface IRootState {
@@ -48,6 +49,7 @@ export interface IRootState {
   readonly customerDetails: CustomerDetailsState;
   readonly shoppingCart: ShoppingCartState;
   readonly productOrder: ProductOrderState;
+  readonly checkout: CheckoutState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
 }
@@ -67,6 +69,7 @@ const rootReducer = combineReducers<IRootState>({
   customerDetails,
   shoppingCart,
   productOrder,
+  checkout,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar
 });

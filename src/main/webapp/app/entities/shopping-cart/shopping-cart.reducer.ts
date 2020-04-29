@@ -172,6 +172,14 @@ export const removeOrder: ICrudDeleteAction<IShoppingCart> = id => async dispatc
   return result;
 };
 
+export const closeShoppingCart = paymentType => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.UPDATE_SHOPPINGCART,
+    payload: axios.put(`${apiUrl}/close/${paymentType}`)
+  });
+  return result;
+};
+
 export const reset = () => ({
   type: ACTION_TYPES.RESET
 });

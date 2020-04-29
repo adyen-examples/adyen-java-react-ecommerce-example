@@ -50,14 +50,14 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
                     </Button>
                   </td>
                   <td>
-                    <TextFormat type="date" value={shoppingCart.placedDate} format={APP_DATE_FORMAT} />
+                    {shoppingCart.placedDate ? <TextFormat type="date" value={shoppingCart.placedDate} format={APP_DATE_FORMAT} /> : null}
                   </td>
                   <td>{shoppingCart.status}</td>
                   <td>{shoppingCart.totalPrice}</td>
                   <td>{shoppingCart.paymentMethod}</td>
                   <td>
                     {shoppingCart.customerDetails ? (
-                      <Link to={`customer-details/${shoppingCart.customerDetails.id}`}>{shoppingCart.customerDetails.id}</Link>
+                      <Link to={`customer-details/${shoppingCart.customerDetails.id}`}>{shoppingCart.customerDetails.user?.login}</Link>
                     ) : (
                       ''
                     )}

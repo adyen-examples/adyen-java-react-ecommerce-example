@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="100px" height="100px" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>Icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M67.7975,34.25 C68.3735,34.25 68.948375,34.469375 69.38825,34.90925 C70.266875,35.787875 70.266875,37.21325 69.38825,38.091875 L43.136375,64.342625 C42.917,64.562 42.629,64.67225 42.341,64.67225 C42.053,64.67225 41.765,64.562 41.545625,64.342625 L30.40925,53.20625 C29.5295,52.3265 29.5295,50.903375 30.40925,50.023625 C30.848,49.584875 31.424,49.364375 32,49.364375 C32.574875,49.364375 33.152,49.584875 33.59075,50.023625 L42.341,58.775 L66.20675,34.90925 C66.646625,34.469375 67.2215,34.25 67.7975,34.25" id="path-1"></path>
+    </defs>
+    <g id="Layouts" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Chanel---04---Checkout" transform="translate(-669.000000, -275.000000)">
+            <g id="Group-5" transform="translate(524.000000, 100.000000)">
+                <g id="Group-4" transform="translate(115.000000, 175.000000)">
+                    <g id="Icon" transform="translate(30.000000, 0.000000)">
+                        <path d="M50,4 C24.709139,4 4,24.709139 4,50 C4,75.290861 24.709139,96 50,96 C75.290861,96 96,75.290861 96,50 C96,24.709139 75.290861,4 50,4 Z M50,0 C77.5,0 100,22.5 100,50 C100,77.5 77.5,100 50,100 C22.5,100 0,77.5 0,50 C0,22.5 22.5,0 50,0 Z" id="Path" fill="#0ABF53" fill-rule="nonzero"></path>
+                        <mask id="mask-2" fill="white">
+                            <use xlink:href="#path-1"></use>
+                        </mask>
+                        <use id="Mask" fill="#0ABF53" xlink:href="#path-1"></use>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

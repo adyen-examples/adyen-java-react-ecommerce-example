@@ -5,12 +5,11 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Alert, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { TextFormat } from 'react-jhipster';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntityForCurrentUser, removeOrder } from 'app/entities/shopping-cart/shopping-cart.reducer';
 
-export interface ICartProp extends StateProps, DispatchProps {}
+export type ICartProp = StateProps & DispatchProps;
 
 export const Cart = (props: ICartProp) => {
   useEffect(() => {

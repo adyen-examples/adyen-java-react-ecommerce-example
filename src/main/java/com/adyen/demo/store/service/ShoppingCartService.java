@@ -131,4 +131,15 @@ public class ShoppingCartService {
         }
         return shoppingCartRepository.save(activeCart);
     }
+
+    public ShoppingCart closeCartForUser(final String user, final String paymentType) {
+        ShoppingCart activeCart = findActiveCartByUser(user);
+        activeCart.setStatus(OrderStatus.PAID);
+        if (paymentType.equals("ideal")) {
+            activeCart.setPaymentMethod(PaymentMethod.IDEAL);
+        } else {
+            activeCart.setPaymentMethod(PaymentMethod.CREDIT_CARD);
+        }
+        return shoppingCartRepository.save(activeCart);
+    }
 }
