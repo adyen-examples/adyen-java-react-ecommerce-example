@@ -26,7 +26,7 @@ const initialState = {
     configProps: {} as any,
     env: {} as any
   },
-  audits: [],
+  audits: [] as any[],
   totalItems: 0
 };
 

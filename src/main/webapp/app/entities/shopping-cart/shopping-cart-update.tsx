@@ -148,7 +148,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                   type="select"
                   className="form-control"
                   name="customerDetails.id"
-                  value={isNew ? customerDetails[0] && customerDetails[0].id : shoppingCartEntity.customerDetails.id}
+                  value={isNew ? customerDetails[0] && customerDetails[0].id : shoppingCartEntity.customerDetails?.id}
                   required
                 >
                   {customerDetails

@@ -10,6 +10,10 @@ export ADYEN_MERCHANT_ACCOUNT=yourAdyenMerchantAccount
 export ADYEN_ORIGIN_KEY=yourAdyenOriginKey
 ```
 
+Refer to `app.png` for the entity model used in `app.jdl`
+
+![](app.png)
+
 ## Development
 
 Before you can build this project, you must install and configure the following dependencies on your machine:

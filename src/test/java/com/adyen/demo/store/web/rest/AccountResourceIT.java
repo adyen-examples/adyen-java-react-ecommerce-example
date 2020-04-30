@@ -1,10 +1,27 @@
 package com.adyen.demo.store.web.rest;
 
+import java.time.Instant;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import com.adyen.demo.store.StoreApp;
 import com.adyen.demo.store.config.Constants;
-import com.adyen.demo.store.domain.Authority;
+import com.adyen.demo.store.domain.CustomerDetails;
 import com.adyen.demo.store.domain.User;
+import com.adyen.demo.store.domain.enumeration.Gender;
 import com.adyen.demo.store.repository.AuthorityRepository;
+import com.adyen.demo.store.repository.CustomerDetailsRepository;
 import com.adyen.demo.store.repository.UserRepository;
 import com.adyen.demo.store.security.AuthoritiesConstants;
 import com.adyen.demo.store.service.UserService;
@@ -12,27 +29,14 @@ import com.adyen.demo.store.service.dto.PasswordChangeDTO;
 import com.adyen.demo.store.service.dto.UserDTO;
 import com.adyen.demo.store.web.rest.vm.KeyAndPasswordVM;
 import com.adyen.demo.store.web.rest.vm.ManagedUserVM;
-import org.apache.commons.lang3.RandomStringUtils;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static com.adyen.demo.store.web.rest.AccountResourceIT.TEST_USER_LOGIN;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the {@link AccountResource} REST controller.
@@ -45,6 +49,8 @@ public class AccountResourceIT {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CustomerDetailsRepository customerDetailsRepository;
 
     @Autowired
     private AuthorityRepository authorityRepository;
@@ -126,6 +132,11 @@ public class AccountResourceIT {
         validUser.setImageUrl("http://placehold.it/50x50");
         validUser.setLangKey(Constants.DEFAULT_LANGUAGE);
         validUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        validUser.setAddressLine1("test");
+        validUser.setCity("test");
+        validUser.setCountry("test");
+        validUser.setGender(Gender.FEMALE);
+        validUser.setPhone("123");
         assertThat(userRepository.findOneByLogin("test-register-valid").isPresent()).isFalse();
 
         restAccountMockMvc.perform(
@@ -150,6 +161,11 @@ public class AccountResourceIT {
         invalidUser.setImageUrl("http://placehold.it/50x50");
         invalidUser.setLangKey(Constants.DEFAULT_LANGUAGE);
         invalidUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
+        invalidUser.setAddressLine1("test");
+        invalidUser.setCity("test");
+        invalidUser.setCountry("test");
+        invalidUser.setGender(Gender.FEMALE);
+        invalidUser.setPhone("123");
 
         restAccountMockMvc.perform(
             post("/api/register")
@@ -246,7 +262,11 @@ public class AccountResourceIT {
         firstUser.setImageUrl("http://placehold.it/50x50");
         firstUser.setLangKey(Constants.DEFAULT_LANGUAGE);
         firstUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
-
+        firstUser.setAddressLine1("test");
+        firstUser.setCity("test");
+        firstUser.setCountry("test");
+        firstUser.setGender(Gender.FEMALE);
+        firstUser.setPhone("123");
         // Duplicate login, different email
         ManagedUserVM secondUser = new ManagedUserVM();
         secondUser.setLogin(firstUser.getLogin());
@@ -261,13 +281,20 @@ public class AccountResourceIT {
         secondUser.setLastModifiedBy(firstUser.getLastModifiedBy());
         secondUser.setLastModifiedDate(firstUser.getLastModifiedDate());
         secondUser.setAuthorities(new HashSet<>(firstUser.getAuthorities()));
-
+        secondUser.setAddressLine1("test");
+        secondUser.setCity("test");
+        secondUser.setCountry("test");
+        secondUser.setGender(Gender.FEMALE);
+        secondUser.setPhone("123");
         // First user
         restAccountMockMvc.perform(
             post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(TestUtil.convertObjectToJsonBytes(firstUser)))
             .andExpect(status().isCreated());
+
+        CustomerDetails oneByUserLogin = customerDetailsRepository.findOneByUserLogin("alice").get();
+        customerDetailsRepository.delete(oneByUserLogin);
 
         // Second (non activated) user
         restAccountMockMvc.perform(
@@ -302,7 +329,11 @@ public class AccountResourceIT {
         firstUser.setImageUrl("http://placehold.it/50x50");
         firstUser.setLangKey(Constants.DEFAULT_LANGUAGE);
         firstUser.setAuthorities(Collections.singleton(AuthoritiesConstants.USER));
-
+        firstUser.setAddressLine1("test");
+        firstUser.setCity("test");
+        firstUser.setCountry("test");
+        firstUser.setGender(Gender.FEMALE);
+        firstUser.setPhone("123");
         // Register first user
         restAccountMockMvc.perform(
             post("/api/register")
@@ -312,6 +343,8 @@ public class AccountResourceIT {
 
         Optional<User> testUser1 = userRepository.findOneByLogin("test-register-duplicate-email");
         assertThat(testUser1.isPresent()).isTrue();
+        CustomerDetails oneByUserLogin = customerDetailsRepository.findOneByUserLogin("test-register-duplicate-email").get();
+        customerDetailsRepository.delete(oneByUserLogin);
 
         // Duplicate email, different login
         ManagedUserVM secondUser = new ManagedUserVM();
@@ -323,7 +356,11 @@ public class AccountResourceIT {
         secondUser.setImageUrl(firstUser.getImageUrl());
         secondUser.setLangKey(firstUser.getLangKey());
         secondUser.setAuthorities(new HashSet<>(firstUser.getAuthorities()));
-
+        secondUser.setAddressLine1("test");
+        secondUser.setCity("test");
+        secondUser.setCountry("test");
+        secondUser.setGender(Gender.FEMALE);
+        secondUser.setPhone("123");
         // Register second (non activated) user
         restAccountMockMvc.perform(
             post("/api/register")
@@ -337,6 +374,9 @@ public class AccountResourceIT {
         Optional<User> testUser3 = userRepository.findOneByLogin("test-register-duplicate-email-2");
         assertThat(testUser3.isPresent()).isTrue();
 
+        oneByUserLogin = customerDetailsRepository.findOneByUserLogin("test-register-duplicate-email-2").get();
+        customerDetailsRepository.delete(oneByUserLogin);
+
         // Duplicate email - with uppercase email address
         ManagedUserVM userWithUpperCaseEmail = new ManagedUserVM();
         userWithUpperCaseEmail.setId(firstUser.getId());
@@ -348,7 +388,11 @@ public class AccountResourceIT {
         userWithUpperCaseEmail.setImageUrl(firstUser.getImageUrl());
         userWithUpperCaseEmail.setLangKey(firstUser.getLangKey());
         userWithUpperCaseEmail.setAuthorities(new HashSet<>(firstUser.getAuthorities()));
-
+        userWithUpperCaseEmail.setAddressLine1("test");
+        userWithUpperCaseEmail.setCity("test");
+        userWithUpperCaseEmail.setCountry("test");
+        userWithUpperCaseEmail.setGender(Gender.FEMALE);
+        userWithUpperCaseEmail.setPhone("123");
         // Register third (not activated) user
         restAccountMockMvc.perform(
             post("/api/register")
@@ -384,6 +428,11 @@ public class AccountResourceIT {
         validUser.setImageUrl("http://placehold.it/50x50");
         validUser.setLangKey(Constants.DEFAULT_LANGUAGE);
         validUser.setAuthorities(Collections.singleton(AuthoritiesConstants.ADMIN));
+        validUser.setAddressLine1("test");
+        validUser.setCity("test");
+        validUser.setCountry("test");
+        validUser.setGender(Gender.FEMALE);
+        validUser.setPhone("123");
 
         restAccountMockMvc.perform(
             post("/api/register")

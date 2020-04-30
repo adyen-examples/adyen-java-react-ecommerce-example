@@ -54,7 +54,7 @@ export const ConfigurationPage = (props: IConfigurationPageProps) => {
           {configProps.contexts
             ? Object.values(getContextList(configProps.contexts))
                 .filter(propsFilterFn)
-                .map((property, propIndex) => (
+                .map((property: any, propIndex) => (
                   <tr key={propIndex}>
                     <td>{property['prefix']}</td>
                     <td>

@@ -140,9 +140,11 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                   <br />
                   {image ? (
                     <div>
-                      <a onClick={openFile(imageContentType, image)}>
-                        <img src={`data:${imageContentType};base64,${image}`} style={{ maxHeight: '100px' }} />
-                      </a>
+                      {imageContentType ? (
+                        <a onClick={openFile(imageContentType, image)}>
+                          <img src={`data:${imageContentType};base64,${image}`} style={{ maxHeight: '100px' }} />
+                        </a>
+                      ) : null}
                       <br />
                       <Row>
                         <Col md="11">
@@ -169,7 +171,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                   type="select"
                   className="form-control"
                   name="productCategory.id"
-                  value={isNew ? productCategories[0] && productCategories[0].id : productEntity.productCategory.id}
+                  value={isNew ? productCategories[0] && productCategories[0].id : productEntity.productCategory?.id}
                   required
                 >
                   {productCategories

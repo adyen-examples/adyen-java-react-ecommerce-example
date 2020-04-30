@@ -17,7 +17,9 @@ export const PasswordPage = (props: IUserPasswordProps) => {
   useEffect(() => {
     props.reset();
     props.getSession();
-    return () => props.reset();
+    return () => {
+      props.reset();
+    };
   }, []);
 
   const handleValidSubmit = (event, values) => {

@@ -21,7 +21,9 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
       props.getUser(props.match.params.login);
     }
     props.getRoles();
-    return () => props.reset();
+    return () => {
+      props.reset();
+    };
   }, []);
 
   const handleClose = () => {
@@ -71,8 +73,8 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       errorMessage: 'Your username is required.'
                     },
                     pattern: {
-                      value: '^[_.@A-Za-z0-9-]*$',
-                      errorMessage: 'Your username can only contain letters and digits.'
+                      value: "^[a-zA-Z0-9!#$&'*+=?^_`{|}~.-]+@?[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$",
+                      errorMessage: 'Your username is invalid.',
                     },
                     minLength: {
                       value: 1,

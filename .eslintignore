@@ -7,3 +7,4 @@ target/
 build/
 node/
 postcss.config.js
+src/main/webapp/content/js/adyen.js

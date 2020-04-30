@@ -20,11 +20,11 @@ const initialState = {
   loginError: false, // Errors returned from server side
   showModalLogin: false,
   account: {} as any,
-  errorMessage: null as string, // Errors returned from server side
-  redirectMessage: null as string,
+  errorMessage: (null as unknown) as string, // Errors returned from server side
+  redirectMessage: (null as unknown) as string,
   sessionHasBeenFetched: false,
-  idToken: null as string,
-  logoutUrl: null as string
+  idToken: (null as unknown) as string,
+  logoutUrl: (null as unknown) as string
 };
 
 export type AuthenticationState = Readonly<typeof initialState>;
@@ -98,14 +98,17 @@ export default (state: AuthenticationState = initialState, action): Authenticati
 
 export const displayAuthError = message => ({ type: ACTION_TYPES.ERROR_MESSAGE, message });
 
-export const getSession = () => (dispatch, getState) => {
+export const getSession: () => void = () => (dispatch, getState) => {
   dispatch({
     type: ACTION_TYPES.GET_SESSION,
     payload: axios.get('api/account')
   });
 };
 
-export const login = (username, password, rememberMe = false) => async (dispatch, getState) => {
+export const login: (username: string, password: string, rememberMe?: boolean) => void = (username, password, rememberMe = false) => async (
+  dispatch,
+  getState
+) => {
   const result = await dispatch({
     type: ACTION_TYPES.LOGIN,
     payload: axios.post('api/authenticate', { username, password, rememberMe })
@@ -131,7 +134,7 @@ export const clearAuthToken = () => {
   }
 };
 
-export const logout = () => dispatch => {
+export const logout: () => void = () => dispatch => {
   clearAuthToken();
   dispatch({
     type: ACTION_TYPES.LOGOUT
