@@ -11,25 +11,25 @@ cover_image:
 
 # Building an E-Commerce application using Java & React
 
-E-commerce applications are the backbone of today's online shopping world, in this post, we will see how to build an e-commerce application easily using Java, JHipster, Spring Boot, and React. Since we will be scaffolding the application the post will focus on how to build a shopping cart and payment integration rather than details of how to build the base application.
+E-commerce applications are the backbone of today's online shopping world. In this post, we will see how to build an e-commerce application easily using Java, JHipster, Spring Boot, and React. Since we will be scaffolding the application, the post will focus on how to build a shopping cart and payment integration rather than how to build the base application.
 
 ## Tools and technology we will use
 
-We will use the below tools and technology to build this application before we start let's have a small intro in case you are not familiar with any of these
+We will use the below tools and technology to build this application:
 
-- [**JHipster**](https://www.jhipster.tech/): JHipster is a popular rapid application development platform in the Java world. It can create web applications and microservices with production-grade code at blazing speeds. Head over to the [installation instructions](https://www.jhipster.tech/installation/) to set it up. JHipster can scaffold applications with a wide variety of languages, frameworks, and configurations. Today we will stick with the following major options. You don't have to install anything for this as JHipster will manage these for you
-  - [**Spring Framework**](https://spring.io/): Its the most popular application framework in Java and comes with Spring Boot which makes development faster and convenient. This lets us focus more on our business needs rather than spending time setting up technical integrations
-  - [**React**](https://reactjs.org/): The most popular client-side MVVM framework. It helps to build modern scalable front ends. We will be writing React code using TypeScript.
-  - [**Bootstrap**](https://getbootstrap.com/): Again its the most popular UI framework for web applications with a plethora of themes and customizations
-  - [**Gradle**](https://gradle.org/): Gradle is a Java build orchestration tool and provides a highly customizable and easy to use DSL to work with
+- [**JHipster**](https://www.jhipster.tech/): JHipster is a popular rapid application development platform in the Java world. It can quickly create web applications and microservices with production-grade code. Head over to the [installation instructions](https://www.jhipster.tech/installation/) to set it up. JHipster can scaffold applications with a wide variety of languages, frameworks, and configurations. For this tutorial, we will stick with the following major options. You don't have to install anything for this, as JHipster will manage these for you.
+  - [**Spring Framework**](https://spring.io/): The most popular application framework in Java and comes with Spring Boot which makes development faster and convenient. This lets us focus more on our business needs rather than spending time setting up technical integrations.
+  - [**React**](https://reactjs.org/): A popular JavaScript UI library that helps build modern scalable front ends. We will be writing React code using TypeScript.
+  - [**Bootstrap**](https://getbootstrap.com/): A popular UI framework for web applications with a variety of themes and customizations.
+  - [**Gradle**](https://gradle.org/): Gradle is a Java build orchestration tool that provides a highly customizable and easy-to-use domain-specific language (DSL).
   - [**Webpack**](https://webpack.js.org/): A widely used front-end build tool for modern web applications
 - [**Adyen Payments Platform**](https://www.adyen.com/): Adyen is one of the leading payment platforms for medium to large scale businesses. It provides a plethora of payment options and provides SDKs for easy integrations. And I also happen to work for Adyen 😄
-- [**Docker**](https://www.docker.com/): Its the defacto containerization technology and today we will use it to quickly run our database. If you can run a local MySQL setup then you wouldn't need Docker
-- [**Heroku**](https://www.heroku.com/): Heroku is an easy to use PaaS platform with a generous free tier. We will deploy our application to Heroku today. Do signup for a free account. You have to add a credit card details to enable add ons, but you won't be charged anything as we will only use the free tier.
+- [**Docker**](https://www.docker.com/): The de facto containerization technology, which we will use it to quickly run our database. If you can run a local MySQL setup, you won't need Docker.
+- [**Heroku**](https://www.heroku.com/): Heroku is an easy-to-use PaaS platform with a generous free tier. We will deploy our application to Heroku. Do signup for a free account. You have to add credit card details to enable add-ons, but you won't be charged anything, as we will only use the free tier.
 
 ## Designing the entity model
 
-Since we are going to scaffold our application, the most important aspect is making sure we have our entity model for the e-commerce application right. We will use the [JHipster Domain Language(JDL)](https://www.jhipster.tech/jdl/) to do this. Below is the JDL model for an e-commerce application and I believe its quite self explanatory.
+Since we are going to scaffold our application, it is important to make sure that we have the correct entity model for the e-commerce application. We will use the [JHipster Domain Language(JDL)](https://www.jhipster.tech/jdl/) to do this. Below is the JDL model for an e-commerce application:
 
 ```groovy
 /** Product sold by the Online store */
@@ -81,7 +81,7 @@ enum PaymentMethod {
     CREDIT_CARD, IDEAL
 }
 
-/** product order keeps track of orders */
+/** Product order keeps track of orders */
 entity ProductOrder {
     quantity Integer required min(0)
     totalPrice BigDecimal required min(0)
@@ -100,9 +100,9 @@ relationship ManyToOne {
 relationship OneToMany {
     // Every customer can have many shopping carts
     CustomerDetails{cart} to ShoppingCart{customerDetails required},
-    // Every shopping cart can have multiple product orders
+    // Every shopping cart can have many product orders
     ShoppingCart{order} to ProductOrder{cart required},
-    // Every product category can have multiple products
+    // Every product category can have many products
     ProductCategory{product} to Product{productCategory(name) required}
 }
 
@@ -110,17 +110,17 @@ service * with serviceClass
 paginate Product, CustomerDetails, ProductCategory with pagination
 ```
 
-The `User` entity is built-in from JHipster and hence we don't have to define it in JDL but we can define relationships to it. Here is a UML visualization of the same.
+The `User` entity is built-in from JHipster and hence we don't have to define it in JDL. However, we can define its relationships. Here is a UML visualization of the same:
 
 ![Entity model for e-commerce](https://i.imgur.com/p403lEc.png)
 
 Head over to [JDL Studio](https://start.jhipster.tech/jdl-studio/) if you want to visualize the model and make any changes.
 
-Now create a new folder and save the above to a file named `app.jdl` inside the folder.
+Next, create a new folder and save the above to a file named `app.jdl` within that folder.
 
 ## Scaffolding the application
 
-Now that we have our model in place we can go ahead and scaffold a Java web application using JHipster. First, let's define our application. Add the below snippet to the file(`app.jdl`) we created earlier.
+Now that we have our model in place, we can go ahead and scaffold a Java web application using JHipster. First, let's define our application. Add the below snippet to the file (`app.jdl`) we created earlier.
 
 ```groovy
 application {
@@ -138,57 +138,59 @@ application {
 }
 ```
 
-We just defined an application named **store** that uses JSON Web Token(JWT) as the authentication mechanism, MySQL as the production database, Gradle as the build tool and React as the client-side framework. You can see all the options supported by JHipster [here](https://www.jhipster.tech/jdl/applications). We also defined that the application uses all the entities we defined with `entities *`.
+We just defined an application named **store** that uses JSON Web Token (JWT) as the authentication mechanism, MySQL as the production database, Gradle as the build tool and React as the client-side framework. You can see all the options supported by JHipster [here](https://www.jhipster.tech/jdl/applications). We also defined that the application uses all the entities we defined with `entities *`.
 
-Now let's invoke JHipster to scaffold the application. Run the below command inside the folder where we created `app.jdl`
+Now, let's invoke JHipster to scaffold the application. Run the below command inside the folder where we created `app.jdl`:
 
 ```shell
 jhipster import-jdl app.jdl
 ```
 
-This will create our application, install all necessary dependencies and initialize & commit everything to Git. Make sure you have Git installed on your system.
+This will create our application, install all necessary dependencies, and initialize & commit everything to Git. Make sure you have Git installed on your system.
 
 > We have created an example application [here](https://github.com/adyen-examples/adyen-java-react-ecommerce-example) for you to refer to. Check out the [commits](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commits/master) to see the steps.
 
-Let's check out the application. Run the below command to run the application in development mode
+Let's check out the application. Run the below command to run the application in development mode:
 
 ```shell
 ./gradlew
 ```
 
-Now visit [https://localhost:8080](https://localhost:8080) and use the default users mentioned on the home page to log in and explore the application. You can find the [commit](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/1833f6d96de51ed1838f159c404bee24533fcf4f) in the sample application.
+After running the application, visit [https://localhost:8080](https://localhost:8080) and use the default users mentioned on the home page to log in and explore the application. You can find the [commit](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/1833f6d96de51ed1838f159c404bee24533fcf4f) in the sample application.
 
-You can also run the generated unit and integration tests with this command
+You can also run the generated unit and integration tests with this command:
 
 ```shell
 ./gradlew npm_test test integrationTest
 ```
 
-So far the generated application doesn't have any specific business logic or custom screens. It is just a CRUD application for the model we defined. If you are familiar with Spring Framework and React you should be able to navigate the source code created easily. If Spring/React application created by JHipster is not the focus of this post and for that I recommend you head over to documentation provided by JHipster, SPring and React.
+So far, the generated application doesn't have any specific business logic or custom screens. It is just a CRUD application for the model we defined. If you are familiar with Spring Framework and React you should be able to navigate the source code created easily. The Spring/React application created by JHipster is not the focus of this post, and for that I recommend you head over to documentation provided by JHipster, Spring and React.
 
 ## Building a products landing page
 
 Now that our application and all the CRUD APIs are ready, let us build a product landing page that lists all the products offered by the store.
 
-We will convert `src/main/webapp/app/modules/home/home.tsx` to be our product landing page. This involves updating the JSX to show products list and using the product redux reducer to fetch the data from product API. [Here](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/8bef6c1737a2fdc4feaedd0751f5dd0b5044f536#diff-718161e5814fcf204ef9e82fdc962d7d) is the complete diff for `home.tsx` and [here](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/8bef6c1737a2fdc4feaedd0751f5dd0b5044f536) is the entire changelog for this step.
+We will convert `src/main/webapp/app/modules/home/home.tsx` to be our product landing page. This involves updating the JSX to show the products list and using the product redux reducer to fetch the data from product API. [Here](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/8bef6c1737a2fdc4feaedd0751f5dd0b5044f536#diff-718161e5814fcf204ef9e82fdc962d7d) is the complete diff for `home.tsx` and [here](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/8bef6c1737a2fdc4feaedd0751f5dd0b5044f536) is the entire changelog for this step.
 
 ![Product listing home page](https://i.imgur.com/kxNLwS8.png)
 
-Start the application client-side in dev mode to speed up development. Keep the application running in a terminal using `./gradlew` if it not already running from the previous step. Now in a new terminal run `npm start` and it will start a development server for client-side which proxies API calls to the backend and it will open up new browser window pointing to [https://localhost:9000](https://localhost:9000). Now both the front-end and back-end are running in development mode with hot reload functionality. This means the entire application will automatically reload when we make any changes and the browser will reload as well. For backend changes, the reload will happen when you compile using your IDE or by running `./gradlew compileJava`.
+Start the application client-side in dev mode to speed up development. Keep the application running in a terminal using `./gradlew` if it not already running from the previous step. In a new terminal, run `npm start` and it will start a development server for the client-side, which proxies API calls to the backend abd open up a new browser window pointing to [https://localhost:9000](https://localhost:9000).
 
-Update the `home.tsx` according to the [changelog](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/8bef6c1737a2fdc4feaedd0751f5dd0b5044f536) and see the changes reflected on the home page.
+At this point, the front-end and back-end are running in development mode with hot reload functionality. This means the entire application will automatically reload when we make any changes (the browser will reload as well). For backend changes, the reload will happen when you compile using your IDE or by running `./gradlew compileJava`.
+
+Update `home.tsx` according to the [changelog](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/8bef6c1737a2fdc4feaedd0751f5dd0b5044f536) and see the changes reflected on the home page.
 
 ## Building the shopping cart
 
-Now let us build a persistent shopping cart page where we can list all the items added to the cart by the user. The user can also start checkout from this page. The shopping cart will hold the items added until the payment is complete even if the user logs out or uses the application in a different machine as the state is persisted automatically using the generated CRUD API
+Now let us build a persistent shopping cart page, where we can list all the items added to the cart by the user. The user can also start checkout from this page. The shopping cart will hold the items added until the payment is complete even if the user logs out or uses the application in a different machine as the state is persisted automatically using the generated CRUD API:
 
 ![Shopping cart](https://i.imgur.com/vLcJ7Ly.png)
 
-For this feature, we also update the [security configurations](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c#diff-ff9a3a62938424f5f25aa23632e0130b) to ensure that a user can update only his/her shopping cart when logged in. Only administrators will be able to see the shopping cart of other users and manage all entities. We will also add [new REST endpoints](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c#diff-d193fb13f737cee08eebe3d91ad724ef) to add and remove products to and from a shopping cart. We will also add [service methods](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c#diff-5ba862ad08c22a3dbadff2c8aaf7ee31) and [database operations](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c#diff-67890efa54cdc134785c6d61ae09dec5) for these. These are quite straightforward due to the framework provided by JHipster and Spring.
+For this feature, we also update the [security configurations](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c#diff-ff9a3a62938424f5f25aa23632e0130b) to ensure that a user can update only his/her own shopping cart when logged in. Only administrators will be able to see the shopping cart of other users and manage all entities. We will also add [new REST endpoints](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c#diff-d193fb13f737cee08eebe3d91ad724ef) to add and remove products to and from a shopping cart. We will also add [service methods](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c#diff-5ba862ad08c22a3dbadff2c8aaf7ee31) and [database operations](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c#diff-67890efa54cdc134785c6d61ae09dec5) for these. These are quite straightforward due to the framework provided by JHipster and Spring.
 
 On the client-side, we will update the [shopping-cart reducer](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c#diff-a3e50072c5d00cf79e3b620f3c5103c0) to talk to the new endpoints and add a new route and [module](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c#diff-ea8adcc088ab63d7cf36005231489d6e) to show the shopping cart.
 
-The shopping cart React page uses the below snippet, the listing content is quite similar to the product listing page.
+The shopping cart React page uses the below snippet. Note that the listing content is quite similar to the product listing page.
 
 ```tsx
 //import ...;
@@ -264,11 +266,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(Cart);
 
 Here is the entire [changelog](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/b23f455e8105e32a2154ca9ee9544231355cf57c) for this feature. Make the changes to the application and see the changes reflected on the shopping cart page.
 
-Please note that I also did some improvements to the fake data generated by JHipster in [this commit](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/8dacb111116517b0cebfefb10c7a8680960dcea0) and made improvements to product and cart pages in [this commit](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/91f49fc6708b78862c9ea003e317aea7040e7335). I also fixed the tests in [this commit](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/0787f9b5a868799073a602b2f5245e82dda1f3cc). Update your application according to these changelogs as well.
+Please note that I also made some improvements to the fake data generated by JHipster in [this commit](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/8dacb111116517b0cebfefb10c7a8680960dcea0) and made improvements to product and cart pages in [this commit](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/91f49fc6708b78862c9ea003e317aea7040e7335). I also fixed the tests in [this commit](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/0787f9b5a868799073a602b2f5245e82dda1f3cc). Update your application according to these changelogs as well.
 
 ## Payments integration
 
-Now that our shopping cart is ready we can integrate the [Adyen checkout API](https://docs.adyen.com/checkout) to make payments. First, make sure you [signup](https://www.adyen.com/signup) for an Adyen test account. Follow [this guide](https://docs.adyen.com/checkout/get-started) to get your API keys and Merchant Account. You will also need to [generate an origin key](https://docs.adyen.com/user-management/how-to-get-an-origin-key) per domain you use to make payment. In our case for development use, we need to create an origin key for `http://localhost:9000` and `http://localhost:8080`.
+Now that our shopping cart is ready, we can integrate the [Adyen checkout API](https://docs.adyen.com/checkout) to make payments. First, make sure you [sign up](https://www.adyen.com/signup) for an Adyen test account. Follow [this guide](https://docs.adyen.com/checkout/get-started) to get your API keys and Merchant Account. You will also need to [generate an origin key](https://docs.adyen.com/user-management/how-to-get-an-origin-key) per domain you use to collect payments. In our case for development use, we need to create an origin key for `http://localhost:9000` and `http://localhost:8080`.
 
 We will use the [Adyen Java API library](https://github.com/Adyen/adyen-java-api-library) to make API calls. We will add the dependency to our [Gradle build](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/30899562564be5f2b6dd1291af812c3f4ff8e22e#diff-c197962302397baf3a4cc36463dce5ea).
 
@@ -298,11 +300,11 @@ public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws EntityNotF
 }
 ```
 
-The controller ensures that all actions are done against the active shopping cart of the user logged into the session hence ensures security issues like the man in the middle attacks and request spoofing doesn't happen. When payment is completed successfully we close the active shopping cart ensuring every user has only one active shopping cart at a time.
+The controller ensures that all actions are done against the active shopping cart of the user logged into the session. This ensures that security issues like man-in-the-middle attacks and request spoofing do not happen. When payment is completed successfully, we close the active shopping cart, ensuring every user has only one active shopping cart at a time.
 
 On the client-side, we will create a React page to show the [payment options](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/30899562564be5f2b6dd1291af812c3f4ff8e22e#diff-3723704a01d50dc81a81a4a3e56936eb) and payment [result status](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/30899562564be5f2b6dd1291af812c3f4ff8e22e#diff-8e5b7843a18c84ef4f242a352d2572fe), a [redux reducer](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/30899562564be5f2b6dd1291af812c3f4ff8e22e#diff-6d93eb93377c66204b2e844472d95860) to talk to the new API endpoints. We will also download and add the Adyen client-side resources to our [index.html](https://github.com/adyen-examples/adyen-java-react-ecommerce-example/commit/30899562564be5f2b6dd1291af812c3f4ff8e22e#diff-747e7a37d03935942014106202566830) file.
 
-Here are the important bits of the checkout page
+Here are the important bits of the checkout page:
 
 ```tsx
 //import ...;
