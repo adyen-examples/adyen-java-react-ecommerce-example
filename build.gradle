@@ -105,7 +105,7 @@ test {
 task integrationTest(type: Test) {
     environment "ADYEN_API_KEY", "test"
     environment "ADYEN_MERCHANT_ACCOUNT", "test"
-    environment "ADYEN_ORIGIN_KEY", "test"
+    environment "ADYEN_CLIENT_KEY", "test"
     useJUnitPlatform()
     description = "Execute integration tests."
     group = "verification"

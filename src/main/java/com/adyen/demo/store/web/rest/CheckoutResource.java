@@ -42,8 +42,8 @@ public class CheckoutResource {
 
     @Value("${ADYEN_MERCHANT_ACCOUNT}")
     private String merchantAccount;
-    @Value("${ADYEN_ORIGIN_KEY}")
-    private String originKey;
+    @Value("${ADYEN_CLIENT_KEY}")
+    private String clientKey;
 
     private final Checkout checkout;
     private final ShoppingCartService shoppingCartService;
@@ -63,7 +63,7 @@ public class CheckoutResource {
     public ResponseEntity<Map> config() {
         Map<String, String> conf = new HashMap<>();
         conf.put("environment", "test");
-        conf.put("originKey", originKey);
+        conf.put("clientKey", clientKey);
         return ResponseEntity.ok()
             .body(conf);
     }
