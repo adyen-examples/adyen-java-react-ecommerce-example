@@ -7,7 +7,7 @@ The below environment variables must be set in order for the application to work
 ```shell
 export ADYEN_API_KEY=yourAdyenApiKey
 export ADYEN_MERCHANT_ACCOUNT=yourAdyenMerchantAccount
-export ADYEN_ORIGIN_KEY=yourAdyenOriginKey
+export ADYEN_CLIENT_KEY=yourAdyenClientKey
 ```
 
 Refer to `app.png` for the entity model used in `app.jdl`
