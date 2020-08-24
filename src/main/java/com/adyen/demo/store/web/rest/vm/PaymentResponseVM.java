@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import com.adyen.model.FraudResult;
 import com.adyen.model.checkout.*;
+import com.adyen.model.ThreeDS2Result;
 
 public class PaymentResponseVM {
     private Map<String, String> additionalData;

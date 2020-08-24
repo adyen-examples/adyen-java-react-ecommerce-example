@@ -207,7 +207,7 @@ dependencies {
     // Use ", version: jhipster_dependencies_version, changing: true" if you want
     // to use a SNAPSHOT release instead of a stable release
     implementation group: "io.github.jhipster", name: "jhipster-framework"
-    implementation group: "com.adyen", name: "adyen-java-api-library", version: "5.0.0"
+    implementation group: "com.adyen", name: "adyen-java-api-library", version: "8.1.0"
     implementation "javax.annotation:javax.annotation-api"
     implementation "org.springframework.boot:spring-boot-starter-cache"
     implementation "io.dropwizard.metrics:metrics-core"
