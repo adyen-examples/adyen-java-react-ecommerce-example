@@ -10,6 +10,8 @@ export interface IShoppingCart {
   status?: OrderStatus;
   totalPrice?: number;
   paymentMethod?: PaymentMethod;
+  paymentReference?: string;
+  paymentModificationReference?: string;
   orders?: IProductOrder[];
   customerDetails?: ICustomerDetails;
 }

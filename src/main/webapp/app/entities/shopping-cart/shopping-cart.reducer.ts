@@ -121,10 +121,18 @@ export const getEntity: ICrudGetAction<IShoppingCart> = id => {
   };
 };
 
-export const getEntityForCurrentUser: ICrudSearchAction<IShoppingCart> = () => {
-  const requestUrl = `${apiUrl}/current-user`;
+export const getActiveCartForCurrentUser: ICrudSearchAction<IShoppingCart> = () => {
+  const requestUrl = `${apiUrl}/current-user-active`;
   return {
     type: ACTION_TYPES.FETCH_SHOPPINGCART,
+    payload: axios.get<IShoppingCart>(requestUrl)
+  };
+};
+
+export const getCartsForCurrentUser: ICrudSearchAction<IShoppingCart> = () => {
+  const requestUrl = `${apiUrl}/current-user`;
+  return {
+    type: ACTION_TYPES.FETCH_SHOPPINGCART_LIST,
     payload: axios.get<IShoppingCart>(requestUrl)
   };
 };
@@ -172,10 +180,10 @@ export const removeOrder: ICrudDeleteAction<IShoppingCart> = id => async dispatc
   return result;
 };
 
-export const closeShoppingCart = paymentType => async dispatch => {
+export const closeShoppingCart = (paymentType, paymentRef) => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_SHOPPINGCART,
-    payload: axios.put(`${apiUrl}/close/${paymentType}`)
+    payload: axios.put(`${apiUrl}/close?paymentType=${paymentType}&paymentRef=${paymentRef}`)
   });
   return result;
 };

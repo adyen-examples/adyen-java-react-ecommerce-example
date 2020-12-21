@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { IShoppingCart } from 'app/shared/model/shopping-cart.model';
 
 export const ACTION_TYPES = {
   FETCH_CONFIG: 'checkout/FETCH_CONFIG',
   FETCH_PAYMENTMETHODS: 'checkout/FETCH_PAYMENTMETHODS',
   SUBMIT_PAYMENT: 'checkout/SUBMIT_PAYMENT',
+  REFUND_PAYMENT: 'checkout/REFUND_PAYMENT',
   SUBMIT_PAYMENTDETAILS: 'checkout/SUBMIT_PAYMENTDETAILS'
 };
 
@@ -120,4 +122,14 @@ export const submitAdditionalDetails = data => {
     type: ACTION_TYPES.SUBMIT_PAYMENTDETAILS,
     payload: axios.post(requestUrl, data)
   };
+};
+
+export const refundPayment = (cart: IShoppingCart, action: Function) => async dispatch => {
+  const requestUrl = `${apiUrl}/refund-payment`;
+  const res = await dispatch({
+    type: ACTION_TYPES.REFUND_PAYMENT,
+    payload: axios.post(requestUrl, cart)
+  });
+  dispatch(action());
+  return res;
 };

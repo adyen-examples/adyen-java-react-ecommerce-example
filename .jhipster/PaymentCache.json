@@ -1,0 +1,47 @@
+{
+    "name": "PaymentCache",
+    "fields": [
+        {
+            "fieldName": "orderRef",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "originalHost",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "paymentData",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "paymentType",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "paymentCache",
+            "relationshipValidateRules": "required",
+            "relationshipName": "user",
+            "otherEntityField": "login"
+        }
+    ],
+    "changelogDate": "20201218114000",
+    "entityTableName": "payment_cache",
+    "dto": "no",
+    "pagination": "no",
+    "service": "serviceClass",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "embedded": false,
+    "clientRootFolder": "",
+    "applications": [
+        "store"
+    ]
+}

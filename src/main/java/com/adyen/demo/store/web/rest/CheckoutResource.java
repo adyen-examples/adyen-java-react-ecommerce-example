@@ -3,30 +3,37 @@ package com.adyen.demo.store.web.rest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.time.Instant;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.persistence.EntityNotFoundException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
 import com.adyen.Client;
+import com.adyen.demo.store.domain.PaymentCache;
 import com.adyen.demo.store.domain.ShoppingCart;
+import com.adyen.demo.store.domain.User;
+import com.adyen.demo.store.domain.enumeration.OrderStatus;
+import com.adyen.demo.store.repository.UserRepository;
 import com.adyen.demo.store.security.SecurityUtils;
+import com.adyen.demo.store.service.PaymentCacheService;
 import com.adyen.demo.store.service.ShoppingCartService;
+import com.adyen.demo.store.web.rest.errors.EntityNotFoundException;
 import com.adyen.demo.store.web.rest.vm.PaymentRedirectVM;
 import com.adyen.demo.store.web.rest.vm.PaymentRequestVM;
 import com.adyen.demo.store.web.rest.vm.PaymentResponseVM;
 import com.adyen.enums.Environment;
 import com.adyen.model.Amount;
 import com.adyen.model.checkout.*;
+import com.adyen.model.modification.CancelOrRefundRequest;
+import com.adyen.model.modification.ModificationResult;
 import com.adyen.service.Checkout;
+import com.adyen.service.Modification;
 import com.adyen.service.exception.ApiException;
 
 /**
@@ -36,9 +43,6 @@ import com.adyen.service.exception.ApiException;
 @RequestMapping("/api")
 public class CheckoutResource {
     private final Logger log = LoggerFactory.getLogger(CheckoutResource.class);
-    private static final String ORIGINAL_HOST_COOKIE = "originalHost";
-    private static final String PAYMENT_TYPE_COOKIE = "paymentType";
-    private static final String PAYMENT_DATA_COOKIE = "paymentData";
 
     @Value("${ADYEN_MERCHANT_ACCOUNT}")
     private String merchantAccount;
@@ -46,12 +50,21 @@ public class CheckoutResource {
     private String clientKey;
 
     private final Checkout checkout;
+    private final Modification modification;
     private final ShoppingCartService shoppingCartService;
+    private final PaymentCacheService paymentCacheService;
+    private final UserRepository userRepository;
 
-    public CheckoutResource(final ShoppingCartService shoppingCartService, @Value("${ADYEN_API_KEY}") String apiKey) {
+    public CheckoutResource(final ShoppingCartService shoppingCartService,
+                            final PaymentCacheService paymentCacheService,
+                            final UserRepository userRepository,
+                            @Value("${ADYEN_API_KEY}") String apiKey) {
         this.shoppingCartService = shoppingCartService;
+        this.paymentCacheService = paymentCacheService;
+        this.userRepository = userRepository;
         Client client = new Client(apiKey, Environment.TEST);
         this.checkout = new Checkout(client);
+        this.modification = new Modification(client);
     }
 
     /**
@@ -101,7 +114,7 @@ public class CheckoutResource {
      * @throws ApiException            from Adyen API.
      */
     @PostMapping("/checkout/initiate-payment")
-    public ResponseEntity<PaymentResponseVM> payments(@RequestHeader("referer") String referer, @RequestBody PaymentRequestVM body, HttpServletResponse httpResponse) throws EntityNotFoundException, IOException, ApiException {
+    public ResponseEntity<PaymentResponseVM> payments(@RequestHeader("referer") String referer, @RequestBody PaymentRequestVM body) throws EntityNotFoundException, IOException, ApiException {
         PaymentsRequest paymentRequest = new PaymentsRequest();
         paymentRequest.setMerchantAccount(merchantAccount);
         paymentRequest.setCountryCode("NL");
@@ -109,9 +122,10 @@ public class CheckoutResource {
         paymentRequest.setChannel(PaymentsRequest.ChannelEnum.WEB);
         URL refURL = new URL(referer);
         String originalHost = refURL.getProtocol() + "://" + refURL.getHost() + (refURL.getPort() >= 80 ? ":" + refURL.getPort() : "");
-        String returnUrl = originalHost + "/api/checkout/redirect";
+        String orderRef = UUID.randomUUID().toString();
+        String returnUrl = originalHost + "/api/checkout/redirect?orderRef=" + orderRef;
         paymentRequest.setReturnUrl(returnUrl);
-        paymentRequest.setReference(Instant.now().toString());
+        paymentRequest.setReference(orderRef);
         paymentRequest.setPaymentMethod(body.getPaymentMethod());
         paymentRequest.setBrowserInfo(body.getBrowserInfo());
         paymentRequest.setOrigin(body.getOrigin());
@@ -121,16 +135,16 @@ public class CheckoutResource {
         log.debug("REST request to make Adyen payment {}", paymentRequest);
         PaymentResponseVM response = new PaymentResponseVM(checkout.payments(paymentRequest));
         if (response.getAction() != null && !response.getAction().getPaymentData().isEmpty()) {
-            Cookie cookie = new Cookie(PAYMENT_DATA_COOKIE, response.getAction().getPaymentData());
-            cookie.setMaxAge(3600);
-            cookie.setHttpOnly(true);
-            httpResponse.addCookie(cookie);
-            cookie = new Cookie(ORIGINAL_HOST_COOKIE, referer);
-            cookie.setMaxAge(3600);
-            httpResponse.addCookie(cookie);
-            cookie = new Cookie(PAYMENT_TYPE_COOKIE, body.getPaymentMethod().getType());
-            cookie.setMaxAge(3600);
-            httpResponse.addCookie(cookie);
+            String login = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User"));
+            User user = userRepository.findOneByLogin(login).orElseThrow(() -> new EntityNotFoundException("User"));
+            paymentCacheService.save(
+                new PaymentCache()
+                    .orderRef(orderRef)
+                    .paymentData(response.getAction().getPaymentData())
+                    .paymentType(body.getPaymentMethod().getType())
+                    .originalHost(referer)
+                    .user(user)
+            );
         }
         return ResponseEntity.ok()
             .body(response);
@@ -154,6 +168,32 @@ public class CheckoutResource {
     }
 
     /**
+     * {@code POST  /checkout/refund-payment} : Cancel & Refund a payment.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (Ok)} and with body the paymentMethods response.
+     * @throws EntityNotFoundException when user is not found.
+     * @throws IOException             from Adyen API.
+     * @throws ApiException            from Adyen API.
+     */
+    @PostMapping("/checkout/refund-payment")
+    public ResponseEntity<ModificationResult> refund(@RequestBody ShoppingCart cart) throws IOException, ApiException {
+        log.debug("REST request to cancel payment {}", cart);
+        CancelOrRefundRequest req = new CancelOrRefundRequest();
+        req.setMerchantAccount(merchantAccount);
+        req.setOriginalReference(cart.getPaymentReference());
+        req.setReference(UUID.randomUUID().toString());
+        ModificationResult modificationResult = modification.cancelOrRefund(req);
+        // update the shopping cart with ref & status
+        cart = shoppingCartService.findOne(cart.getId()).orElseThrow(() -> new EntityNotFoundException("Cart"));
+        cart.setStatus(OrderStatus.CANCELLED);
+        cart.setPaymentModificationReference(modificationResult.getPspReference());
+        shoppingCartService.save(cart);
+
+        return ResponseEntity.ok()
+            .body(modificationResult);
+    }
+
+    /**
      * {@code GET  /checkout/redirect} : Handle redirect during payment.
      *
      * @return the {@link RedirectView} with status {@code 302}
@@ -161,12 +201,10 @@ public class CheckoutResource {
      * @throws ApiException from Adyen API.
      */
     @GetMapping("/checkout/redirect")
-    public RedirectView redirect(@RequestParam("payload") String payload, @CookieValue(PAYMENT_DATA_COOKIE) String paymentData, @CookieValue(ORIGINAL_HOST_COOKIE) String originalHost, @CookieValue("paymentType") String paymentType) throws IOException, ApiException {
+    public RedirectView redirect(@RequestParam("payload") String payload, @RequestParam String orderRef) throws IOException, ApiException {
         PaymentsDetailsRequest detailsRequest = new PaymentsDetailsRequest();
         detailsRequest.setDetails(Collections.singletonMap("payload", payload));
-        detailsRequest.setPaymentData(paymentData);
-
-        return getRedirectView(originalHost, paymentType, detailsRequest);
+        return getRedirectView(orderRef, detailsRequest);
     }
 
     /**
@@ -176,24 +214,30 @@ public class CheckoutResource {
      * @throws IOException  from Adyen API.
      * @throws ApiException from Adyen API.
      */
-    @PostMapping("/checkout/redirect")
-    public RedirectView redirect(@RequestBody PaymentRedirectVM payload, @CookieValue(PAYMENT_DATA_COOKIE) String paymentData, @CookieValue(ORIGINAL_HOST_COOKIE) String originalHost, @CookieValue("paymentType") String paymentType) throws IOException, ApiException {
+    @PostMapping(
+        path = "/checkout/redirect",
+        consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    public RedirectView redirect(PaymentRedirectVM payload, @RequestParam String orderRef) throws IOException, ApiException {
         PaymentsDetailsRequest detailsRequest = new PaymentsDetailsRequest();
         Map<String, String> details = new HashMap<>();
         details.put("MD", payload.getMD());
         details.put("PaRes", payload.getPaRes());
         detailsRequest.setDetails(details);
-        detailsRequest.setPaymentData(paymentData);
-        return getRedirectView(originalHost, paymentType, detailsRequest);
+        return getRedirectView(orderRef, detailsRequest);
     }
 
-    private RedirectView getRedirectView(final String originalHost, final String paymentType, final PaymentsDetailsRequest detailsRequest) throws ApiException, IOException {
+    private RedirectView getRedirectView(final String orderRef, final PaymentsDetailsRequest detailsRequest) throws ApiException, IOException {
         log.debug("REST request to handle payment redirect {}", detailsRequest);
+        PaymentCache paymentCache = paymentCacheService.findOneByOrderRef(orderRef).orElseThrow(() -> new EntityNotFoundException("PaymentData"));
+        detailsRequest.setPaymentData(paymentCache.getPaymentData());
+
         PaymentsResponse paymentsResponse = checkout.paymentsDetails(detailsRequest);
         PaymentResponseVM response = new PaymentResponseVM(paymentsResponse);
-        String redirectURL = originalHost + "/status/";
+        String redirectURL = paymentCache.getOriginalHost() + "/status/";
         switch (paymentsResponse.getResultCode()) {
             case AUTHORISED:
+                shoppingCartService.closeCartForUser(paymentCache.getUser().getLogin(), paymentCache.getPaymentType(), paymentsResponse.getPspReference());
+                paymentCacheService.delete(paymentCache.getId());
                 redirectURL += "success";
                 break;
             case PENDING:
@@ -207,11 +251,11 @@ public class CheckoutResource {
                 redirectURL += "error";
                 break;
         }
-        return new RedirectView(redirectURL + "?reason=" + response.getResultCode() + "&paymentType=" + paymentType);
+        return new RedirectView(redirectURL + "?reason=" + response.getResultCode());
     }
 
     private Amount getAmountFromCart() {
-        String user = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User not found"));
+        String user = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User"));
         ShoppingCart activeCart = shoppingCartService.findActiveCartByUser(user);
 
         Amount amount = new Amount();

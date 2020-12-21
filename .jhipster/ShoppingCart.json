@@ -11,7 +11,7 @@
         {
             "fieldName": "status",
             "fieldType": "OrderStatus",
-            "fieldValues": "COMPLETED,PAID,PENDING,CANCELLED",
+            "fieldValues": "COMPLETED,PAID,PENDING,CANCELLED,REFUNDED",
             "fieldValidateRules": [
                 "required"
             ]
@@ -28,10 +28,18 @@
         {
             "fieldName": "paymentMethod",
             "fieldType": "PaymentMethod",
-            "fieldValues": "CREDIT_CARD,IDEAL",
+            "fieldValues": "CREDIT_CARD (scheme),IDEAL (ideal)",
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "paymentReference",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "paymentModificationReference",
+            "fieldType": "String"
         }
     ],
     "relationships": [

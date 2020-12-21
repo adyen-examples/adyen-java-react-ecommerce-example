@@ -109,6 +109,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                   <option value="PAID">PAID</option>
                   <option value="PENDING">PENDING</option>
                   <option value="CANCELLED">CANCELLED</option>
+                  <option value="REFUNDED">REFUNDED</option>
                 </AvInput>
               </AvGroup>
               <AvGroup>
@@ -140,6 +141,18 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                   <option value="CREDIT_CARD">CREDIT_CARD</option>
                   <option value="IDEAL">IDEAL</option>
                 </AvInput>
+              </AvGroup>
+              <AvGroup>
+                <Label id="paymentReferenceLabel" for="shopping-cart-paymentReference">
+                  Payment Reference
+                </Label>
+                <AvField id="shopping-cart-paymentReference" type="text" name="paymentReference" />
+              </AvGroup>
+              <AvGroup>
+                <Label id="paymentModificationReferenceLabel" for="shopping-cart-paymentModificationReference">
+                  Payment Modification Reference
+                </Label>
+                <AvField id="shopping-cart-paymentModificationReference" type="text" name="paymentModificationReference" />
               </AvGroup>
               <AvGroup>
                 <Label for="shopping-cart-customerDetails">Customer Details</Label>

@@ -1,5 +1,3 @@
-import './cart.scss';
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -7,13 +5,13 @@ import { Row, Col, Alert, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntityForCurrentUser, removeOrder } from 'app/entities/shopping-cart/shopping-cart.reducer';
+import { getActiveCartForCurrentUser, removeOrder } from 'app/entities/shopping-cart/shopping-cart.reducer';
 
 export type ICartProp = StateProps & DispatchProps;
 
 export const Cart = (props: ICartProp) => {
   useEffect(() => {
-    props.getEntityForCurrentUser();
+    props.getActiveCartForCurrentUser();
   }, []);
 
   const remove = id => () => {
@@ -33,7 +31,7 @@ export const Cart = (props: ICartProp) => {
               <>
                 <div className="list-group">
                   {cart.orders.map((order, i) => (
-                    <a key={`entity-${i}`} className="list-group-item list-group-item-action flex-column align-items-start">
+                    <div key={`entity-${i}`} className="list-group-item list-group-item-action flex-column align-items-start">
                       <div className="row">
                         <div className="col-2 col-xs-12 justify-content-center">
                           {order.product && order.product.image ? (
@@ -68,7 +66,7 @@ export const Cart = (props: ICartProp) => {
                           </div>
                         </div>
                       </div>
-                    </a>
+                    </div>
                   ))}
                 </div>
                 <div className="d-flex justify-content-between py-4">
@@ -99,7 +97,7 @@ const mapStateToProps = ({ authentication, shoppingCart }: IRootState) => ({
 });
 
 const mapDispatchToProps = {
-  getEntityForCurrentUser,
+  getActiveCartForCurrentUser,
   removeOrder
 };
 

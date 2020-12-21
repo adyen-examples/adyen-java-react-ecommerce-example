@@ -1,12 +1,8 @@
 import './checkout.scss';
 
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import { Link, useParams, useLocation } from 'react-router-dom';
 import { Button } from 'reactstrap';
-
-import { IRootState } from 'app/shared/reducers';
-import { closeShoppingCart } from 'app/entities/shopping-cart/shopping-cart.reducer';
 
 export const Message = ({ type, reason }) => {
   let msg: JSX.Element, img: string;
@@ -42,17 +38,10 @@ export const Message = ({ type, reason }) => {
   );
 };
 
-export type ICheckoutStatusProp = DispatchProps;
-
-export const CheckoutStatus = (props: ICheckoutStatusProp) => {
-  const { type } = useParams();
+export default () => {
+  const { type } = useParams<{ type: string }>();
   const query = new URLSearchParams(useLocation().search);
   const reason = query ? query.get('reason') : '';
-  const paymentType = query ? query.get('paymentType') : '';
-
-  useEffect(() => {
-    reason === 'Authorised' && props.closeShoppingCart(paymentType);
-  }, []);
 
   return (
     <div className="status-container">
@@ -65,11 +54,3 @@ export const CheckoutStatus = (props: ICheckoutStatusProp) => {
     </div>
   );
 };
-
-const mapDispatchToProps = {
-  closeShoppingCart
-};
-
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(null, mapDispatchToProps)(CheckoutStatus);

@@ -45,6 +45,14 @@ export const ShoppingCartDetail = (props: IShoppingCartDetailProps) => {
             <span id="paymentMethod">Payment Method</span>
           </dt>
           <dd>{shoppingCartEntity.paymentMethod}</dd>
+          <dt>
+            <span id="paymentReference">Payment Reference</span>
+          </dt>
+          <dd>{shoppingCartEntity.paymentReference}</dd>
+          <dt>
+            <span id="paymentModificationReference">Payment Modification Reference</span>
+          </dt>
+          <dd>{shoppingCartEntity.paymentModificationReference}</dd>
           <dt>Customer Details</dt>
           <dd>{shoppingCartEntity.customerDetails ? shoppingCartEntity.customerDetails.id : ''}</dd>
         </dl>

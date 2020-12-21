@@ -9,40 +9,33 @@
         <property name="autoIncrement" value="true"/>
 
     <!--
-        Added the entity ShoppingCart.
+        Added the entity PaymentCache.
     -->
-    <changeSet id="20200424080400-1" author="jhipster">
-        <createTable tableName="shopping_cart">
+    <changeSet id="20201218114000-1" author="jhipster">
+        <createTable tableName="payment_cache">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="placed_date" type="datetime">
+            <column name="order_ref" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            <column name="status" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="total_price" type="decimal(21,2)">
-                <constraints nullable="false" />
-            </column>
-            <column name="payment_method" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
-            <column name="payment_reference" type="varchar(255)">
+            <column name="original_host" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="payment_modification_reference" type="varchar(255)">
+            <column name="payment_data" type="varchar(5100)">
                 <constraints nullable="true" />
             </column>
-            <column name="customer_details_id" type="bigint">
+            <column name="payment_type" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="user_id" type="bigint">
                 <constraints nullable="false" />
             </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
-        <dropDefaultValue tableName="shopping_cart" columnName="placed_date" columnDataType="datetime"/>
     </changeSet>
 
-    <changeSet id="20200424080400-1-relations" author="jhipster">
+    <changeSet id="20201218114000-1-relations" author="jhipster">
 
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->

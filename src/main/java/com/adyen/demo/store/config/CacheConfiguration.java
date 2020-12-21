@@ -50,6 +50,7 @@ public class CacheConfiguration {
             createCache(cm, com.adyen.demo.store.domain.ShoppingCart.class.getName());
             createCache(cm, com.adyen.demo.store.domain.ShoppingCart.class.getName() + ".orders");
             createCache(cm, com.adyen.demo.store.domain.ProductOrder.class.getName());
+            createCache(cm, com.adyen.demo.store.domain.PaymentCache.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

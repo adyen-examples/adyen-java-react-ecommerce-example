@@ -1,5 +1,6 @@
 package com.adyen.demo.store.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -14,4 +15,6 @@ import com.adyen.demo.store.domain.enumeration.OrderStatus;
 public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long> {
 
     Optional<ShoppingCart> findFirstByCustomerDetailsUserLoginAndStatusOrderByIdAsc(String login, OrderStatus orderStatus);
+
+    List<ShoppingCart> findAllByCustomerDetailsUserLoginAndStatusNot(String user, OrderStatus orderStatus);
 }

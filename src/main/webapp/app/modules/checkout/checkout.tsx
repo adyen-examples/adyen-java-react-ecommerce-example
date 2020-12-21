@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, ButtonGroup, Button } from 'reactstrap';
+import AdyenCheckout from '@adyen/adyen-web';
+import '@adyen/adyen-web/dist/adyen.css';
 
 import { getAdyenConfig, getPaymentMethods, initiatePayment, submitAdditionalDetails } from './checkout.reducer';
-import { getEntityForCurrentUser } from 'app/entities/shopping-cart/shopping-cart.reducer';
+import { closeShoppingCart, getActiveCartForCurrentUser } from 'app/entities/shopping-cart/shopping-cart.reducer';
 import { IRootState } from 'app/shared/reducers';
 
 export interface ICheckoutProp extends StateProps, DispatchProps {}
@@ -14,7 +16,7 @@ class CheckoutContainer extends React.Component<ICheckoutProp> {
   private checkout: any;
 
   componentDidMount() {
-    this.props.getEntityForCurrentUser();
+    this.props.getActiveCartForCurrentUser();
     this.props.getAdyenConfig();
     this.props.getPaymentMethods();
   }
@@ -22,12 +24,10 @@ class CheckoutContainer extends React.Component<ICheckoutProp> {
   componentDidUpdate(prevProps: ICheckoutProp) {
     const { paymentMethodsRes, config, paymentRes, paymentDetailsRes, errorMessage } = this.props;
     if (errorMessage && errorMessage !== prevProps.errorMessage) {
-      window.location.href = `/status/error?reason=${errorMessage}`;
+      window.location.href = `/checkout/status/error?reason=${errorMessage}`;
       return;
     }
     if (paymentMethodsRes && config && (paymentMethodsRes !== prevProps.paymentMethodsRes || config !== prevProps.config)) {
-      // eslint-disable-next-line
-      // @ts-ignore
       this.checkout = new AdyenCheckout({
         ...config,
         paymentMethodsResponse: this.removeNilFields(paymentMethodsRes),
@@ -59,6 +59,7 @@ class CheckoutContainer extends React.Component<ICheckoutProp> {
       let urlPart;
       switch (paymentRes.resultCode) {
         case 'Authorised':
+          this.props.closeShoppingCart('scheme', paymentRes.pspReference);
           urlPart = 'success';
           break;
         case 'Pending':
@@ -71,7 +72,7 @@ class CheckoutContainer extends React.Component<ICheckoutProp> {
           urlPart = 'error';
           break;
       }
-      window.location.href = `/checkout/status/${urlPart}?reason=${paymentRes.resultCode}&paymentType=unknown`;
+      window.location.href = `/checkout/status/${urlPart}?reason=${paymentRes.resultCode}`;
     }
   };
 
@@ -136,7 +137,8 @@ const mapDispatchToProps = {
   getPaymentMethods,
   initiatePayment,
   submitAdditionalDetails,
-  getEntityForCurrentUser
+  closeShoppingCart,
+  getActiveCartForCurrentUser
 };
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

@@ -4,7 +4,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +16,7 @@ import com.adyen.demo.store.security.AuthoritiesConstants;
 import com.adyen.demo.store.security.SecurityUtils;
 import com.adyen.demo.store.service.ShoppingCartService;
 import com.adyen.demo.store.web.rest.errors.BadRequestAlertException;
+import com.adyen.demo.store.web.rest.errors.EntityNotFoundException;
 
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -72,7 +72,7 @@ public class ShoppingCartResource {
      */
     @PutMapping("/shopping-carts")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<ShoppingCart> updateShoppingCart(@Valid @RequestBody ShoppingCart shoppingCart) throws URISyntaxException {
+    public ResponseEntity<ShoppingCart> updateShoppingCart(@Valid @RequestBody ShoppingCart shoppingCart) {
         log.debug("REST request to update ShoppingCart : {}", shoppingCart);
         if (shoppingCart.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -129,11 +129,23 @@ public class ShoppingCartResource {
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the shoppingCart, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/shopping-carts/current-user")
+    @GetMapping("/shopping-carts/current-user-active")
     public ResponseEntity<ShoppingCart> getActiveShoppingCartByUser() {
         String user = SecurityUtils.getCurrentUserLogin().orElse("");
         log.debug("REST request to get ShoppingCart for user: {}", user);
         return ResponseEntity.ok().body(shoppingCartService.findActiveCartByUser(user));
+    }
+
+    /**
+     * {@code GET  /shopping-carts/current-user} : get all shoppingCarts of current user.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the shoppingCart, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/shopping-carts/current-user")
+    public List<ShoppingCart> getShoppingCartByUser() {
+        String user = SecurityUtils.getCurrentUserLogin().orElse("");
+        log.debug("REST request to get ShoppingCart for user: {}", user);
+        return shoppingCartService.findCartsByUser(user);
     }
 
 
@@ -149,7 +161,7 @@ public class ShoppingCartResource {
     @PutMapping("/shopping-carts/add-product/{id}")
     public ResponseEntity<ShoppingCart> addProduct(@PathVariable Long id) throws EntityNotFoundException {
         log.debug("REST request to add product to ShoppingCart");
-        String user = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User not found"));
+        String user = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User"));
         ShoppingCart result = shoppingCartService.addProductForUser(id, user);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
@@ -168,7 +180,7 @@ public class ShoppingCartResource {
     @DeleteMapping("/shopping-carts/remove-order/{id}")
     public ResponseEntity<ShoppingCart> removeOrder(@PathVariable Long id) throws EntityNotFoundException {
         log.debug("REST request to remove product order from ShoppingCart");
-        String user = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User not found"));
+        String user = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User"));
         ShoppingCart result = shoppingCartService.removeProductOrderForUser(id, user);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
@@ -176,19 +188,20 @@ public class ShoppingCartResource {
     }
 
     /**
-     * {@code PUT  /close/:paymentType} : Close an existing shoppingCart.
+     * {@code PUT  /close} : Close an existing shoppingCart.
      *
      * @param paymentType the payment type used.
+     * @param paymentRef  the payment reference from PSP.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated shoppingCart,
      * or with status {@code 400 (Bad Request)} if the shoppingCart is not valid,
      * or with status {@code 500 (Internal Server Error)} if the shoppingCart couldn't be updated.
      * @throws EntityNotFoundException if the order is not found.
      */
-    @PutMapping("/shopping-carts/close/{paymentType}")
-    public ResponseEntity<ShoppingCart> closeShoppingCart(@PathVariable String paymentType) throws EntityNotFoundException {
+    @PutMapping("/shopping-carts/close")
+    public ResponseEntity<ShoppingCart> closeShoppingCart(@RequestParam String paymentType, @RequestParam String paymentRef) throws EntityNotFoundException {
         log.debug("REST request to update ShoppingCart");
-        String user = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User not found"));
-        ShoppingCart result = shoppingCartService.closeCartForUser(user, paymentType);
+        String user = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User"));
+        ShoppingCart result = shoppingCartService.closeCartForUser(user, paymentType, paymentRef);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);

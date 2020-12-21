@@ -102,7 +102,7 @@ export const Home = (props: IHomeProp) => {
                 </div>
                 <div className="list-group">
                   {productList.filter(filter).map((product, i) => (
-                    <a key={`entity-${i}`} className="list-group-item list-group-item-action flex-column align-items-start">
+                    <div key={`entity-${i}`} className="list-group-item list-group-item-action flex-column align-items-start">
                       <div className="row">
                         <div className="col-2 col-xs-12 justify-content-center">
                           {product.image ? (
@@ -134,7 +134,7 @@ export const Home = (props: IHomeProp) => {
                           </div>
                         </div>
                       </div>
-                    </a>
+                    </div>
                   ))}
                 </div>
                 <div className={productList && productList.length > 0 ? 'p-4' : 'd-none'}>

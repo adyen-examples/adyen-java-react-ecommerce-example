@@ -26,7 +26,7 @@
     "packageFolder": "com/adyen/demo/store",
     "useSass": true,
     "jhipsterVersion": "6.8.0",
-    "creationTimestamp": 1587715200735,
+    "creationTimestamp": 1608565320758,
     "skipServer": false,
     "clientPackageManager": "npm",
     "clientTheme": "none",
@@ -41,5 +41,5 @@
     "herokuAppName": "adyen-demo-store",
     "herokuDeployType": "jar"
   },
-  "entities": ["Product", "ProductCategory", "CustomerDetails", "ShoppingCart", "ProductOrder"]
+  "entities": ["Product", "ProductCategory", "CustomerDetails", "ShoppingCart", "ProductOrder", "PaymentCache"]
 }

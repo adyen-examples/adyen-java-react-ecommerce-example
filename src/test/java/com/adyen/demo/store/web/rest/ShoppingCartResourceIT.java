@@ -1,10 +1,11 @@
 package com.adyen.demo.store.web.rest;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import javax.persistence.EntityManager;
+import com.adyen.demo.store.StoreApp;
+import com.adyen.demo.store.domain.ShoppingCart;
+import com.adyen.demo.store.domain.CustomerDetails;
+import com.adyen.demo.store.repository.ShoppingCartRepository;
+import com.adyen.demo.store.service.ShoppingCartService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,23 +15,19 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import com.adyen.demo.store.StoreApp;
-import com.adyen.demo.store.domain.CustomerDetails;
-import com.adyen.demo.store.domain.ShoppingCart;
-import com.adyen.demo.store.domain.enumeration.OrderStatus;
-import com.adyen.demo.store.domain.enumeration.PaymentMethod;
-import com.adyen.demo.store.repository.ShoppingCartRepository;
-import com.adyen.demo.store.service.ShoppingCartService;
+import javax.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.adyen.demo.store.domain.enumeration.OrderStatus;
+import com.adyen.demo.store.domain.enumeration.PaymentMethod;
 /**
  * Integration tests for the {@link ShoppingCartResource} REST controller.
  */
@@ -51,6 +48,12 @@ public class ShoppingCartResourceIT {
 
     private static final PaymentMethod DEFAULT_PAYMENT_METHOD = PaymentMethod.CREDIT_CARD;
     private static final PaymentMethod UPDATED_PAYMENT_METHOD = PaymentMethod.IDEAL;
+
+    private static final String DEFAULT_PAYMENT_REFERENCE = "AAAAAAAAAA";
+    private static final String UPDATED_PAYMENT_REFERENCE = "BBBBBBBBBB";
+
+    private static final String DEFAULT_PAYMENT_MODIFICATION_REFERENCE = "AAAAAAAAAA";
+    private static final String UPDATED_PAYMENT_MODIFICATION_REFERENCE = "BBBBBBBBBB";
 
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
@@ -77,7 +80,9 @@ public class ShoppingCartResourceIT {
             .placedDate(DEFAULT_PLACED_DATE)
             .status(DEFAULT_STATUS)
             .totalPrice(DEFAULT_TOTAL_PRICE)
-            .paymentMethod(DEFAULT_PAYMENT_METHOD);
+            .paymentMethod(DEFAULT_PAYMENT_METHOD)
+            .paymentReference(DEFAULT_PAYMENT_REFERENCE)
+            .paymentModificationReference(DEFAULT_PAYMENT_MODIFICATION_REFERENCE);
         // Add required entity
         CustomerDetails customerDetails;
         if (TestUtil.findAll(em, CustomerDetails.class).isEmpty()) {
@@ -101,7 +106,9 @@ public class ShoppingCartResourceIT {
             .placedDate(UPDATED_PLACED_DATE)
             .status(UPDATED_STATUS)
             .totalPrice(UPDATED_TOTAL_PRICE)
-            .paymentMethod(UPDATED_PAYMENT_METHOD);
+            .paymentMethod(UPDATED_PAYMENT_METHOD)
+            .paymentReference(UPDATED_PAYMENT_REFERENCE)
+            .paymentModificationReference(UPDATED_PAYMENT_MODIFICATION_REFERENCE);
         // Add required entity
         CustomerDetails customerDetails;
         if (TestUtil.findAll(em, CustomerDetails.class).isEmpty()) {
@@ -139,6 +146,8 @@ public class ShoppingCartResourceIT {
         assertThat(testShoppingCart.getStatus()).isEqualTo(DEFAULT_STATUS);
         assertThat(testShoppingCart.getTotalPrice()).isEqualTo(DEFAULT_TOTAL_PRICE);
         assertThat(testShoppingCart.getPaymentMethod()).isEqualTo(DEFAULT_PAYMENT_METHOD);
+        assertThat(testShoppingCart.getPaymentReference()).isEqualTo(DEFAULT_PAYMENT_REFERENCE);
+        assertThat(testShoppingCart.getPaymentModificationReference()).isEqualTo(DEFAULT_PAYMENT_MODIFICATION_REFERENCE);
     }
 
     @Test
@@ -247,7 +256,9 @@ public class ShoppingCartResourceIT {
             .andExpect(jsonPath("$.[*].placedDate").value(hasItem(DEFAULT_PLACED_DATE.toString())))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].totalPrice").value(hasItem(DEFAULT_TOTAL_PRICE.intValue())))
-            .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD.toString())));
+            .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD.toString())))
+            .andExpect(jsonPath("$.[*].paymentReference").value(hasItem(DEFAULT_PAYMENT_REFERENCE)))
+            .andExpect(jsonPath("$.[*].paymentModificationReference").value(hasItem(DEFAULT_PAYMENT_MODIFICATION_REFERENCE)));
     }
 
     @Test
@@ -264,7 +275,9 @@ public class ShoppingCartResourceIT {
             .andExpect(jsonPath("$.placedDate").value(DEFAULT_PLACED_DATE.toString()))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
             .andExpect(jsonPath("$.totalPrice").value(DEFAULT_TOTAL_PRICE.intValue()))
-            .andExpect(jsonPath("$.paymentMethod").value(DEFAULT_PAYMENT_METHOD.toString()));
+            .andExpect(jsonPath("$.paymentMethod").value(DEFAULT_PAYMENT_METHOD.toString()))
+            .andExpect(jsonPath("$.paymentReference").value(DEFAULT_PAYMENT_REFERENCE))
+            .andExpect(jsonPath("$.paymentModificationReference").value(DEFAULT_PAYMENT_MODIFICATION_REFERENCE));
     }
 
     @Test
@@ -291,7 +304,9 @@ public class ShoppingCartResourceIT {
             .placedDate(UPDATED_PLACED_DATE)
             .status(UPDATED_STATUS)
             .totalPrice(UPDATED_TOTAL_PRICE)
-            .paymentMethod(UPDATED_PAYMENT_METHOD);
+            .paymentMethod(UPDATED_PAYMENT_METHOD)
+            .paymentReference(UPDATED_PAYMENT_REFERENCE)
+            .paymentModificationReference(UPDATED_PAYMENT_MODIFICATION_REFERENCE);
 
         restShoppingCartMockMvc.perform(put("/api/shopping-carts")
             .contentType(MediaType.APPLICATION_JSON)
@@ -306,6 +321,8 @@ public class ShoppingCartResourceIT {
         assertThat(testShoppingCart.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testShoppingCart.getTotalPrice()).isEqualTo(UPDATED_TOTAL_PRICE);
         assertThat(testShoppingCart.getPaymentMethod()).isEqualTo(UPDATED_PAYMENT_METHOD);
+        assertThat(testShoppingCart.getPaymentReference()).isEqualTo(UPDATED_PAYMENT_REFERENCE);
+        assertThat(testShoppingCart.getPaymentModificationReference()).isEqualTo(UPDATED_PAYMENT_MODIFICATION_REFERENCE);
     }
 
     @Test

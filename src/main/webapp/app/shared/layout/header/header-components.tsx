@@ -37,3 +37,12 @@ export const Cart = props => (
     </NavLink>
   </NavItem>
 );
+
+export const Orders = props => (
+  <NavItem>
+    <NavLink tag={Link} to="/orders" className="d-flex align-items-center">
+      <FontAwesomeIcon icon="list" />
+      <span>My Orders</span>
+    </NavLink>
+  </NavItem>
+);

@@ -47,6 +47,12 @@ public class ShoppingCart implements Serializable {
     @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
 
+    @Column(name = "payment_reference")
+    private String paymentReference;
+
+    @Column(name = "payment_modification_reference")
+    private String paymentModificationReference;
+
     @OneToMany(mappedBy = "cart")
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<ProductOrder> orders = new HashSet<>();
@@ -105,7 +111,9 @@ public class ShoppingCart implements Serializable {
     }
 
     public void calculateTotalPrice() {
-        this.setTotalPrice(this.orders.stream().map(ProductOrder::getTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+        if (null != this.orders) {
+            this.setTotalPrice(this.orders.stream().map(ProductOrder::getTotalPrice).reduce(BigDecimal.ZERO, BigDecimal::add));
+        }
     }
 
     public PaymentMethod getPaymentMethod() {
@@ -119,6 +127,32 @@ public class ShoppingCart implements Serializable {
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public String getPaymentReference() {
+        return paymentReference;
+    }
+
+    public ShoppingCart paymentReference(String paymentReference) {
+        this.paymentReference = paymentReference;
+        return this;
+    }
+
+    public void setPaymentReference(String paymentReference) {
+        this.paymentReference = paymentReference;
+    }
+
+    public String getPaymentModificationReference() {
+        return paymentModificationReference;
+    }
+
+    public ShoppingCart paymentModificationReference(String paymentModificationReference) {
+        this.paymentModificationReference = paymentModificationReference;
+        return this;
+    }
+
+    public void setPaymentModificationReference(String paymentModificationReference) {
+        this.paymentModificationReference = paymentModificationReference;
     }
 
     public Set<ProductOrder> getOrders() {
@@ -200,6 +234,8 @@ public class ShoppingCart implements Serializable {
             ", status='" + getStatus() + "'" +
             ", totalPrice=" + getTotalPrice() +
             ", paymentMethod='" + getPaymentMethod() + "'" +
+            ", paymentReference='" + getPaymentReference() + "'" +
+            ", paymentModificationReference='" + getPaymentModificationReference() + "'" +
             "}";
     }
 }

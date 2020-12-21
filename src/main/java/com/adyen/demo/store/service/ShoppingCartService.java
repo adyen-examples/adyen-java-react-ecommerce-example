@@ -97,6 +97,11 @@ public class ShoppingCartService {
         return activeCart;
     }
 
+    @Transactional(readOnly = true)
+    public List<ShoppingCart> findCartsByUser(String user) {
+        return shoppingCartRepository.findAllByCustomerDetailsUserLoginAndStatusNot(user, OrderStatus.PENDING);
+    }
+
     public ShoppingCart addProductForUser(Long id, String user) throws EntityNotFoundException {
         ShoppingCart activeCart = findActiveCartByUser(user);
         Product product = productService.findOne(id).orElseThrow(() -> new EntityNotFoundException("Product not found"));
@@ -132,14 +137,11 @@ public class ShoppingCartService {
         return shoppingCartRepository.save(activeCart);
     }
 
-    public ShoppingCart closeCartForUser(final String user, final String paymentType) {
+    public ShoppingCart closeCartForUser(final String user, final String paymentType, final String paymentRef) {
         ShoppingCart activeCart = findActiveCartByUser(user);
         activeCart.setStatus(OrderStatus.PAID);
-        if (paymentType.equals("ideal")) {
-            activeCart.setPaymentMethod(PaymentMethod.IDEAL);
-        } else {
-            activeCart.setPaymentMethod(PaymentMethod.CREDIT_CARD);
-        }
+        activeCart.setPaymentReference(paymentRef);
+        activeCart.setPaymentMethod(PaymentMethod.fromLabel(paymentType));
         return shoppingCartRepository.save(activeCart);
     }
 }
