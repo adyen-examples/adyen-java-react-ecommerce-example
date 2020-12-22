@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.adyen.demo.store.domain.ShoppingCart;
+import com.adyen.demo.store.domain.enumeration.OrderStatus;
 import com.adyen.demo.store.security.AuthoritiesConstants;
 import com.adyen.demo.store.security.SecurityUtils;
 import com.adyen.demo.store.service.ShoppingCartService;
@@ -198,10 +199,10 @@ public class ShoppingCartResource {
      * @throws EntityNotFoundException if the order is not found.
      */
     @PutMapping("/shopping-carts/close")
-    public ResponseEntity<ShoppingCart> closeShoppingCart(@RequestParam String paymentType, @RequestParam String paymentRef) throws EntityNotFoundException {
+    public ResponseEntity<ShoppingCart> closeShoppingCart(@RequestParam String paymentType, @RequestParam String paymentRef, @RequestParam OrderStatus status) throws EntityNotFoundException {
         log.debug("REST request to update ShoppingCart");
         String user = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User"));
-        ShoppingCart result = shoppingCartService.closeCartForUser(user, paymentType, paymentRef);
+        ShoppingCart result = shoppingCartService.updateCartForUser(user, paymentType, paymentRef, status);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);

@@ -185,7 +185,7 @@ public class CheckoutResource {
         ModificationResult modificationResult = modification.cancelOrRefund(req);
         // update the shopping cart with ref & status
         cart = shoppingCartService.findOne(cart.getId()).orElseThrow(() -> new EntityNotFoundException("Cart"));
-        cart.setStatus(OrderStatus.CANCELLED);
+        cart.setStatus(OrderStatus.REFUND_INITIATED);
         cart.setPaymentModificationReference(modificationResult.getPspReference());
         shoppingCartService.save(cart);
 
@@ -236,12 +236,12 @@ public class CheckoutResource {
         String redirectURL = paymentCache.getOriginalHost() + "/status/";
         switch (paymentsResponse.getResultCode()) {
             case AUTHORISED:
-                shoppingCartService.closeCartForUser(paymentCache.getUser().getLogin(), paymentCache.getPaymentType(), paymentsResponse.getPspReference());
-                paymentCacheService.delete(paymentCache.getId());
+                shoppingCartService.updateCartForUser(paymentCache.getUser().getLogin(), paymentCache.getPaymentType(), paymentsResponse.getPspReference(), OrderStatus.PAID);
                 redirectURL += "success";
                 break;
             case PENDING:
             case RECEIVED:
+                shoppingCartService.updateCartForUser(paymentCache.getUser().getLogin(), paymentCache.getPaymentType(), paymentsResponse.getPspReference(), OrderStatus.PENDING);
                 redirectURL += "pending";
                 break;
             case REFUSED:
@@ -251,6 +251,7 @@ public class CheckoutResource {
                 redirectURL += "error";
                 break;
         }
+        paymentCacheService.delete(paymentCache.getId());
         return new RedirectView(redirectURL + "?reason=" + response.getResultCode());
     }
 

@@ -76,7 +76,7 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
                       <Button tag={Link} to={`${match.url}/${shoppingCart.id}`} color="info" size="sm">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                       </Button>
-                      {shoppingCart.status === OrderStatus.PAID ? (
+                      {shoppingCart.status === OrderStatus.PAID || shoppingCart.status === OrderStatus.REFUND_FAILED ? (
                         <Button color="warning" size="sm" onClick={refund(shoppingCart)}>
                           <FontAwesomeIcon icon="sync" /> <span className="d-none d-md-inline">Refund</span>
                         </Button>

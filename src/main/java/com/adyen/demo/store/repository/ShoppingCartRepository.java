@@ -17,4 +17,8 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart, Long
     Optional<ShoppingCart> findFirstByCustomerDetailsUserLoginAndStatusOrderByIdAsc(String login, OrderStatus orderStatus);
 
     List<ShoppingCart> findAllByCustomerDetailsUserLoginAndStatusNot(String user, OrderStatus orderStatus);
+
+    Optional<ShoppingCart> findOneByPaymentModificationReference(String paymentRef);
+
+    Optional<ShoppingCart> findOneByPaymentReference(String paymentRef);
 }

@@ -126,10 +126,9 @@ export const submitAdditionalDetails = data => {
 
 export const refundPayment = (cart: IShoppingCart, action: Function) => async dispatch => {
   const requestUrl = `${apiUrl}/refund-payment`;
-  const res = await dispatch({
+  await dispatch({
     type: ACTION_TYPES.REFUND_PAYMENT,
     payload: axios.post(requestUrl, cart)
   });
-  dispatch(action());
-  return res;
+  return dispatch(action());
 };

@@ -7,6 +7,7 @@ import '@adyen/adyen-web/dist/adyen.css';
 import { getAdyenConfig, getPaymentMethods, initiatePayment, submitAdditionalDetails } from './checkout.reducer';
 import { closeShoppingCart, getActiveCartForCurrentUser } from 'app/entities/shopping-cart/shopping-cart.reducer';
 import { IRootState } from 'app/shared/reducers';
+import { OrderStatus } from 'app/shared/model/enumerations/order-status.model';
 
 export interface ICheckoutProp extends StateProps, DispatchProps {}
 
@@ -59,10 +60,11 @@ class CheckoutContainer extends React.Component<ICheckoutProp> {
       let urlPart;
       switch (paymentRes.resultCode) {
         case 'Authorised':
-          this.props.closeShoppingCart('scheme', paymentRes.pspReference);
+          this.props.closeShoppingCart('scheme', paymentRes.pspReference, OrderStatus.PAID);
           urlPart = 'success';
           break;
         case 'Pending':
+          this.props.closeShoppingCart('scheme', paymentRes.pspReference, OrderStatus.PENDING);
           urlPart = 'pending';
           break;
         case 'Refused':

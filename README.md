@@ -8,6 +8,7 @@ The below environment variables must be set in order for the application to work
 export ADYEN_API_KEY=yourAdyenApiKey
 export ADYEN_MERCHANT_ACCOUNT=yourAdyenMerchantAccount
 export ADYEN_CLIENT_KEY=yourAdyenClientKey
+export ADYEN_HMAC_KEY=yourNotificationSetupHMACkey
 ```
 
 On Windows CMD you can use below commands instead
@@ -16,7 +17,16 @@ On Windows CMD you can use below commands instead
 set ADYEN_API_KEY=yourAdyenApiKey
 set ADYEN_MERCHANT_ACCOUNT=yourAdyenMerchantAccount
 set ADYEN_CLIENT_KEY=yourAdyenClientKey
+set ADYEN_HMAC_KEY=yourNotificationSetupHMACkey
 ```
+
+Ideal pending payments and Cancellation/Refund flow makes use of [Adyen webhook notifications](https://docs.adyen.com/development-resources/webhooks). You can use a service like [ngrok](https://ngrok.com) to configure two Adyen webhooks with below details for test
+
+- Notification types: Standard Notification, Ideal Pending Notification
+- URL: https://[tempdomain].ngrok.io/api/webhook/notification
+- Method: JSON
+- Username: webhook
+- Password: admin
 
 Refer to `app.png` for the entity model used in `app.jdl`
 

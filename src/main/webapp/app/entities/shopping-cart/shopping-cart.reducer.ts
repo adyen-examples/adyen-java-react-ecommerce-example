@@ -6,6 +6,7 @@ import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util'
 
 import { IShoppingCart, defaultValue } from 'app/shared/model/shopping-cart.model';
 import { IProduct } from 'app/shared/model/product.model';
+import { OrderStatus } from 'app/shared/model/enumerations/order-status.model';
 
 export const ACTION_TYPES = {
   FETCH_SHOPPINGCART_LIST: 'shoppingCart/FETCH_SHOPPINGCART_LIST',
@@ -108,7 +109,7 @@ const apiUrl = 'api/shopping-carts';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IShoppingCart> = (page, size, sort) => ({
+export const getEntities: ICrudGetAllAction<IShoppingCart> = () => ({
   type: ACTION_TYPES.FETCH_SHOPPINGCART_LIST,
   payload: axios.get<IShoppingCart>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
 });
@@ -180,12 +181,11 @@ export const removeOrder: ICrudDeleteAction<IShoppingCart> = id => async dispatc
   return result;
 };
 
-export const closeShoppingCart = (paymentType, paymentRef) => async dispatch => {
-  const result = await dispatch({
+export const closeShoppingCart = (paymentType: string, paymentRef: string, status: OrderStatus) => async dispatch => {
+  return await dispatch({
     type: ACTION_TYPES.UPDATE_SHOPPINGCART,
-    payload: axios.put(`${apiUrl}/close?paymentType=${paymentType}&paymentRef=${paymentRef}`)
+    payload: axios.put(`${apiUrl}/close?paymentType=${paymentType}&paymentRef=${paymentRef}&status=${status}`)
   });
-  return result;
 };
 
 export const reset = () => ({

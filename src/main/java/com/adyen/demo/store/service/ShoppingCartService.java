@@ -85,11 +85,11 @@ public class ShoppingCartService {
     }
 
     public ShoppingCart findActiveCartByUser(String user) {
-        Optional<ShoppingCart> oCart = shoppingCartRepository.findFirstByCustomerDetailsUserLoginAndStatusOrderByIdAsc(user, OrderStatus.PENDING);
+        Optional<ShoppingCart> oCart = shoppingCartRepository.findFirstByCustomerDetailsUserLoginAndStatusOrderByIdAsc(user, OrderStatus.OPEN);
         ShoppingCart activeCart = oCart.orElseGet(() -> {
             Optional<CustomerDetails> customer = customerDetailsRepository.findOneByUserLogin(user);
             return shoppingCartRepository.save(new ShoppingCart(
-                Instant.now(), OrderStatus.PENDING, BigDecimal.ZERO, PaymentMethod.CREDIT_CARD, customer.get()
+                Instant.now(), OrderStatus.OPEN, BigDecimal.ZERO, PaymentMethod.CREDIT_CARD, customer.get()
             ));
         });
         // also serves as lazy init of orders
@@ -99,7 +99,7 @@ public class ShoppingCartService {
 
     @Transactional(readOnly = true)
     public List<ShoppingCart> findCartsByUser(String user) {
-        return shoppingCartRepository.findAllByCustomerDetailsUserLoginAndStatusNot(user, OrderStatus.PENDING);
+        return shoppingCartRepository.findAllByCustomerDetailsUserLoginAndStatusNot(user, OrderStatus.OPEN);
     }
 
     public ShoppingCart addProductForUser(Long id, String user) throws EntityNotFoundException {
@@ -137,11 +137,19 @@ public class ShoppingCartService {
         return shoppingCartRepository.save(activeCart);
     }
 
-    public ShoppingCart closeCartForUser(final String user, final String paymentType, final String paymentRef) {
+    public ShoppingCart updateCartForUser(final String user, final String paymentType, final String paymentRef, OrderStatus status) {
         ShoppingCart activeCart = findActiveCartByUser(user);
-        activeCart.setStatus(OrderStatus.PAID);
+        activeCart.setStatus(status);
         activeCart.setPaymentReference(paymentRef);
         activeCart.setPaymentMethod(PaymentMethod.fromLabel(paymentType));
         return shoppingCartRepository.save(activeCart);
+    }
+
+    public Optional<ShoppingCart> findOneByPaymentModificationReference(final String paymentRef) {
+        return shoppingCartRepository.findOneByPaymentModificationReference(paymentRef);
+    }
+
+    public Optional<ShoppingCart> findOneByPaymentReference(final String paymentRef) {
+        return shoppingCartRepository.findOneByPaymentReference(paymentRef);
     }
 }
