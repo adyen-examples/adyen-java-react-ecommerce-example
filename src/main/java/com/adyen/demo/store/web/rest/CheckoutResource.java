@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +26,6 @@ import com.adyen.demo.store.service.PaymentCacheService;
 import com.adyen.demo.store.service.ShoppingCartService;
 import com.adyen.demo.store.web.rest.errors.EntityNotFoundException;
 import com.adyen.demo.store.web.rest.vm.PaymentRedirectVM;
-import com.adyen.demo.store.web.rest.vm.PaymentRequestVM;
-import com.adyen.demo.store.web.rest.vm.PaymentResponseVM;
 import com.adyen.enums.Environment;
 import com.adyen.model.Amount;
 import com.adyen.model.checkout.*;
@@ -90,7 +89,7 @@ public class CheckoutResource {
      * @throws ApiException            from Adyen API.
      */
     @PostMapping("/checkout/payment-methods")
-    public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws EntityNotFoundException, IOException, ApiException {
+    public ResponseEntity<PaymentMethodsResponse> paymentMethods() throws IOException, ApiException {
         PaymentMethodsRequest paymentMethodsRequest = new PaymentMethodsRequest();
         paymentMethodsRequest.setMerchantAccount(merchantAccount);
         paymentMethodsRequest.setCountryCode("NL");
@@ -108,13 +107,13 @@ public class CheckoutResource {
     /**
      * {@code POST  /checkout/initiate-payment} : Make a payment.
      *
-     * @return the {@link ResponseEntity} with status {@code 200 (Ok)} and with body the paymentMethods response.
+     * @return the {@link ResponseEntity} with status {@code 200 (Ok)} and with req the paymentMethods response.
      * @throws EntityNotFoundException when user is not found.
      * @throws IOException             from Adyen API.
      * @throws ApiException            from Adyen API.
      */
     @PostMapping("/checkout/initiate-payment")
-    public ResponseEntity<PaymentResponseVM> payments(@RequestHeader("referer") String referer, @RequestBody PaymentRequestVM body) throws EntityNotFoundException, IOException, ApiException {
+    public ResponseEntity<PaymentsResponse> payments(@RequestHeader("referer") String referer, @RequestBody PaymentsRequest req, HttpServletRequest request) throws IOException, ApiException {
         PaymentsRequest paymentRequest = new PaymentsRequest();
         paymentRequest.setMerchantAccount(merchantAccount);
         paymentRequest.setCountryCode("NL");
@@ -126,14 +125,19 @@ public class CheckoutResource {
         String returnUrl = originalHost + "/api/checkout/redirect?orderRef=" + orderRef;
         paymentRequest.setReturnUrl(returnUrl);
         paymentRequest.setReference(orderRef);
-        paymentRequest.setPaymentMethod(body.getPaymentMethod());
-        paymentRequest.setBrowserInfo(body.getBrowserInfo());
-        paymentRequest.setOrigin(body.getOrigin());
+        paymentRequest.setPaymentMethod(req.getPaymentMethod());
+        // required for 3ds2 native flow
+        paymentRequest.setAdditionalData(Collections.singletonMap("allow3DS2", "true"));
+        paymentRequest.setOrigin(req.getOrigin());
+        // required for 3ds2 flow
+        paymentRequest.setBrowserInfo(req.getBrowserInfo());
+        // required by some issuers for 3ds2
+        paymentRequest.setShopperIP(request.getRemoteAddr());
 
         Amount amount = getAmountFromCart();
         paymentRequest.setAmount(amount);
         log.debug("REST request to make Adyen payment {}", paymentRequest);
-        PaymentResponseVM response = new PaymentResponseVM(checkout.payments(paymentRequest));
+        PaymentsResponse response = checkout.payments(paymentRequest);
         if (response.getAction() != null && !response.getAction().getPaymentData().isEmpty()) {
             String login = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new EntityNotFoundException("User"));
             User user = userRepository.findOneByLogin(login).orElseThrow(() -> new EntityNotFoundException("User"));
@@ -141,7 +145,7 @@ public class CheckoutResource {
                 new PaymentCache()
                     .orderRef(orderRef)
                     .paymentData(response.getAction().getPaymentData())
-                    .paymentType(body.getPaymentMethod().getType())
+                    .paymentType(req.getPaymentMethod().getType())
                     .originalHost(referer)
                     .user(user)
             );
@@ -159,10 +163,9 @@ public class CheckoutResource {
      * @throws ApiException            from Adyen API.
      */
     @PostMapping("/checkout/submit-additional-details")
-    public ResponseEntity<PaymentResponseVM> payments(@RequestBody PaymentsDetailsRequest detailsRequest) throws IOException, ApiException {
+    public ResponseEntity<PaymentsResponse> payments(@RequestBody PaymentsDetailsRequest detailsRequest) throws IOException, ApiException {
         log.debug("REST request to make Adyen payment details {}", detailsRequest);
-        PaymentsResponse paymentsResponse = checkout.paymentsDetails(detailsRequest);
-        PaymentResponseVM response = new PaymentResponseVM(paymentsResponse);
+        PaymentsResponse response = checkout.paymentsDetails(detailsRequest);
         return ResponseEntity.ok()
             .body(response);
     }
@@ -231,17 +234,16 @@ public class CheckoutResource {
         PaymentCache paymentCache = paymentCacheService.findOneByOrderRef(orderRef).orElseThrow(() -> new EntityNotFoundException("PaymentData"));
         detailsRequest.setPaymentData(paymentCache.getPaymentData());
 
-        PaymentsResponse paymentsResponse = checkout.paymentsDetails(detailsRequest);
-        PaymentResponseVM response = new PaymentResponseVM(paymentsResponse);
+        PaymentsResponse response = checkout.paymentsDetails(detailsRequest);
         String redirectURL = paymentCache.getOriginalHost() + "/status/";
-        switch (paymentsResponse.getResultCode()) {
+        switch (response.getResultCode()) {
             case AUTHORISED:
-                shoppingCartService.updateCartForUser(paymentCache.getUser().getLogin(), paymentCache.getPaymentType(), paymentsResponse.getPspReference(), OrderStatus.PAID);
+                shoppingCartService.updateCartForUser(paymentCache.getUser().getLogin(), paymentCache.getPaymentType(), response.getPspReference(), OrderStatus.PAID);
                 redirectURL += "success";
                 break;
             case PENDING:
             case RECEIVED:
-                shoppingCartService.updateCartForUser(paymentCache.getUser().getLogin(), paymentCache.getPaymentType(), paymentsResponse.getPspReference(), OrderStatus.PENDING);
+                shoppingCartService.updateCartForUser(paymentCache.getUser().getLogin(), paymentCache.getPaymentType(), response.getPspReference(), OrderStatus.PENDING);
                 redirectURL += "pending";
                 break;
             case REFUSED:

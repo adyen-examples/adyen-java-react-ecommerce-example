@@ -22,7 +22,7 @@
             <column name="original_host" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
-            <column name="payment_data" type="varchar(5100)">
+            <column name="payment_data" type="varchar(65535)">
                 <constraints nullable="true" />
             </column>
             <column name="payment_type" type="varchar(255)">
