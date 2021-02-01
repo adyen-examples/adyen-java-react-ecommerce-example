@@ -204,9 +204,9 @@ public class CheckoutResource {
      * @throws ApiException from Adyen API.
      */
     @GetMapping("/checkout/redirect")
-    public RedirectView redirect(@RequestParam("payload") String payload, @RequestParam String orderRef) throws IOException, ApiException {
+    public RedirectView redirect(@RequestParam("redirectResult") String redirectResult, @RequestParam String orderRef) throws IOException, ApiException {
         PaymentsDetailsRequest detailsRequest = new PaymentsDetailsRequest();
-        detailsRequest.setDetails(Collections.singletonMap("payload", payload));
+        detailsRequest.setDetails(Collections.singletonMap("redirectResult", redirectResult));
         return getRedirectView(orderRef, detailsRequest);
     }
 

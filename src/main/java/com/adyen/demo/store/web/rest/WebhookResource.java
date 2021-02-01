@@ -35,9 +35,7 @@ public class WebhookResource {
     }
 
     @PostMapping("/webhook/notification")
-    public ResponseEntity<String> notification(@RequestBody String req) throws SignatureException {
-        NotificationHandler notificationHandler = new NotificationHandler();
-        NotificationRequest notificationRequest = notificationHandler.handleNotificationJson(req);
+    public ResponseEntity<String> notification(@RequestBody NotificationRequest notificationRequest) throws SignatureException {
         // Handling multiple notificationRequests
         List<NotificationRequestItem> notificationRequestItems = notificationRequest.getNotificationItems();
         for (NotificationRequestItem item : notificationRequestItems) {

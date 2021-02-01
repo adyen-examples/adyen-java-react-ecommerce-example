@@ -64,7 +64,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(problemSupport)
         .and()
             .headers()
-            .contentSecurityPolicy("connect-src 'self' data: https://checkoutshopper-test.adyen.com; default-src 'self'; frame-src 'self' data: https://checkoutshopper-test.adyen.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://checkoutshopper-test.adyen.com; font-src 'self' data:")
+            .contentSecurityPolicy("script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://checkoutshopper-test.adyen.com https://pal-test.adyen.com; connect-src 'self' data: https://checkoutshopper-test.adyen.com https://pal-test.adyen.com; default-src 'self'; frame-src 'self' data: https://checkoutshopper-test.adyen.com https://pal-test.adyen.com; font-src 'self' data:")
         .and()
             .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
         .and()
