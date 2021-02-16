@@ -35,7 +35,7 @@ description = ""
 
 sourceCompatibility=1.8
 targetCompatibility=1.8
-assert System.properties["java.specification.version"] == "1.8" || "11" || "12" || "13"
+assert System.properties["java.specification.version"] == "1.8" || "11" || "12" || "13" || "14"
 
 apply from: "gradle/docker.gradle"
 apply from: "gradle/sonar.gradle"
@@ -109,6 +109,11 @@ task integrationTest(type: Test) {
     testLogging {
         events 'FAILED', 'SKIPPED'
     }
+
+    if (project.hasProperty('testcontainers')) {
+        environment 'spring.profiles.active', 'testcontainers'
+    }
+
     // uncomment if the tests reports are not generated
     // see https://github.com/jhipster/generator-jhipster/pull/2771 and https://github.com/jhipster/generator-jhipster/pull/4484
     // ignoreFailures true
@@ -181,7 +186,7 @@ configurations {
         resolutionStrategy {
             // Inherited version from Spring Boot can't be used because of regressions:
             // To be removed as soon as spring-boot use the same version
-            force 'org.liquibase:liquibase-core:3.8.7'
+            force 'org.liquibase:liquibase-core:3.9.0'
         }
     }
 }
@@ -213,12 +218,9 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5"
     implementation "com.fasterxml.jackson.core:jackson-annotations"
     implementation "com.fasterxml.jackson.core:jackson-databind"
-    implementation "com.fasterxml.jackson.module:jackson-module-afterburner"
     implementation "javax.cache:cache-api"
     implementation "org.hibernate:hibernate-core"
     implementation "com.zaxxer:HikariCP"
-    implementation "org.apache.commons:commons-lang3"
-    implementation "commons-io:commons-io"
     implementation "javax.transaction:javax.transaction-api"
     implementation "org.ehcache:ehcache"
     implementation "org.hibernate:hibernate-jcache"
@@ -234,6 +236,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-aop"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    testImplementation "org.testcontainers:mysql"
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation ("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
@@ -293,7 +296,7 @@ task cleanResources(type: Delete) {
 }
 
 wrapper {
-    gradleVersion = "6.1"
+    gradleVersion = "6.5"
 }
 
 

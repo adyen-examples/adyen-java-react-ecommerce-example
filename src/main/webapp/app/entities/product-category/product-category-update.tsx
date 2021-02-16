@@ -41,7 +41,7 @@ export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
     if (errors.length === 0) {
       const entity = {
         ...productCategoryEntity,
-        ...values
+        ...values,
       };
 
       if (isNew) {
@@ -80,7 +80,7 @@ export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
                   type="text"
                   name="name"
                   validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
+                    required: { value: true, errorMessage: 'This field is required.' },
                   }}
                 />
               </AvGroup>
@@ -112,14 +112,14 @@ const mapStateToProps = (storeState: IRootState) => ({
   productCategoryEntity: storeState.productCategory.entity,
   loading: storeState.productCategory.loading,
   updating: storeState.productCategory.updating,
-  updateSuccess: storeState.productCategory.updateSuccess
+  updateSuccess: storeState.productCategory.updateSuccess,
 });
 
 const mapDispatchToProps = {
   getEntity,
   updateEntity,
   createEntity,
-  reset
+  reset,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

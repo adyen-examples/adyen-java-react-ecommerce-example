@@ -51,7 +51,7 @@ export const ProductOrderDetail = (props: IProductOrderDetailProps) => {
 };
 
 const mapStateToProps = ({ productOrder }: IRootState) => ({
-  productOrderEntity: productOrder.entity
+  productOrderEntity: productOrder.entity,
 });
 
 const mapDispatchToProps = { getEntity };

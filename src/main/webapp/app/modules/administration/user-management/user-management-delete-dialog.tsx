@@ -46,7 +46,7 @@ export const UserManagementDeleteDialog = (props: IUserManagementDeleteDialogPro
 };
 
 const mapStateToProps = (storeState: IRootState) => ({
-  user: storeState.userManagement.user
+  user: storeState.userManagement.user,
 });
 
 const mapDispatchToProps = { getUser, deleteUser };

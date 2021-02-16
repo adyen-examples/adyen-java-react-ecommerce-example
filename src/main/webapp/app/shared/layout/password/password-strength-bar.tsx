@@ -16,7 +16,7 @@ export const PasswordStrengthBar = ({ password }: IPasswordStrengthBarProps) => 
       lowerLetters: /[a-z]+/.test(p),
       upperLetters: /[A-Z]+/.test(p),
       numbers: /[0-9]+/.test(p),
-      symbols: regex.test(p)
+      symbols: regex.test(p),
     };
 
     const passedMatches = Object.values(flags).filter((isMatchedFlag: boolean) => !!isMatchedFlag).length;
@@ -52,7 +52,7 @@ export const PasswordStrengthBar = ({ password }: IPasswordStrengthBarProps) => 
   };
 
   const getPoints = force => {
-    const pts = [];
+    const pts = [] as any[];
     for (let i = 0; i < 5; i++) {
       pts.push(<li key={i} className="point" style={i < force.idx ? { backgroundColor: force.col } : { backgroundColor: '#DDD' }} />);
     }

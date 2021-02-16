@@ -30,7 +30,6 @@ import com.adyen.demo.store.domain.enumeration.Size;
  * Integration tests for the {@link ProductResource} REST controller.
  */
 @SpringBootTest(classes = StoreApp.class)
-
 @AutoConfigureMockMvc
 @WithMockUser
 public class ProductResourceIT {
@@ -128,7 +127,6 @@ public class ProductResourceIT {
     @Transactional
     public void createProduct() throws Exception {
         int databaseSizeBeforeCreate = productRepository.findAll().size();
-
         // Create the Product
         restProductMockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
@@ -176,6 +174,7 @@ public class ProductResourceIT {
 
         // Create the Product, which fails.
 
+
         restProductMockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(product)))
@@ -194,6 +193,7 @@ public class ProductResourceIT {
 
         // Create the Product, which fails.
 
+
         restProductMockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(product)))
@@ -211,6 +211,7 @@ public class ProductResourceIT {
         product.setSize(null);
 
         // Create the Product, which fails.
+
 
         restProductMockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
@@ -258,7 +259,6 @@ public class ProductResourceIT {
             .andExpect(jsonPath("$.imageContentType").value(DEFAULT_IMAGE_CONTENT_TYPE))
             .andExpect(jsonPath("$.image").value(Base64Utils.encodeToString(DEFAULT_IMAGE)));
     }
-
     @Test
     @Transactional
     public void getNonExistingProduct() throws Exception {
@@ -308,8 +308,6 @@ public class ProductResourceIT {
     @Transactional
     public void updateNonExistingProduct() throws Exception {
         int databaseSizeBeforeUpdate = productRepository.findAll().size();
-
-        // Create the Product
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restProductMockMvc.perform(put("/api/products")

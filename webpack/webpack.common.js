@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const { BaseHrefWebpackPlugin } = require('base-href-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -119,9 +118,9 @@ module.exports = options => ({
     ]),
     new HtmlWebpackPlugin({
       template: './src/main/webapp/index.html',
-      chunksSortMode: 'dependency',
-      inject: 'body'
+      chunksSortMode: 'auto',
+      inject: 'body',
+      base: '/',
     }),
-    new BaseHrefWebpackPlugin({ baseHref: '/' }),
   ]
 });

@@ -48,7 +48,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
     if (errors.length === 0) {
       const entity = {
         ...shoppingCartEntity,
-        ...values
+        ...values,
       };
 
       if (isNew) {
@@ -90,7 +90,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                   placeholder={'YYYY-MM-DD HH:mm'}
                   value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.shoppingCartEntity.placedDate)}
                   validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
+                    required: { value: true, errorMessage: 'This field is required.' },
                   }}
                 />
               </AvGroup>
@@ -123,7 +123,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                   validate={{
                     required: { value: true, errorMessage: 'This field is required.' },
                     min: { value: 0, errorMessage: 'This field should be at least 0.' },
-                    number: { value: true, errorMessage: 'This field should be a number.' }
+                    number: { value: true, errorMessage: 'This field should be a number.' },
                   }}
                 />
               </AvGroup>
@@ -136,10 +136,10 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                   type="select"
                   className="form-control"
                   name="paymentMethod"
-                  value={(!isNew && shoppingCartEntity.paymentMethod) || 'CREDIT_CARD(scheme)'}
+                  value={(!isNew && shoppingCartEntity.paymentMethod) || 'CREDIT_CARD'}
                 >
-                  <option value="CREDIT_CARD(scheme)">CREDIT_CARD(scheme)</option>
-                  <option value="IDEAL(ideal)">IDEAL(ideal)</option>
+                  <option value="CREDIT_CARD">scheme</option>
+                  <option value="IDEAL">ideal</option>
                 </AvInput>
               </AvGroup>
               <AvGroup>
@@ -161,7 +161,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                   type="select"
                   className="form-control"
                   name="customerDetails.id"
-                  value={isNew ? customerDetails[0] && customerDetails[0].id : shoppingCartEntity.customerDetails.id}
+                  value={isNew ? customerDetails[0] && customerDetails[0].id : shoppingCartEntity.customerDetails?.id}
                   required
                 >
                   {customerDetails
@@ -197,7 +197,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   shoppingCartEntity: storeState.shoppingCart.entity,
   loading: storeState.shoppingCart.loading,
   updating: storeState.shoppingCart.updating,
-  updateSuccess: storeState.shoppingCart.updateSuccess
+  updateSuccess: storeState.shoppingCart.updateSuccess,
 });
 
 const mapDispatchToProps = {
@@ -205,7 +205,7 @@ const mapDispatchToProps = {
   getEntity,
   updateEntity,
   createEntity,
-  reset
+  reset,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

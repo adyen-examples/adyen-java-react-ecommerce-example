@@ -21,7 +21,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
   const handleValidSubmit = (event, values) => {
     const account = {
       ...props.account,
-      ...values
+      ...values,
     };
 
     props.saveAccountSettings(account);
@@ -44,7 +44,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
               validate={{
                 required: { value: true, errorMessage: 'Your first name is required.' },
                 minLength: { value: 1, errorMessage: 'Your first name is required to be at least 1 character' },
-                maxLength: { value: 50, errorMessage: 'Your first name cannot be longer than 50 characters' }
+                maxLength: { value: 50, errorMessage: 'Your first name cannot be longer than 50 characters' },
               }}
               value={props.account.firstName}
             />
@@ -58,7 +58,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
               validate={{
                 required: { value: true, errorMessage: 'Your last name is required.' },
                 minLength: { value: 1, errorMessage: 'Your last name is required to be at least 1 character' },
-                maxLength: { value: 50, errorMessage: 'Your last name cannot be longer than 50 characters' }
+                maxLength: { value: 50, errorMessage: 'Your last name cannot be longer than 50 characters' },
               }}
               value={props.account.lastName}
             />
@@ -71,7 +71,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
               validate={{
                 required: { value: true, errorMessage: 'Your email is required.' },
                 minLength: { value: 5, errorMessage: 'Your email is required to be at least 5 characters.' },
-                maxLength: { value: 254, errorMessage: 'Your email cannot be longer than 50 characters.' }
+                maxLength: { value: 254, errorMessage: 'Your email cannot be longer than 50 characters.' },
               }}
               value={props.account.email}
             />
@@ -87,7 +87,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
 
 const mapStateToProps = ({ authentication }: IRootState) => ({
   account: authentication.account,
-  isAuthenticated: authentication.isAuthenticated
+  isAuthenticated: authentication.isAuthenticated,
 });
 
 const mapDispatchToProps = { getSession, saveAccountSettings, reset };

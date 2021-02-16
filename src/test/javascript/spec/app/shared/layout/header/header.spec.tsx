@@ -16,22 +16,22 @@ describe('Header', () => {
     isAdmin: true,
     ribbonEnv: 'dev',
     isInProduction: false,
-    isSwaggerEnabled: true
+    isSwaggerEnabled: true,
   };
   const prodProps = {
     ...devProps,
     ribbonEnv: 'prod',
     isInProduction: true,
-    isSwaggerEnabled: false
+    isSwaggerEnabled: false,
   };
   const userProps = {
     ...prodProps,
-    isAdmin: false
+    isAdmin: false,
   };
   const guestProps = {
     ...prodProps,
     isAdmin: false,
-    isAuthenticated: false
+    isAuthenticated: false,
   };
 
   const wrapper = (props = devProps) => {

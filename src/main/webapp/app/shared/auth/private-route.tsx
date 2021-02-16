@@ -41,7 +41,7 @@ export const PrivateRouteComponent = ({
           to={{
             pathname: '/login',
             search: props.location.search,
-            state: { from: props.location }
+            state: { from: props.location },
           }}
         />
       );
@@ -69,7 +69,7 @@ const mapStateToProps = (
 ) => ({
   isAuthenticated,
   isAuthorized: hasAnyAuthority(account.authorities, hasAnyAuthorities),
-  sessionHasBeenFetched
+  sessionHasBeenFetched,
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -79,6 +79,6 @@ type StateProps = ReturnType<typeof mapStateToProps>;
  * Accepts same props as React router Route.
  * The route also checks for authorization if hasAnyAuthorities is specified.
  */
-export const PrivateRoute = connect<StateProps, undefined, IOwnProps>(mapStateToProps, null, null, { pure: false })(PrivateRouteComponent);
+export const PrivateRoute = connect(mapStateToProps, null, null, { pure: false })(PrivateRouteComponent);
 
 export default PrivateRoute;

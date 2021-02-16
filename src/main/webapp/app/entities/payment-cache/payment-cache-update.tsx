@@ -46,9 +46,8 @@ export const PaymentCacheUpdate = (props: IPaymentCacheUpdateProps) => {
     if (errors.length === 0) {
       const entity = {
         ...paymentCacheEntity,
-        ...values
+        ...values,
       };
-      entity.user = users[values.user];
 
       if (isNew) {
         props.createEntity(entity);
@@ -86,7 +85,7 @@ export const PaymentCacheUpdate = (props: IPaymentCacheUpdateProps) => {
                   type="text"
                   name="orderRef"
                   validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
+                    required: { value: true, errorMessage: 'This field is required.' },
                   }}
                 />
               </AvGroup>
@@ -115,7 +114,7 @@ export const PaymentCacheUpdate = (props: IPaymentCacheUpdateProps) => {
                   type="select"
                   className="form-control"
                   name="user.id"
-                  value={isNew ? users[0] && users[0].id : paymentCacheEntity.user.id}
+                  value={isNew ? users[0] && users[0].id : paymentCacheEntity.user?.id}
                   required
                 >
                   {users
@@ -151,7 +150,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   paymentCacheEntity: storeState.paymentCache.entity,
   loading: storeState.paymentCache.loading,
   updating: storeState.paymentCache.updating,
-  updateSuccess: storeState.paymentCache.updateSuccess
+  updateSuccess: storeState.paymentCache.updateSuccess,
 });
 
 const mapDispatchToProps = {
@@ -159,7 +158,7 @@ const mapDispatchToProps = {
   getEntity,
   updateEntity,
   createEntity,
-  reset
+  reset,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

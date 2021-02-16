@@ -51,7 +51,7 @@ export const ShoppingCartDeleteDialog = (props: IShoppingCartDeleteDialogProps) 
 
 const mapStateToProps = ({ shoppingCart }: IRootState) => ({
   shoppingCartEntity: shoppingCart.entity,
-  updateSuccess: shoppingCart.updateSuccess
+  updateSuccess: shoppingCart.updateSuccess,
 });
 
 const mapDispatchToProps = { getEntity, deleteEntity };

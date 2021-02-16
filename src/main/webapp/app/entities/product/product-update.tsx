@@ -56,7 +56,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
     if (errors.length === 0) {
       const entity = {
         ...productEntity,
-        ...values
+        ...values,
       };
 
       if (isNew) {
@@ -95,7 +95,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                   type="text"
                   name="name"
                   validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
+                    required: { value: true, errorMessage: 'This field is required.' },
                   }}
                 />
               </AvGroup>
@@ -116,7 +116,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                   validate={{
                     required: { value: true, errorMessage: 'This field is required.' },
                     min: { value: 0, errorMessage: 'This field should be at least 0.' },
-                    number: { value: true, errorMessage: 'This field should be a number.' }
+                    number: { value: true, errorMessage: 'This field should be a number.' },
                   }}
                 />
               </AvGroup>
@@ -140,9 +140,11 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                   <br />
                   {image ? (
                     <div>
-                      <a onClick={openFile(imageContentType, image)}>
-                        <img src={`data:${imageContentType};base64,${image}`} style={{ maxHeight: '100px' }} />
-                      </a>
+                      {imageContentType ? (
+                        <a onClick={openFile(imageContentType, image)}>
+                          <img src={`data:${imageContentType};base64,${image}`} style={{ maxHeight: '100px' }} />
+                        </a>
+                      ) : null}
                       <br />
                       <Row>
                         <Col md="11">
@@ -169,7 +171,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                   type="select"
                   className="form-control"
                   name="productCategory.id"
-                  value={isNew ? productCategories[0] && productCategories[0].id : productEntity.productCategory.id}
+                  value={isNew ? productCategories[0] && productCategories[0].id : productEntity.productCategory?.id}
                   required
                 >
                   {productCategories
@@ -205,7 +207,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   productEntity: storeState.product.entity,
   loading: storeState.product.loading,
   updating: storeState.product.updating,
-  updateSuccess: storeState.product.updateSuccess
+  updateSuccess: storeState.product.updateSuccess,
 });
 
 const mapDispatchToProps = {
@@ -214,7 +216,7 @@ const mapDispatchToProps = {
   updateEntity,
   setBlob,
   createEntity,
-  reset
+  reset,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

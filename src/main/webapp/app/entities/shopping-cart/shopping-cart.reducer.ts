@@ -12,7 +12,7 @@ export const ACTION_TYPES = {
   CREATE_SHOPPINGCART: 'shoppingCart/CREATE_SHOPPINGCART',
   UPDATE_SHOPPINGCART: 'shoppingCart/UPDATE_SHOPPINGCART',
   DELETE_SHOPPINGCART: 'shoppingCart/DELETE_SHOPPINGCART',
-  RESET: 'shoppingCart/RESET'
+  RESET: 'shoppingCart/RESET',
 };
 
 const initialState = {
@@ -21,7 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IShoppingCart>,
   entity: defaultValue,
   updating: false,
-  updateSuccess: false
+  updateSuccess: false,
 };
 
 export type ShoppingCartState = Readonly<typeof initialState>;
@@ -36,7 +36,7 @@ export default (state: ShoppingCartState = initialState, action): ShoppingCartSt
         ...state,
         errorMessage: null,
         updateSuccess: false,
-        loading: true
+        loading: true,
       };
     case REQUEST(ACTION_TYPES.CREATE_SHOPPINGCART):
     case REQUEST(ACTION_TYPES.UPDATE_SHOPPINGCART):
@@ -45,7 +45,7 @@ export default (state: ShoppingCartState = initialState, action): ShoppingCartSt
         ...state,
         errorMessage: null,
         updateSuccess: false,
-        updating: true
+        updating: true,
       };
     case FAILURE(ACTION_TYPES.FETCH_SHOPPINGCART_LIST):
     case FAILURE(ACTION_TYPES.FETCH_SHOPPINGCART):
@@ -57,19 +57,19 @@ export default (state: ShoppingCartState = initialState, action): ShoppingCartSt
         loading: false,
         updating: false,
         updateSuccess: false,
-        errorMessage: action.payload
+        errorMessage: action.payload,
       };
     case SUCCESS(ACTION_TYPES.FETCH_SHOPPINGCART_LIST):
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.FETCH_SHOPPINGCART):
       return {
         ...state,
         loading: false,
-        entity: action.payload.data
+        entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.CREATE_SHOPPINGCART):
     case SUCCESS(ACTION_TYPES.UPDATE_SHOPPINGCART):
@@ -77,18 +77,18 @@ export default (state: ShoppingCartState = initialState, action): ShoppingCartSt
         ...state,
         updating: false,
         updateSuccess: true,
-        entity: action.payload.data
+        entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.DELETE_SHOPPINGCART):
       return {
         ...state,
         updating: false,
         updateSuccess: true,
-        entity: {}
+        entity: {},
       };
     case ACTION_TYPES.RESET:
       return {
-        ...initialState
+        ...initialState,
       };
     default:
       return state;
@@ -101,21 +101,21 @@ const apiUrl = 'api/shopping-carts';
 
 export const getEntities: ICrudGetAllAction<IShoppingCart> = (page, size, sort) => ({
   type: ACTION_TYPES.FETCH_SHOPPINGCART_LIST,
-  payload: axios.get<IShoppingCart>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
+  payload: axios.get<IShoppingCart>(`${apiUrl}?cacheBuster=${new Date().getTime()}`),
 });
 
 export const getEntity: ICrudGetAction<IShoppingCart> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {
     type: ACTION_TYPES.FETCH_SHOPPINGCART,
-    payload: axios.get<IShoppingCart>(requestUrl)
+    payload: axios.get<IShoppingCart>(requestUrl),
   };
 };
 
 export const createEntity: ICrudPutAction<IShoppingCart> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.CREATE_SHOPPINGCART,
-    payload: axios.post(apiUrl, cleanEntity(entity))
+    payload: axios.post(apiUrl, cleanEntity(entity)),
   });
   dispatch(getEntities());
   return result;
@@ -124,7 +124,7 @@ export const createEntity: ICrudPutAction<IShoppingCart> = entity => async dispa
 export const updateEntity: ICrudPutAction<IShoppingCart> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_SHOPPINGCART,
-    payload: axios.put(apiUrl, cleanEntity(entity))
+    payload: axios.put(apiUrl, cleanEntity(entity)),
   });
   return result;
 };
@@ -133,11 +133,12 @@ export const deleteEntity: ICrudDeleteAction<IShoppingCart> = id => async dispat
   const requestUrl = `${apiUrl}/${id}`;
   const result = await dispatch({
     type: ACTION_TYPES.DELETE_SHOPPINGCART,
-    payload: axios.delete(requestUrl)
+    payload: axios.delete(requestUrl),
   });
+  dispatch(getEntities());
   return result;
 };
 
 export const reset = () => ({
-  type: ACTION_TYPES.RESET
+  type: ACTION_TYPES.RESET,
 });

@@ -29,7 +29,9 @@ export const ShoppingCartDetail = (props: IShoppingCartDetailProps) => {
             <span id="placedDate">Placed Date</span>
           </dt>
           <dd>
-            <TextFormat value={shoppingCartEntity.placedDate} type="date" format={APP_DATE_FORMAT} />
+            {shoppingCartEntity.placedDate ? (
+              <TextFormat value={shoppingCartEntity.placedDate} type="date" format={APP_DATE_FORMAT} />
+            ) : null}
           </dd>
           <dt>
             <span id="status">Status</span>
@@ -67,7 +69,7 @@ export const ShoppingCartDetail = (props: IShoppingCartDetailProps) => {
 };
 
 const mapStateToProps = ({ shoppingCart }: IRootState) => ({
-  shoppingCartEntity: shoppingCart.entity
+  shoppingCartEntity: shoppingCart.entity,
 });
 
 const mapDispatchToProps = { getEntity };

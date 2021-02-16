@@ -28,7 +28,6 @@ import com.adyen.demo.store.domain.enumeration.Gender;
  * Integration tests for the {@link CustomerDetailsResource} REST controller.
  */
 @SpringBootTest(classes = StoreApp.class)
-
 @AutoConfigureMockMvc
 @WithMockUser
 public class CustomerDetailsResourceIT {
@@ -117,7 +116,6 @@ public class CustomerDetailsResourceIT {
     @Transactional
     public void createCustomerDetails() throws Exception {
         int databaseSizeBeforeCreate = customerDetailsRepository.findAll().size();
-
         // Create the CustomerDetails
         restCustomerDetailsMockMvc.perform(post("/api/customer-details")
             .contentType(MediaType.APPLICATION_JSON)
@@ -165,6 +163,7 @@ public class CustomerDetailsResourceIT {
 
         // Create the CustomerDetails, which fails.
 
+
         restCustomerDetailsMockMvc.perform(post("/api/customer-details")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(customerDetails)))
@@ -182,6 +181,7 @@ public class CustomerDetailsResourceIT {
         customerDetails.setPhone(null);
 
         // Create the CustomerDetails, which fails.
+
 
         restCustomerDetailsMockMvc.perform(post("/api/customer-details")
             .contentType(MediaType.APPLICATION_JSON)
@@ -201,6 +201,7 @@ public class CustomerDetailsResourceIT {
 
         // Create the CustomerDetails, which fails.
 
+
         restCustomerDetailsMockMvc.perform(post("/api/customer-details")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(customerDetails)))
@@ -219,6 +220,7 @@ public class CustomerDetailsResourceIT {
 
         // Create the CustomerDetails, which fails.
 
+
         restCustomerDetailsMockMvc.perform(post("/api/customer-details")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(customerDetails)))
@@ -236,6 +238,7 @@ public class CustomerDetailsResourceIT {
         customerDetails.setCountry(null);
 
         // Create the CustomerDetails, which fails.
+
 
         restCustomerDetailsMockMvc.perform(post("/api/customer-details")
             .contentType(MediaType.APPLICATION_JSON)
@@ -283,7 +286,6 @@ public class CustomerDetailsResourceIT {
             .andExpect(jsonPath("$.city").value(DEFAULT_CITY))
             .andExpect(jsonPath("$.country").value(DEFAULT_COUNTRY));
     }
-
     @Test
     @Transactional
     public void getNonExistingCustomerDetails() throws Exception {
@@ -333,8 +335,6 @@ public class CustomerDetailsResourceIT {
     @Transactional
     public void updateNonExistingCustomerDetails() throws Exception {
         int databaseSizeBeforeUpdate = customerDetailsRepository.findAll().size();
-
-        // Create the CustomerDetails
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restCustomerDetailsMockMvc.perform(put("/api/customer-details")

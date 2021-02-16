@@ -79,11 +79,11 @@ export const ProductOrder = (props: IProductOrderProps) => {
 
 const mapStateToProps = ({ productOrder }: IRootState) => ({
   productOrderList: productOrder.entities,
-  loading: productOrder.loading
+  loading: productOrder.loading,
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getEntities,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

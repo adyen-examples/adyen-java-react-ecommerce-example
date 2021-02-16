@@ -11,12 +11,12 @@ import PaymentCacheDeleteDialog from './payment-cache-delete-dialog';
 const Routes = ({ match }) => (
   <>
     <Switch>
-      <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={PaymentCacheDeleteDialog} />
       <ErrorBoundaryRoute exact path={`${match.url}/new`} component={PaymentCacheUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={PaymentCacheUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={PaymentCacheDetail} />
       <ErrorBoundaryRoute path={match.url} component={PaymentCache} />
     </Switch>
+    <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={PaymentCacheDeleteDialog} />
   </>
 );
 

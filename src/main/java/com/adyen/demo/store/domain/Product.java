@@ -9,7 +9,6 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.math.BigDecimal;
 
 import com.adyen.demo.store.domain.enumeration.Size;
@@ -20,7 +19,7 @@ import com.adyen.demo.store.domain.enumeration.Size;
 @ApiModel(description = "Product sold by the Online store")
 @Entity
 @Table(name = "product")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Product implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -55,10 +54,10 @@ public class Product implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties("products")
+    @JsonIgnoreProperties(value = "products", allowSetters = true)
     private ProductCategory productCategory;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -157,7 +156,7 @@ public class Product implements Serializable {
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -175,6 +174,7 @@ public class Product implements Serializable {
         return 31;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "Product{" +

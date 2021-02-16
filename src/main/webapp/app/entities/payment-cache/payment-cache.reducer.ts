@@ -12,7 +12,7 @@ export const ACTION_TYPES = {
   CREATE_PAYMENTCACHE: 'paymentCache/CREATE_PAYMENTCACHE',
   UPDATE_PAYMENTCACHE: 'paymentCache/UPDATE_PAYMENTCACHE',
   DELETE_PAYMENTCACHE: 'paymentCache/DELETE_PAYMENTCACHE',
-  RESET: 'paymentCache/RESET'
+  RESET: 'paymentCache/RESET',
 };
 
 const initialState = {
@@ -21,7 +21,7 @@ const initialState = {
   entities: [] as ReadonlyArray<IPaymentCache>,
   entity: defaultValue,
   updating: false,
-  updateSuccess: false
+  updateSuccess: false,
 };
 
 export type PaymentCacheState = Readonly<typeof initialState>;
@@ -36,7 +36,7 @@ export default (state: PaymentCacheState = initialState, action): PaymentCacheSt
         ...state,
         errorMessage: null,
         updateSuccess: false,
-        loading: true
+        loading: true,
       };
     case REQUEST(ACTION_TYPES.CREATE_PAYMENTCACHE):
     case REQUEST(ACTION_TYPES.UPDATE_PAYMENTCACHE):
@@ -45,7 +45,7 @@ export default (state: PaymentCacheState = initialState, action): PaymentCacheSt
         ...state,
         errorMessage: null,
         updateSuccess: false,
-        updating: true
+        updating: true,
       };
     case FAILURE(ACTION_TYPES.FETCH_PAYMENTCACHE_LIST):
     case FAILURE(ACTION_TYPES.FETCH_PAYMENTCACHE):
@@ -57,19 +57,19 @@ export default (state: PaymentCacheState = initialState, action): PaymentCacheSt
         loading: false,
         updating: false,
         updateSuccess: false,
-        errorMessage: action.payload
+        errorMessage: action.payload,
       };
     case SUCCESS(ACTION_TYPES.FETCH_PAYMENTCACHE_LIST):
       return {
         ...state,
         loading: false,
-        entities: action.payload.data
+        entities: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.FETCH_PAYMENTCACHE):
       return {
         ...state,
         loading: false,
-        entity: action.payload.data
+        entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.CREATE_PAYMENTCACHE):
     case SUCCESS(ACTION_TYPES.UPDATE_PAYMENTCACHE):
@@ -77,18 +77,18 @@ export default (state: PaymentCacheState = initialState, action): PaymentCacheSt
         ...state,
         updating: false,
         updateSuccess: true,
-        entity: action.payload.data
+        entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.DELETE_PAYMENTCACHE):
       return {
         ...state,
         updating: false,
         updateSuccess: true,
-        entity: {}
+        entity: {},
       };
     case ACTION_TYPES.RESET:
       return {
-        ...initialState
+        ...initialState,
       };
     default:
       return state;
@@ -101,21 +101,21 @@ const apiUrl = 'api/payment-caches';
 
 export const getEntities: ICrudGetAllAction<IPaymentCache> = (page, size, sort) => ({
   type: ACTION_TYPES.FETCH_PAYMENTCACHE_LIST,
-  payload: axios.get<IPaymentCache>(`${apiUrl}?cacheBuster=${new Date().getTime()}`)
+  payload: axios.get<IPaymentCache>(`${apiUrl}?cacheBuster=${new Date().getTime()}`),
 });
 
 export const getEntity: ICrudGetAction<IPaymentCache> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {
     type: ACTION_TYPES.FETCH_PAYMENTCACHE,
-    payload: axios.get<IPaymentCache>(requestUrl)
+    payload: axios.get<IPaymentCache>(requestUrl),
   };
 };
 
 export const createEntity: ICrudPutAction<IPaymentCache> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.CREATE_PAYMENTCACHE,
-    payload: axios.post(apiUrl, cleanEntity(entity))
+    payload: axios.post(apiUrl, cleanEntity(entity)),
   });
   dispatch(getEntities());
   return result;
@@ -124,7 +124,7 @@ export const createEntity: ICrudPutAction<IPaymentCache> = entity => async dispa
 export const updateEntity: ICrudPutAction<IPaymentCache> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_PAYMENTCACHE,
-    payload: axios.put(apiUrl, cleanEntity(entity))
+    payload: axios.put(apiUrl, cleanEntity(entity)),
   });
   return result;
 };
@@ -133,11 +133,12 @@ export const deleteEntity: ICrudDeleteAction<IPaymentCache> = id => async dispat
   const requestUrl = `${apiUrl}/${id}`;
   const result = await dispatch({
     type: ACTION_TYPES.DELETE_PAYMENTCACHE,
-    payload: axios.delete(requestUrl)
+    payload: axios.delete(requestUrl),
   });
+  dispatch(getEntities());
   return result;
 };
 
 export const reset = () => ({
-  type: ACTION_TYPES.RESET
+  type: ACTION_TYPES.RESET,
 });

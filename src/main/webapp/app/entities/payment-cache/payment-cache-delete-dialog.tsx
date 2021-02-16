@@ -51,7 +51,7 @@ export const PaymentCacheDeleteDialog = (props: IPaymentCacheDeleteDialogProps) 
 
 const mapStateToProps = ({ paymentCache }: IRootState) => ({
   paymentCacheEntity: paymentCache.entity,
-  updateSuccess: paymentCache.updateSuccess
+  updateSuccess: paymentCache.updateSuccess,
 });
 
 const mapDispatchToProps = { getEntity, deleteEntity };

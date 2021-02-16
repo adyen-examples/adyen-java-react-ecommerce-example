@@ -81,11 +81,11 @@ export const PaymentCache = (props: IPaymentCacheProps) => {
 
 const mapStateToProps = ({ paymentCache }: IRootState) => ({
   paymentCacheList: paymentCache.entities,
-  loading: paymentCache.loading
+  loading: paymentCache.loading,
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getEntities,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

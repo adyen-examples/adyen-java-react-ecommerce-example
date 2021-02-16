@@ -17,7 +17,9 @@ export const PasswordPage = (props: IUserPasswordProps) => {
   useEffect(() => {
     props.reset();
     props.getSession();
-    return () => props.reset();
+    return () => {
+      props.reset();
+    };
   }, []);
 
   const handleValidSubmit = (event, values) => {
@@ -38,7 +40,7 @@ export const PasswordPage = (props: IUserPasswordProps) => {
               placeholder={'Current password'}
               type="password"
               validate={{
-                required: { value: true, errorMessage: 'Your password is required.' }
+                required: { value: true, errorMessage: 'Your password is required.' },
               }}
             />
             <AvField
@@ -49,7 +51,7 @@ export const PasswordPage = (props: IUserPasswordProps) => {
               validate={{
                 required: { value: true, errorMessage: 'Your password is required.' },
                 minLength: { value: 4, errorMessage: 'Your password is required to be at least 4 characters.' },
-                maxLength: { value: 50, errorMessage: 'Your password cannot be longer than 50 characters.' }
+                maxLength: { value: 50, errorMessage: 'Your password cannot be longer than 50 characters.' },
               }}
               onChange={updatePassword}
             />
@@ -62,20 +64,20 @@ export const PasswordPage = (props: IUserPasswordProps) => {
               validate={{
                 required: {
                   value: true,
-                  errorMessage: 'Your confirmation password is required.'
+                  errorMessage: 'Your confirmation password is required.',
                 },
                 minLength: {
                   value: 4,
-                  errorMessage: 'Your confirmation password is required to be at least 4 characters.'
+                  errorMessage: 'Your confirmation password is required to be at least 4 characters.',
                 },
                 maxLength: {
                   value: 50,
-                  errorMessage: 'Your confirmation password cannot be longer than 50 characters.'
+                  errorMessage: 'Your confirmation password cannot be longer than 50 characters.',
                 },
                 match: {
                   value: 'newPassword',
-                  errorMessage: 'The password and its confirmation do not match!'
-                }
+                  errorMessage: 'The password and its confirmation do not match!',
+                },
               }}
             />
             <Button color="success" type="submit">
@@ -90,7 +92,7 @@ export const PasswordPage = (props: IUserPasswordProps) => {
 
 const mapStateToProps = ({ authentication }: IRootState) => ({
   account: authentication.account,
-  isAuthenticated: authentication.isAuthenticated
+  isAuthenticated: authentication.isAuthenticated,
 });
 
 const mapDispatchToProps = { getSession, savePassword, reset };

@@ -50,6 +50,7 @@ public class ProductCategoryService {
         return productCategoryRepository.findAll(pageable);
     }
 
+
     /**
      * Get one productCategory by id.
      *

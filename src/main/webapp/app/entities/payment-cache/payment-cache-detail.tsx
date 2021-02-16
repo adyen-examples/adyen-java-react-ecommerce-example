@@ -57,7 +57,7 @@ export const PaymentCacheDetail = (props: IPaymentCacheDetailProps) => {
 };
 
 const mapStateToProps = ({ paymentCache }: IRootState) => ({
-  paymentCacheEntity: paymentCache.entity
+  paymentCacheEntity: paymentCache.entity,
 });
 
 const mapDispatchToProps = { getEntity };

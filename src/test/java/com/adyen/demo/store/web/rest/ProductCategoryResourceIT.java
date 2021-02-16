@@ -26,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link ProductCategoryResource} REST controller.
  */
 @SpringBootTest(classes = StoreApp.class)
-
 @AutoConfigureMockMvc
 @WithMockUser
 public class ProductCategoryResourceIT {
@@ -85,7 +84,6 @@ public class ProductCategoryResourceIT {
     @Transactional
     public void createProductCategory() throws Exception {
         int databaseSizeBeforeCreate = productCategoryRepository.findAll().size();
-
         // Create the ProductCategory
         restProductCategoryMockMvc.perform(post("/api/product-categories")
             .contentType(MediaType.APPLICATION_JSON)
@@ -129,6 +127,7 @@ public class ProductCategoryResourceIT {
 
         // Create the ProductCategory, which fails.
 
+
         restProductCategoryMockMvc.perform(post("/api/product-categories")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(productCategory)))
@@ -167,7 +166,6 @@ public class ProductCategoryResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION));
     }
-
     @Test
     @Transactional
     public void getNonExistingProductCategory() throws Exception {
@@ -209,8 +207,6 @@ public class ProductCategoryResourceIT {
     @Transactional
     public void updateNonExistingProductCategory() throws Exception {
         int databaseSizeBeforeUpdate = productCategoryRepository.findAll().size();
-
-        // Create the ProductCategory
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restProductCategoryMockMvc.perform(put("/api/product-categories")

@@ -6,7 +6,7 @@ import { PaymentMethod } from 'app/shared/model/enumerations/payment-method.mode
 
 export interface IShoppingCart {
   id?: number;
-  placedDate?: Moment;
+  placedDate?: string;
   status?: OrderStatus;
   totalPrice?: number;
   paymentMethod?: PaymentMethod;

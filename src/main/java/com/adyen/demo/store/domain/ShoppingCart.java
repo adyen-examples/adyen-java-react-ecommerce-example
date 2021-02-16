@@ -8,7 +8,6 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
@@ -23,7 +22,7 @@ import com.adyen.demo.store.domain.enumeration.PaymentMethod;
  */
 @Entity
 @Table(name = "shopping_cart")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ShoppingCart implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -58,15 +57,15 @@ public class ShoppingCart implements Serializable {
     private String paymentModificationReference;
 
     @OneToMany(mappedBy = "cart")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<ProductOrder> orders = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties("carts")
+    @JsonIgnoreProperties(value = "carts", allowSetters = true)
     private CustomerDetails customerDetails;
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -190,7 +189,7 @@ public class ShoppingCart implements Serializable {
     public void setCustomerDetails(CustomerDetails customerDetails) {
         this.customerDetails = customerDetails;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -208,6 +207,7 @@ public class ShoppingCart implements Serializable {
         return 31;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "ShoppingCart{" +

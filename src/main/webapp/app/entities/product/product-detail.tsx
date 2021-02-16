@@ -47,9 +47,11 @@ export const ProductDetail = (props: IProductDetailProps) => {
           <dd>
             {productEntity.image ? (
               <div>
-                <a onClick={openFile(productEntity.imageContentType, productEntity.image)}>
-                  <img src={`data:${productEntity.imageContentType};base64,${productEntity.image}`} style={{ maxHeight: '30px' }} />
-                </a>
+                {productEntity.imageContentType ? (
+                  <a onClick={openFile(productEntity.imageContentType, productEntity.image)}>
+                    <img src={`data:${productEntity.imageContentType};base64,${productEntity.image}`} style={{ maxHeight: '30px' }} />
+                  </a>
+                ) : null}
                 <span>
                   {productEntity.imageContentType}, {byteSize(productEntity.image)}
                 </span>
@@ -72,7 +74,7 @@ export const ProductDetail = (props: IProductDetailProps) => {
 };
 
 const mapStateToProps = ({ product }: IRootState) => ({
-  productEntity: product.entity
+  productEntity: product.entity,
 });
 
 const mapDispatchToProps = { getEntity };

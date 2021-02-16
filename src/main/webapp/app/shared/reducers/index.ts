@@ -74,7 +74,7 @@ const rootReducer = combineReducers<IRootState>({
   productOrder,
   paymentCache,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
-  loadingBar
+  loadingBar,
 });
 
 export default rootReducer;

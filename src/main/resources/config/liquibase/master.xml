@@ -2,10 +2,10 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
 
     <property name="now" value="now()" dbms="h2"/>
-    <property name="now" value="now()" dbms="mysql"/>
+    <property name="now" value="now()" dbms="mysql, mariadb"/>
 
     <property name="floatType" value="float4" dbms="postgresql, h2"/>
     <property name="floatType" value="float" dbms="mysql, oracle, mssql, mariadb"/>
@@ -27,4 +27,5 @@
     <include file="config/liquibase/changelog/20200424080500_added_entity_constraints_ProductOrder.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20201218114000_added_entity_constraints_PaymentCache.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
+    <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link PaymentCacheResource} REST controller.
  */
 @SpringBootTest(classes = StoreApp.class)
-
 @AutoConfigureMockMvc
 @WithMockUser
 public class PaymentCacheResourceIT {
@@ -106,7 +105,6 @@ public class PaymentCacheResourceIT {
     @Transactional
     public void createPaymentCache() throws Exception {
         int databaseSizeBeforeCreate = paymentCacheRepository.findAll().size();
-
         // Create the PaymentCache
         restPaymentCacheMockMvc.perform(post("/api/payment-caches")
             .contentType(MediaType.APPLICATION_JSON)
@@ -152,6 +150,7 @@ public class PaymentCacheResourceIT {
 
         // Create the PaymentCache, which fails.
 
+
         restPaymentCacheMockMvc.perform(post("/api/payment-caches")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(paymentCache)))
@@ -194,7 +193,6 @@ public class PaymentCacheResourceIT {
             .andExpect(jsonPath("$.paymentData").value(DEFAULT_PAYMENT_DATA))
             .andExpect(jsonPath("$.paymentType").value(DEFAULT_PAYMENT_TYPE));
     }
-
     @Test
     @Transactional
     public void getNonExistingPaymentCache() throws Exception {
@@ -240,8 +238,6 @@ public class PaymentCacheResourceIT {
     @Transactional
     public void updateNonExistingPaymentCache() throws Exception {
         int databaseSizeBeforeUpdate = paymentCacheRepository.findAll().size();
-
-        // Create the PaymentCache
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restPaymentCacheMockMvc.perform(put("/api/payment-caches")

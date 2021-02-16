@@ -52,7 +52,7 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
                     </Button>
                   </td>
                   <td>
-                    <TextFormat type="date" value={shoppingCart.placedDate} format={APP_DATE_FORMAT} />
+                    {shoppingCart.placedDate ? <TextFormat type="date" value={shoppingCart.placedDate} format={APP_DATE_FORMAT} /> : null}
                   </td>
                   <td>{shoppingCart.status}</td>
                   <td>{shoppingCart.totalPrice}</td>
@@ -93,11 +93,11 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
 
 const mapStateToProps = ({ shoppingCart }: IRootState) => ({
   shoppingCartList: shoppingCart.entities,
-  loading: shoppingCart.loading
+  loading: shoppingCart.loading,
 });
 
 const mapDispatchToProps = {
-  getEntities
+  getEntities,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
