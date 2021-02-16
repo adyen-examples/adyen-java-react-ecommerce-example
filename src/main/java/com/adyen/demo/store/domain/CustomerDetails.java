@@ -7,7 +7,6 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +17,7 @@ import com.adyen.demo.store.domain.enumeration.Gender;
  */
 @Entity
 @Table(name = "customer_details")
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class CustomerDetails implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,10 +56,10 @@ public class CustomerDetails implements Serializable {
     private User user;
 
     @OneToMany(mappedBy = "customerDetails")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private Set<ShoppingCart> carts = new HashSet<>();
 
-    // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
+    // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
     }
@@ -184,7 +183,7 @@ public class CustomerDetails implements Serializable {
     public void setCarts(Set<ShoppingCart> shoppingCarts) {
         this.carts = shoppingCarts;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
+    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
     public boolean equals(Object o) {
@@ -202,6 +201,7 @@ public class CustomerDetails implements Serializable {
         return 31;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "CustomerDetails{" +

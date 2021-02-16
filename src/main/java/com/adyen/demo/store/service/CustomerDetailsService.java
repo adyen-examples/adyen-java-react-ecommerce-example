@@ -50,6 +50,7 @@ public class CustomerDetailsService {
         return customerDetailsRepository.findAll(pageable);
     }
 
+
     /**
      * Get one customerDetails by id.
      *

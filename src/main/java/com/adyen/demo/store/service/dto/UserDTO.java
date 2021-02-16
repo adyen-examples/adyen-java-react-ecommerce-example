@@ -241,6 +241,7 @@ public class UserDTO {
         return this;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
         return "UserDTO{" +

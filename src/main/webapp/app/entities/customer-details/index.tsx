@@ -11,12 +11,12 @@ import CustomerDetailsDeleteDialog from './customer-details-delete-dialog';
 const Routes = ({ match }) => (
   <>
     <Switch>
-      <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={CustomerDetailsDeleteDialog} />
       <ErrorBoundaryRoute exact path={`${match.url}/new`} component={CustomerDetailsUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={CustomerDetailsUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={CustomerDetailsDetail} />
       <ErrorBoundaryRoute path={match.url} component={CustomerDetails} />
     </Switch>
+    <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={CustomerDetailsDeleteDialog} />
   </>
 );
 

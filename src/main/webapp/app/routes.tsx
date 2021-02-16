@@ -21,12 +21,12 @@ import Orders from './modules/orders/orders';
 
 const Account = Loadable({
   loader: () => import(/* webpackChunkName: "account" */ 'app/modules/account'),
-  loading: () => <div>loading ...</div>
+  loading: () => <div>loading ...</div>,
 });
 
 const Admin = Loadable({
   loader: () => import(/* webpackChunkName: "administration" */ 'app/modules/administration'),
-  loading: () => <div>loading ...</div>
+  loading: () => <div>loading ...</div>,
 });
 
 const Routes = () => (

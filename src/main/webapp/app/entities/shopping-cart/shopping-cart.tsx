@@ -103,12 +103,12 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
 
 const mapStateToProps = ({ shoppingCart }: IRootState) => ({
   shoppingCartList: shoppingCart.entities,
-  loading: shoppingCart.loading
+  loading: shoppingCart.loading,
 });
 
 const mapDispatchToProps = {
   getEntities,
-  refundPayment
+  refundPayment,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

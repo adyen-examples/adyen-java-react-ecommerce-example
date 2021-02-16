@@ -37,7 +37,7 @@ export class PasswordResetInit extends React.Component<IPasswordResetInitProps> 
                 validate={{
                   required: { value: true, errorMessage: 'Your email is required.' },
                   minLength: { value: 5, errorMessage: 'Your email is required to be at least 5 characters.' },
-                  maxLength: { value: 254, errorMessage: 'Your email cannot be longer than 50 characters.' }
+                  maxLength: { value: 254, errorMessage: 'Your email cannot be longer than 50 characters.' },
                 }}
               />
               <Button color="primary" type="submit">

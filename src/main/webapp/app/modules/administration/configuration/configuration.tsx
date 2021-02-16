@@ -107,7 +107,7 @@ export const ConfigurationPage = (props: IConfigurationPageProps) => {
 
 const mapStateToProps = ({ administration }: IRootState) => ({
   configuration: administration.configuration,
-  isFetching: administration.loading
+  isFetching: administration.loading,
 });
 
 const mapDispatchToProps = { getConfigurations, getEnv };

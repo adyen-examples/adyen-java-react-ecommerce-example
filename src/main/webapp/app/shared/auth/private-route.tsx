@@ -41,7 +41,7 @@ export const PrivateRouteComponent = ({
           to={{
             pathname: '/login',
             search: props.location.search,
-            state: { from: props.location }
+            state: { from: props.location },
           }}
         />
       );
@@ -69,7 +69,7 @@ const mapStateToProps = (
 ) => ({
   isAuthenticated,
   isAuthorized: hasAnyAuthority(account.authorities, hasAnyAuthorities),
-  sessionHasBeenFetched
+  sessionHasBeenFetched,
 });
 
 type StateProps = ReturnType<typeof mapStateToProps>;

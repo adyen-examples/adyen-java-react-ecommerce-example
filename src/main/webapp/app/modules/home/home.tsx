@@ -198,7 +198,7 @@ const mapStateToProps = ({ product, authentication }: IRootState) => ({
   isAuthenticated: authentication.isAuthenticated,
   productList: product.entities,
   loading: product.loading,
-  totalItems: product.totalItems
+  totalItems: product.totalItems,
 });
 
 const mapDispatchToProps = {

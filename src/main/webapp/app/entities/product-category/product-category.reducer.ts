@@ -12,7 +12,7 @@ export const ACTION_TYPES = {
   CREATE_PRODUCTCATEGORY: 'productCategory/CREATE_PRODUCTCATEGORY',
   UPDATE_PRODUCTCATEGORY: 'productCategory/UPDATE_PRODUCTCATEGORY',
   DELETE_PRODUCTCATEGORY: 'productCategory/DELETE_PRODUCTCATEGORY',
-  RESET: 'productCategory/RESET'
+  RESET: 'productCategory/RESET',
 };
 
 const initialState = {
@@ -22,7 +22,7 @@ const initialState = {
   entity: defaultValue,
   updating: false,
   totalItems: 0,
-  updateSuccess: false
+  updateSuccess: false,
 };
 
 export type ProductCategoryState = Readonly<typeof initialState>;
@@ -37,7 +37,7 @@ export default (state: ProductCategoryState = initialState, action): ProductCate
         ...state,
         errorMessage: null,
         updateSuccess: false,
-        loading: true
+        loading: true,
       };
     case REQUEST(ACTION_TYPES.CREATE_PRODUCTCATEGORY):
     case REQUEST(ACTION_TYPES.UPDATE_PRODUCTCATEGORY):
@@ -46,7 +46,7 @@ export default (state: ProductCategoryState = initialState, action): ProductCate
         ...state,
         errorMessage: null,
         updateSuccess: false,
-        updating: true
+        updating: true,
       };
     case FAILURE(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST):
     case FAILURE(ACTION_TYPES.FETCH_PRODUCTCATEGORY):
@@ -58,20 +58,20 @@ export default (state: ProductCategoryState = initialState, action): ProductCate
         loading: false,
         updating: false,
         updateSuccess: false,
-        errorMessage: action.payload
+        errorMessage: action.payload,
       };
     case SUCCESS(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST):
       return {
         ...state,
         loading: false,
         entities: action.payload.data,
-        totalItems: parseInt(action.payload.headers['x-total-count'], 10)
+        totalItems: parseInt(action.payload.headers['x-total-count'], 10),
       };
     case SUCCESS(ACTION_TYPES.FETCH_PRODUCTCATEGORY):
       return {
         ...state,
         loading: false,
-        entity: action.payload.data
+        entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.CREATE_PRODUCTCATEGORY):
     case SUCCESS(ACTION_TYPES.UPDATE_PRODUCTCATEGORY):
@@ -79,18 +79,18 @@ export default (state: ProductCategoryState = initialState, action): ProductCate
         ...state,
         updating: false,
         updateSuccess: true,
-        entity: action.payload.data
+        entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.DELETE_PRODUCTCATEGORY):
       return {
         ...state,
         updating: false,
         updateSuccess: true,
-        entity: {}
+        entity: {},
       };
     case ACTION_TYPES.RESET:
       return {
-        ...initialState
+        ...initialState,
       };
     default:
       return state;
@@ -105,7 +105,7 @@ export const getEntities: ICrudGetAllAction<IProductCategory> = (page, size, sor
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST,
-    payload: axios.get<IProductCategory>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+    payload: axios.get<IProductCategory>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
   };
 };
 
@@ -113,14 +113,14 @@ export const getEntity: ICrudGetAction<IProductCategory> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {
     type: ACTION_TYPES.FETCH_PRODUCTCATEGORY,
-    payload: axios.get<IProductCategory>(requestUrl)
+    payload: axios.get<IProductCategory>(requestUrl),
   };
 };
 
 export const createEntity: ICrudPutAction<IProductCategory> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.CREATE_PRODUCTCATEGORY,
-    payload: axios.post(apiUrl, cleanEntity(entity))
+    payload: axios.post(apiUrl, cleanEntity(entity)),
   });
   dispatch(getEntities());
   return result;
@@ -129,7 +129,7 @@ export const createEntity: ICrudPutAction<IProductCategory> = entity => async di
 export const updateEntity: ICrudPutAction<IProductCategory> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_PRODUCTCATEGORY,
-    payload: axios.put(apiUrl, cleanEntity(entity))
+    payload: axios.put(apiUrl, cleanEntity(entity)),
   });
   return result;
 };
@@ -138,11 +138,12 @@ export const deleteEntity: ICrudDeleteAction<IProductCategory> = id => async dis
   const requestUrl = `${apiUrl}/${id}`;
   const result = await dispatch({
     type: ACTION_TYPES.DELETE_PRODUCTCATEGORY,
-    payload: axios.delete(requestUrl)
+    payload: axios.delete(requestUrl),
   });
+  dispatch(getEntities());
   return result;
 };
 
 export const reset = () => ({
-  type: ACTION_TYPES.RESET
+  type: ACTION_TYPES.RESET,
 });

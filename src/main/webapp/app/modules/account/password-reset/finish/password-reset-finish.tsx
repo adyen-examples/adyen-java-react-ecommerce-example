@@ -36,7 +36,7 @@ export const PasswordResetFinishPage = (props: IPasswordResetFinishProps) => {
           validate={{
             required: { value: true, errorMessage: 'Your password is required.' },
             minLength: { value: 4, errorMessage: 'Your password is required to be at least 4 characters.' },
-            maxLength: { value: 50, errorMessage: 'Your password cannot be longer than 50 characters.' }
+            maxLength: { value: 50, errorMessage: 'Your password cannot be longer than 50 characters.' },
           }}
           onChange={updatePassword}
         />
@@ -50,7 +50,7 @@ export const PasswordResetFinishPage = (props: IPasswordResetFinishProps) => {
             required: { value: true, errorMessage: 'Your confirmation password is required.' },
             minLength: { value: 4, errorMessage: 'Your confirmation password is required to be at least 4 characters.' },
             maxLength: { value: 50, errorMessage: 'Your confirmation password cannot be longer than 50 characters.' },
-            match: { value: 'newPassword', errorMessage: 'The password and its confirmation do not match!' }
+            match: { value: 'newPassword', errorMessage: 'The password and its confirmation do not match!' },
           }}
         />
         <Button color="success" type="submit">

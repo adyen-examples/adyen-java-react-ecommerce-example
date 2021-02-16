@@ -71,7 +71,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
 };
 
 const mapStateToProps = (storeState: IRootState) => ({
-  user: storeState.userManagement.user
+  user: storeState.userManagement.user,
 });
 
 const mapDispatchToProps = { getUser };

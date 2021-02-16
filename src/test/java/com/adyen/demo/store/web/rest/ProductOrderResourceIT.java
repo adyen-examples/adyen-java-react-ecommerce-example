@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link ProductOrderResource} REST controller.
  */
 @SpringBootTest(classes = StoreApp.class)
-
 @AutoConfigureMockMvc
 @WithMockUser(username="admin", authorities={"ROLE_ADMIN"}, password = "admin")
 public class ProductOrderResourceIT {
@@ -132,7 +131,6 @@ public class ProductOrderResourceIT {
     @Transactional
     public void createProductOrder() throws Exception {
         int databaseSizeBeforeCreate = productOrderRepository.findAll().size();
-
         // Create the ProductOrder
         restProductOrderMockMvc.perform(post("/api/product-orders")
             .contentType(MediaType.APPLICATION_JSON)
@@ -176,6 +174,7 @@ public class ProductOrderResourceIT {
 
         // Create the ProductOrder, which fails.
 
+
         restProductOrderMockMvc.perform(post("/api/product-orders")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(productOrder)))
@@ -193,6 +192,7 @@ public class ProductOrderResourceIT {
         productOrder.setTotalPrice(null);
 
         // Create the ProductOrder, which fails.
+
 
         restProductOrderMockMvc.perform(post("/api/product-orders")
             .contentType(MediaType.APPLICATION_JSON)
@@ -232,7 +232,6 @@ public class ProductOrderResourceIT {
             .andExpect(jsonPath("$.quantity").value(DEFAULT_QUANTITY))
             .andExpect(jsonPath("$.totalPrice").value(DEFAULT_TOTAL_PRICE.intValue()));
     }
-
     @Test
     @Transactional
     public void getNonExistingProductOrder() throws Exception {
@@ -274,8 +273,6 @@ public class ProductOrderResourceIT {
     @Transactional
     public void updateNonExistingProductOrder() throws Exception {
         int databaseSizeBeforeUpdate = productOrderRepository.findAll().size();
-
-        // Create the ProductOrder
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restProductOrderMockMvc.perform(put("/api/product-orders")

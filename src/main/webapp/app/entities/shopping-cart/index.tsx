@@ -11,12 +11,12 @@ import ShoppingCartDeleteDialog from './shopping-cart-delete-dialog';
 const Routes = ({ match }) => (
   <>
     <Switch>
-      <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={ShoppingCartDeleteDialog} />
       <ErrorBoundaryRoute exact path={`${match.url}/new`} component={ShoppingCartUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={ShoppingCartUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={ShoppingCartDetail} />
       <ErrorBoundaryRoute path={match.url} component={ShoppingCart} />
     </Switch>
+    <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={ShoppingCartDeleteDialog} />
   </>
 );
 

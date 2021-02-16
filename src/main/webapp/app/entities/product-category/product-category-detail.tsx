@@ -47,7 +47,7 @@ export const ProductCategoryDetail = (props: IProductCategoryDetailProps) => {
 };
 
 const mapStateToProps = ({ productCategory }: IRootState) => ({
-  productCategoryEntity: productCategory.entity
+  productCategoryEntity: productCategory.entity,
 });
 
 const mapDispatchToProps = { getEntity };

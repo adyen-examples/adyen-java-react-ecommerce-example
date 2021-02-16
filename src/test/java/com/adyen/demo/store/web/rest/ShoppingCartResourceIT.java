@@ -35,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Integration tests for the {@link ShoppingCartResource} REST controller.
  */
 @SpringBootTest(classes = StoreApp.class)
-
 @AutoConfigureMockMvc
 @WithMockUser(username="admin", authorities={"ROLE_ADMIN"}, password = "admin")
 public class ShoppingCartResourceIT {
@@ -134,7 +133,6 @@ public class ShoppingCartResourceIT {
     @Transactional
     public void createShoppingCart() throws Exception {
         int databaseSizeBeforeCreate = shoppingCartRepository.findAll().size();
-
         // Create the ShoppingCart
         restShoppingCartMockMvc.perform(post("/api/shopping-carts")
             .contentType(MediaType.APPLICATION_JSON)
@@ -182,6 +180,7 @@ public class ShoppingCartResourceIT {
 
         // Create the ShoppingCart, which fails.
 
+
         restShoppingCartMockMvc.perform(post("/api/shopping-carts")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(shoppingCart)))
@@ -199,6 +198,7 @@ public class ShoppingCartResourceIT {
         shoppingCart.setStatus(null);
 
         // Create the ShoppingCart, which fails.
+
 
         restShoppingCartMockMvc.perform(post("/api/shopping-carts")
             .contentType(MediaType.APPLICATION_JSON)
@@ -218,6 +218,7 @@ public class ShoppingCartResourceIT {
 
         // Create the ShoppingCart, which fails.
 
+
         restShoppingCartMockMvc.perform(post("/api/shopping-carts")
             .contentType(MediaType.APPLICATION_JSON)
             .content(TestUtil.convertObjectToJsonBytes(shoppingCart)))
@@ -235,6 +236,7 @@ public class ShoppingCartResourceIT {
         shoppingCart.setPaymentMethod(null);
 
         // Create the ShoppingCart, which fails.
+
 
         restShoppingCartMockMvc.perform(post("/api/shopping-carts")
             .contentType(MediaType.APPLICATION_JSON)
@@ -282,7 +284,6 @@ public class ShoppingCartResourceIT {
             .andExpect(jsonPath("$.paymentReference").value(DEFAULT_PAYMENT_REFERENCE))
             .andExpect(jsonPath("$.paymentModificationReference").value(DEFAULT_PAYMENT_MODIFICATION_REFERENCE));
     }
-
     @Test
     @Transactional
     public void getNonExistingShoppingCart() throws Exception {
@@ -332,8 +333,6 @@ public class ShoppingCartResourceIT {
     @Transactional
     public void updateNonExistingShoppingCart() throws Exception {
         int databaseSizeBeforeUpdate = shoppingCartRepository.findAll().size();
-
-        // Create the ShoppingCart
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
         restShoppingCartMockMvc.perform(put("/api/shopping-carts")

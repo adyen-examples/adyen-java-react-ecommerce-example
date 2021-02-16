@@ -46,7 +46,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
     if (errors.length === 0) {
       const entity = {
         ...customerDetailsEntity,
-        ...values
+        ...values,
       };
       entity.user = values.user;
 
@@ -102,7 +102,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                   type="text"
                   name="phone"
                   validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
+                    required: { value: true, errorMessage: 'This field is required.' },
                   }}
                 />
               </AvGroup>
@@ -115,7 +115,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                   type="text"
                   name="addressLine1"
                   validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
+                    required: { value: true, errorMessage: 'This field is required.' },
                   }}
                 />
               </AvGroup>
@@ -134,7 +134,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                   type="text"
                   name="city"
                   validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
+                    required: { value: true, errorMessage: 'This field is required.' },
                   }}
                 />
               </AvGroup>
@@ -147,7 +147,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                   type="text"
                   name="country"
                   validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
+                    required: { value: true, errorMessage: 'This field is required.' },
                   }}
                 />
               </AvGroup>
@@ -194,7 +194,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   customerDetailsEntity: storeState.customerDetails.entity,
   loading: storeState.customerDetails.loading,
   updating: storeState.customerDetails.updating,
-  updateSuccess: storeState.customerDetails.updateSuccess
+  updateSuccess: storeState.customerDetails.updateSuccess,
 });
 
 const mapDispatchToProps = {
@@ -202,7 +202,7 @@ const mapDispatchToProps = {
   getEntity,
   updateEntity,
   createEntity,
-  reset
+  reset,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

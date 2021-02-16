@@ -69,7 +69,7 @@ export const ShoppingCartDetail = (props: IShoppingCartDetailProps) => {
 };
 
 const mapStateToProps = ({ shoppingCart }: IRootState) => ({
-  shoppingCartEntity: shoppingCart.entity
+  shoppingCartEntity: shoppingCart.entity,
 });
 
 const mapDispatchToProps = { getEntity };

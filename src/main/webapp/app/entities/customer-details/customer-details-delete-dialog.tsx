@@ -51,7 +51,7 @@ export const CustomerDetailsDeleteDialog = (props: ICustomerDetailsDeleteDialogP
 
 const mapStateToProps = ({ customerDetails }: IRootState) => ({
   customerDetailsEntity: customerDetails.entity,
-  updateSuccess: customerDetails.updateSuccess
+  updateSuccess: customerDetails.updateSuccess,
 });
 
 const mapDispatchToProps = { getEntity, deleteEntity };

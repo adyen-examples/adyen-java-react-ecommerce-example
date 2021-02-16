@@ -12,7 +12,7 @@ export const ACTION_TYPES = {
   CREATE_CUSTOMERDETAILS: 'customerDetails/CREATE_CUSTOMERDETAILS',
   UPDATE_CUSTOMERDETAILS: 'customerDetails/UPDATE_CUSTOMERDETAILS',
   DELETE_CUSTOMERDETAILS: 'customerDetails/DELETE_CUSTOMERDETAILS',
-  RESET: 'customerDetails/RESET'
+  RESET: 'customerDetails/RESET',
 };
 
 const initialState = {
@@ -22,7 +22,7 @@ const initialState = {
   entity: defaultValue,
   updating: false,
   totalItems: 0,
-  updateSuccess: false
+  updateSuccess: false,
 };
 
 export type CustomerDetailsState = Readonly<typeof initialState>;
@@ -37,7 +37,7 @@ export default (state: CustomerDetailsState = initialState, action): CustomerDet
         ...state,
         errorMessage: null,
         updateSuccess: false,
-        loading: true
+        loading: true,
       };
     case REQUEST(ACTION_TYPES.CREATE_CUSTOMERDETAILS):
     case REQUEST(ACTION_TYPES.UPDATE_CUSTOMERDETAILS):
@@ -46,7 +46,7 @@ export default (state: CustomerDetailsState = initialState, action): CustomerDet
         ...state,
         errorMessage: null,
         updateSuccess: false,
-        updating: true
+        updating: true,
       };
     case FAILURE(ACTION_TYPES.FETCH_CUSTOMERDETAILS_LIST):
     case FAILURE(ACTION_TYPES.FETCH_CUSTOMERDETAILS):
@@ -58,20 +58,20 @@ export default (state: CustomerDetailsState = initialState, action): CustomerDet
         loading: false,
         updating: false,
         updateSuccess: false,
-        errorMessage: action.payload
+        errorMessage: action.payload,
       };
     case SUCCESS(ACTION_TYPES.FETCH_CUSTOMERDETAILS_LIST):
       return {
         ...state,
         loading: false,
         entities: action.payload.data,
-        totalItems: parseInt(action.payload.headers['x-total-count'], 10)
+        totalItems: parseInt(action.payload.headers['x-total-count'], 10),
       };
     case SUCCESS(ACTION_TYPES.FETCH_CUSTOMERDETAILS):
       return {
         ...state,
         loading: false,
-        entity: action.payload.data
+        entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.CREATE_CUSTOMERDETAILS):
     case SUCCESS(ACTION_TYPES.UPDATE_CUSTOMERDETAILS):
@@ -79,18 +79,18 @@ export default (state: CustomerDetailsState = initialState, action): CustomerDet
         ...state,
         updating: false,
         updateSuccess: true,
-        entity: action.payload.data
+        entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.DELETE_CUSTOMERDETAILS):
       return {
         ...state,
         updating: false,
         updateSuccess: true,
-        entity: {}
+        entity: {},
       };
     case ACTION_TYPES.RESET:
       return {
-        ...initialState
+        ...initialState,
       };
     default:
       return state;
@@ -105,7 +105,7 @@ export const getEntities: ICrudGetAllAction<ICustomerDetails> = (page, size, sor
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_CUSTOMERDETAILS_LIST,
-    payload: axios.get<ICustomerDetails>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
+    payload: axios.get<ICustomerDetails>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
   };
 };
 
@@ -113,14 +113,14 @@ export const getEntity: ICrudGetAction<ICustomerDetails> = id => {
   const requestUrl = `${apiUrl}/${id}`;
   return {
     type: ACTION_TYPES.FETCH_CUSTOMERDETAILS,
-    payload: axios.get<ICustomerDetails>(requestUrl)
+    payload: axios.get<ICustomerDetails>(requestUrl),
   };
 };
 
 export const createEntity: ICrudPutAction<ICustomerDetails> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.CREATE_CUSTOMERDETAILS,
-    payload: axios.post(apiUrl, cleanEntity(entity))
+    payload: axios.post(apiUrl, cleanEntity(entity)),
   });
   dispatch(getEntities());
   return result;
@@ -129,7 +129,7 @@ export const createEntity: ICrudPutAction<ICustomerDetails> = entity => async di
 export const updateEntity: ICrudPutAction<ICustomerDetails> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_CUSTOMERDETAILS,
-    payload: axios.put(apiUrl, cleanEntity(entity))
+    payload: axios.put(apiUrl, cleanEntity(entity)),
   });
   return result;
 };
@@ -138,11 +138,12 @@ export const deleteEntity: ICrudDeleteAction<ICustomerDetails> = id => async dis
   const requestUrl = `${apiUrl}/${id}`;
   const result = await dispatch({
     type: ACTION_TYPES.DELETE_CUSTOMERDETAILS,
-    payload: axios.delete(requestUrl)
+    payload: axios.delete(requestUrl),
   });
+  dispatch(getEntities());
   return result;
 };
 
 export const reset = () => ({
-  type: ACTION_TYPES.RESET
+  type: ACTION_TYPES.RESET,
 });

@@ -16,7 +16,7 @@ describe('Settings reducer tests', () => {
         loading: false,
         errorMessage: null,
         updateSuccess: false,
-        updateFailure: false
+        updateFailure: false,
       });
     });
   });
@@ -27,7 +27,7 @@ describe('Settings reducer tests', () => {
       expect(toTest).toMatchObject({
         updateSuccess: false,
         updateFailure: false,
-        loading: true
+        loading: true,
       });
     });
     it('should detect a success', () => {
@@ -35,7 +35,7 @@ describe('Settings reducer tests', () => {
       expect(toTest).toMatchObject({
         updateSuccess: true,
         updateFailure: false,
-        loading: false
+        loading: false,
       });
     });
     it('should detect a failure', () => {
@@ -43,7 +43,7 @@ describe('Settings reducer tests', () => {
       expect(toTest).toMatchObject({
         updateSuccess: false,
         updateFailure: true,
-        loading: false
+        loading: false,
       });
     });
 
@@ -52,17 +52,17 @@ describe('Settings reducer tests', () => {
         loading: false,
         errorMessage: null,
         updateSuccess: false,
-        updateFailure: false
+        updateFailure: false,
       };
       expect(
         account(
           { ...initialState, loading: true },
           {
-            type: ACTION_TYPES.RESET
+            type: ACTION_TYPES.RESET,
           }
         )
       ).toEqual({
-        ...initialState
+        ...initialState,
       });
     });
   });
@@ -80,34 +80,34 @@ describe('Settings reducer tests', () => {
 
     it('dispatches UPDATE_ACCOUNT_PENDING and UPDATE_ACCOUNT_FULFILLED actions', async () => {
       const meta = {
-        successMessage: '<strong>Settings saved!</strong>'
+        successMessage: '<strong>Settings saved!</strong>',
       };
 
       const expectedActions = [
         {
           type: REQUEST(ACTION_TYPES.UPDATE_ACCOUNT),
-          meta
+          meta,
         },
         {
           type: SUCCESS(ACTION_TYPES.UPDATE_ACCOUNT),
           payload: resolvedObject,
-          meta
+          meta,
         },
         {
-          type: REQUEST(authActionTypes.GET_SESSION)
+          type: REQUEST(authActionTypes.GET_SESSION),
         },
         {
           type: SUCCESS(authActionTypes.GET_SESSION),
-          payload: resolvedObject
-        }
+          payload: resolvedObject,
+        },
       ];
       await store.dispatch(saveAccountSettings({})).then(() => expect(store.getActions()).toEqual(expectedActions));
     });
     it('dispatches ACTION_TYPES.RESET actions', async () => {
       const expectedActions = [
         {
-          type: ACTION_TYPES.RESET
-        }
+          type: ACTION_TYPES.RESET,
+        },
       ];
       await store.dispatch(reset());
       expect(store.getActions()).toEqual(expectedActions);

@@ -50,7 +50,7 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
     if (errors.length === 0) {
       const entity = {
         ...productOrderEntity,
-        ...values
+        ...values,
       };
 
       if (isNew) {
@@ -92,7 +92,7 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
                   validate={{
                     required: { value: true, errorMessage: 'This field is required.' },
                     min: { value: 0, errorMessage: 'This field should be at least 0.' },
-                    number: { value: true, errorMessage: 'This field should be a number.' }
+                    number: { value: true, errorMessage: 'This field should be a number.' },
                   }}
                 />
               </AvGroup>
@@ -107,7 +107,7 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
                   validate={{
                     required: { value: true, errorMessage: 'This field is required.' },
                     min: { value: 0, errorMessage: 'This field should be at least 0.' },
-                    number: { value: true, errorMessage: 'This field should be a number.' }
+                    number: { value: true, errorMessage: 'This field should be a number.' },
                   }}
                 />
               </AvGroup>
@@ -175,7 +175,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   productOrderEntity: storeState.productOrder.entity,
   loading: storeState.productOrder.loading,
   updating: storeState.productOrder.updating,
-  updateSuccess: storeState.productOrder.updateSuccess
+  updateSuccess: storeState.productOrder.updateSuccess,
 });
 
 const mapDispatchToProps = {
@@ -184,7 +184,7 @@ const mapDispatchToProps = {
   getEntity,
   updateEntity,
   createEntity,
-  reset
+  reset,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

@@ -65,7 +65,7 @@ export const CustomerDetailsDetail = (props: ICustomerDetailsDetailProps) => {
 };
 
 const mapStateToProps = ({ customerDetails }: IRootState) => ({
-  customerDetailsEntity: customerDetails.entity
+  customerDetailsEntity: customerDetails.entity,
 });
 
 const mapDispatchToProps = { getEntity };
