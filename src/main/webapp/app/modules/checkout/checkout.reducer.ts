@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IShoppingCart } from 'app/shared/model/shopping-cart.model';
+import { IPayload, IPayloadResult } from 'react-jhipster';
 
 export const ACTION_TYPES = {
   FETCH_CONFIG: 'checkout/FETCH_CONFIG',
@@ -124,7 +125,7 @@ export const submitAdditionalDetails = data => {
   };
 };
 
-export const refundPayment = (cart: IShoppingCart, action: Function) => async dispatch => {
+export const refundPayment: (cart: IShoppingCart, action: Function) => IPayload<string> | IPayloadResult<string> = (cart: IShoppingCart, action: Function) => async dispatch => {
   const requestUrl = `${apiUrl}/refund-payment`;
   await dispatch({
     type: ACTION_TYPES.REFUND_PAYMENT,

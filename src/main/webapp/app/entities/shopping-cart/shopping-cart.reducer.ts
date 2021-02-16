@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction, ICrudSearchAction } from 'react-jhipster';
+import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction, ICrudSearchAction, IPayload, IPayloadResult } from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
@@ -182,7 +182,7 @@ export const removeOrder: ICrudDeleteAction<IShoppingCart> = id => async dispatc
   return result;
 };
 
-export const closeShoppingCart = (paymentType: string, paymentRef: string, status: OrderStatus) => async dispatch => {
+export const closeShoppingCart: (paymentType: string, paymentRef: string, status: OrderStatus) => IPayload<string> | IPayloadResult<string> = (paymentType: string, paymentRef: string, status: OrderStatus) => async dispatch => {
   return await dispatch({
     type: ACTION_TYPES.UPDATE_SHOPPINGCART,
     payload: axios.put(`${apiUrl}/close?paymentType=${paymentType}&paymentRef=${paymentRef}&status=${status}`)
