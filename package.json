@@ -13,7 +13,7 @@
     "@fortawesome/free-solid-svg-icons": "5.13.0",
     "@fortawesome/react-fontawesome": "0.1.9",
     "availity-reactstrap-validation": "2.6.1",
-    "axios": "0.19.2",
+    "axios": "0.21.1",
     "bootstrap": "4.4.1",
     "loaders.css": "0.1.2",
     "lodash": "4.17.19",
