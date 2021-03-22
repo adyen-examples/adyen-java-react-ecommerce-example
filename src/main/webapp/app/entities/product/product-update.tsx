@@ -121,10 +121,16 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                 />
               </AvGroup>
               <AvGroup>
-                <Label id="sizeLabel" for="product-size">
-                  Size
+                <Label id="itemSizeLabel" for="product-itemSize">
+                  Item Size
                 </Label>
-                <AvInput id="product-size" type="select" className="form-control" name="size" value={(!isNew && productEntity.size) || 'S'}>
+                <AvInput
+                  id="product-itemSize"
+                  type="select"
+                  className="form-control"
+                  name="itemSize"
+                  value={(!isNew && productEntity.itemSize) || 'S'}
+                >
                   <option value="S">S</option>
                   <option value="M">M</option>
                   <option value="L">L</option>

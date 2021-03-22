@@ -121,7 +121,7 @@ export const Home = (props: IHomeProp) => {
                           </div>
                           <p>
                             <small>
-                              Size: <span>{product.size}</span>
+                              Size: <span>{product.itemSize}</span>
                             </small>
                           </p>
                           <div className="d-flex w-100 justify-content-between">

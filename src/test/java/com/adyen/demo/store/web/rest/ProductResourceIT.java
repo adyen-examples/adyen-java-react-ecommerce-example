@@ -46,8 +46,8 @@ public class ProductResourceIT {
     private static final BigDecimal DEFAULT_PRICE = new BigDecimal(0);
     private static final BigDecimal UPDATED_PRICE = new BigDecimal(1);
 
-    private static final Size DEFAULT_SIZE = Size.S;
-    private static final Size UPDATED_SIZE = Size.M;
+    private static final Size DEFAULT_ITEM_SIZE = Size.S;
+    private static final Size UPDATED_ITEM_SIZE = Size.M;
 
     private static final byte[] DEFAULT_IMAGE = TestUtil.createByteArray(1, "0");
     private static final byte[] UPDATED_IMAGE = TestUtil.createByteArray(1, "1");
@@ -79,7 +79,7 @@ public class ProductResourceIT {
             .name(DEFAULT_NAME)
             .description(DEFAULT_DESCRIPTION)
             .price(DEFAULT_PRICE)
-            .size(DEFAULT_SIZE)
+            .itemSize(DEFAULT_ITEM_SIZE)
             .image(DEFAULT_IMAGE)
             .imageContentType(DEFAULT_IMAGE_CONTENT_TYPE);
         // Add required entity
@@ -105,7 +105,7 @@ public class ProductResourceIT {
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
             .price(UPDATED_PRICE)
-            .size(UPDATED_SIZE)
+            .itemSize(UPDATED_ITEM_SIZE)
             .image(UPDATED_IMAGE)
             .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
         // Add required entity
@@ -143,7 +143,7 @@ public class ProductResourceIT {
         assertThat(testProduct.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testProduct.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testProduct.getPrice()).isEqualTo(DEFAULT_PRICE);
-        assertThat(testProduct.getSize()).isEqualTo(DEFAULT_SIZE);
+        assertThat(testProduct.getItemSize()).isEqualTo(DEFAULT_ITEM_SIZE);
         assertThat(testProduct.getImage()).isEqualTo(DEFAULT_IMAGE);
         assertThat(testProduct.getImageContentType()).isEqualTo(DEFAULT_IMAGE_CONTENT_TYPE);
     }
@@ -208,10 +208,10 @@ public class ProductResourceIT {
 
     @Test
     @Transactional
-    public void checkSizeIsRequired() throws Exception {
+    public void checkItemSizeIsRequired() throws Exception {
         int databaseSizeBeforeTest = productRepository.findAll().size();
         // set the field null
-        product.setSize(null);
+        product.setItemSize(null);
 
         // Create the Product, which fails.
 
@@ -239,7 +239,7 @@ public class ProductResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].price").value(hasItem(DEFAULT_PRICE.intValue())))
-            .andExpect(jsonPath("$.[*].size").value(hasItem(DEFAULT_SIZE.toString())))
+            .andExpect(jsonPath("$.[*].itemSize").value(hasItem(DEFAULT_ITEM_SIZE.toString())))
             .andExpect(jsonPath("$.[*].imageContentType").value(hasItem(DEFAULT_IMAGE_CONTENT_TYPE)))
             .andExpect(jsonPath("$.[*].image").value(hasItem(Base64Utils.encodeToString(DEFAULT_IMAGE))));
     }
@@ -258,7 +258,7 @@ public class ProductResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
             .andExpect(jsonPath("$.price").value(DEFAULT_PRICE.intValue()))
-            .andExpect(jsonPath("$.size").value(DEFAULT_SIZE.toString()))
+            .andExpect(jsonPath("$.itemSize").value(DEFAULT_ITEM_SIZE.toString()))
             .andExpect(jsonPath("$.imageContentType").value(DEFAULT_IMAGE_CONTENT_TYPE))
             .andExpect(jsonPath("$.image").value(Base64Utils.encodeToString(DEFAULT_IMAGE)));
     }
@@ -286,7 +286,7 @@ public class ProductResourceIT {
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
             .price(UPDATED_PRICE)
-            .size(UPDATED_SIZE)
+            .itemSize(UPDATED_ITEM_SIZE)
             .image(UPDATED_IMAGE)
             .imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
 
@@ -302,7 +302,7 @@ public class ProductResourceIT {
         assertThat(testProduct.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testProduct.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testProduct.getPrice()).isEqualTo(UPDATED_PRICE);
-        assertThat(testProduct.getSize()).isEqualTo(UPDATED_SIZE);
+        assertThat(testProduct.getItemSize()).isEqualTo(UPDATED_ITEM_SIZE);
         assertThat(testProduct.getImage()).isEqualTo(UPDATED_IMAGE);
         assertThat(testProduct.getImageContentType()).isEqualTo(UPDATED_IMAGE_CONTENT_TYPE);
     }

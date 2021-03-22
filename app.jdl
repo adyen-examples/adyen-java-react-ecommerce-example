@@ -18,7 +18,7 @@ entity Product {
     name String required
     description String
     price BigDecimal required min(0)
-    size Size required
+    itemSize Size required
     image ImageBlob
 }
 
@@ -54,7 +54,7 @@ entity ShoppingCart {
 }
 
 enum OrderStatus {
-    COMPLETED, PAID, PENDING, CANCELLED, REFUNDED
+    REFUND_INITIATED, REFUND_FAILED, PAID, PENDING, OPEN, CANCELLED, REFUNDED
 }
 
 enum PaymentMethod {

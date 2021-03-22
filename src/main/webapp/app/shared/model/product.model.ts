@@ -6,7 +6,7 @@ export interface IProduct {
   name?: string;
   description?: string;
   price?: number;
-  size?: Size;
+  itemSize?: Size;
   imageContentType?: string;
   image?: any;
   productCategory?: IProductCategory;

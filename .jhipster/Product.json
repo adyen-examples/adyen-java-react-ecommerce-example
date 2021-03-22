@@ -17,7 +17,7 @@
       "fieldValidateRulesMin": "0"
     },
     {
-      "fieldName": "size",
+      "fieldName": "itemSize",
       "fieldType": "Size",
       "fieldValues": "S,M,L,XL,XXL",
       "fieldValidateRules": ["required"]

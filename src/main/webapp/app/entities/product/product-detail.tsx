@@ -39,9 +39,9 @@ export const ProductDetail = (props: IProductDetailProps) => {
           </dt>
           <dd>{productEntity.price}</dd>
           <dt>
-            <span id="size">Size</span>
+            <span id="itemSize">Item Size</span>
           </dt>
-          <dd>{productEntity.size}</dd>
+          <dd>{productEntity.itemSize}</dd>
           <dt>
             <span id="image">Image</span>
           </dt>

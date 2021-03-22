@@ -25,7 +25,7 @@
             <column name="price" type="decimal(21,2)">
                 <constraints nullable="false" />
             </column>
-            <column name="size" type="varchar(255)">
+            <column name="item_size" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
             <column name="image" type="longblob">
@@ -63,7 +63,7 @@
             <column name="name" type="string"/>
             <column name="description" type="string"/>
             <column name="price" type="numeric"/>
-            <column name="size" type="string"/>
+            <column name="item_size" type="string"/>
             <column name="image" type="blob"/>
             <column name="image_content_type" type="string"/>
             <column name="product_category_id" type="numeric"/>

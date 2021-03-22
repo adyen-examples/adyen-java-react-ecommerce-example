@@ -1,4 +1,4 @@
-id;name;description;price;size;image;image_content_type;product_category_id
+id;name;description;price;item_size;image;image_content_type;product_category_id
 1;JHipster T-Shirt;T-Shirt with JHipster logo;12;S;../fake-data/blob/shirt3.jpg;image/png;1
 2;JHipster T-Shirt;T-Shirt with JHipster logo;15;M;../fake-data/blob/shirt3.jpg;image/png;1
 3;JHipster T-Shirt;T-Shirt with JHipster logo;18;L;../fake-data/blob/shirt3.jpg;image/png;1

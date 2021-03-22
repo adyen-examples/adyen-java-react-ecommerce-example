@@ -91,8 +91,8 @@ export const Product = (props: IProductProps) => {
                 <th className="hand" onClick={sort('price')}>
                   Price <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('size')}>
-                  Size <FontAwesomeIcon icon="sort" />
+                <th className="hand" onClick={sort('itemSize')}>
+                  Item Size <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand" onClick={sort('image')}>
                   Image <FontAwesomeIcon icon="sort" />
@@ -114,7 +114,7 @@ export const Product = (props: IProductProps) => {
                   <td>{product.name}</td>
                   <td>{product.description}</td>
                   <td>{product.price}</td>
-                  <td>{product.size}</td>
+                  <td>{product.itemSize}</td>
                   <td>
                     {product.image ? (
                       <div>

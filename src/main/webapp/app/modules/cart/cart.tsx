@@ -50,7 +50,7 @@ export const Cart = (props: ICartProp) => {
                           </div>
                           <div>
                             <small>
-                              Size: <span>{order.product?.size}</span>
+                              Size: <span>{order.product?.itemSize}</span>
                             </small>
                           </div>
                           <p>

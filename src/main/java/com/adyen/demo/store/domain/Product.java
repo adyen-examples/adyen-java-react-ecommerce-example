@@ -42,8 +42,8 @@ public class Product implements Serializable {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "size", nullable = false)
-    private Size size;
+    @Column(name = "item_size", nullable = false)
+    private Size itemSize;
 
     @Lob
     @Column(name = "image")
@@ -105,17 +105,17 @@ public class Product implements Serializable {
         this.price = price;
     }
 
-    public Size getSize() {
-        return size;
+    public Size getItemSize() {
+        return itemSize;
     }
 
-    public Product size(Size size) {
-        this.size = size;
+    public Product itemSize(Size itemSize) {
+        this.itemSize = itemSize;
         return this;
     }
 
-    public void setSize(Size size) {
-        this.size = size;
+    public void setItemSize(Size itemSize) {
+        this.itemSize = itemSize;
     }
 
     public byte[] getImage() {
@@ -182,7 +182,7 @@ public class Product implements Serializable {
             ", name='" + getName() + "'" +
             ", description='" + getDescription() + "'" +
             ", price=" + getPrice() +
-            ", size='" + getSize() + "'" +
+            ", itemSize='" + getItemSize() + "'" +
             ", image='" + getImage() + "'" +
             ", imageContentType='" + getImageContentType() + "'" +
             "}";
