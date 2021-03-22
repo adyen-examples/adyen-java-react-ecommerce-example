@@ -1,0 +1,46 @@
+{
+  "name": "ProductOrder",
+  "fields": [
+    {
+      "fieldName": "quantity",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    },
+    {
+      "fieldName": "totalPrice",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required", "min"],
+      "fieldValidateRulesMin": "0"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "product",
+      "otherEntityRelationshipName": "productOrder",
+      "relationshipValidateRules": "required",
+      "relationshipName": "product",
+      "otherEntityField": "name"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "shoppingCart",
+      "otherEntityRelationshipName": "order",
+      "relationshipValidateRules": "required",
+      "relationshipName": "cart",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20200424080500",
+  "entityTableName": "product_order",
+  "dto": "no",
+  "pagination": "no",
+  "service": "serviceClass",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["store"]
+}
