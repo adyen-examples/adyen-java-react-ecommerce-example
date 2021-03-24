@@ -31,9 +31,8 @@ spring:
     serialization:
       write-durations-as-timestamps: false
   jpa:
-    database-platform: io.github.jhipster.domain.util.FixedH2Dialect
+    database-platform: tech.jhipster.domain.util.FixedH2Dialect
     open-in-view: false
-    show-sql: false
     hibernate:
       ddl-auto: none
       naming:
@@ -47,6 +46,7 @@ spring:
       hibernate.generate_statistics: false
       hibernate.hbm2ddl.auto: validate
       hibernate.jdbc.time_zone: UTC
+      hibernate.query.fail_on_pagination_over_collection_fetch: true
   liquibase:
     contexts: test
   mail:
@@ -100,11 +100,6 @@ jhipster:
         base64-secret: NTMyMGZkYWMzYTVmOWMwMWUwOWNhYjllYzM0MTg2ZDZmNzZmMWZhNjcwYjc2ODA2ZGZjMGJlYTc4YzM3YzczMTFiNjBlYjczMWM4NDM3NTM0N2RkOTNiMWJmOWE4YTUxOTkzMzQ0Zjc2MTNmN2U4NjMyZGMzYjRiNzUwZTI2OTA=
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
-  metrics:
-    logs: # Reports metrics in the logs
-      enabled: true
-      report-frequency: 60 # in seconds
-
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

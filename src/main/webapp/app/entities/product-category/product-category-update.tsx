@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label } from 'reactstrap';
 import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
+import { translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
@@ -15,7 +15,7 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 export interface IProductCategoryUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const { productCategoryEntity, loading, updating } = props;
 
@@ -56,7 +56,9 @@ export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="storeApp.productCategory.home.createOrEditLabel">Create or edit a ProductCategory</h2>
+          <h2 id="storeApp.productCategory.home.createOrEditLabel" data-cy="ProductCategoryCreateUpdateHeading">
+            Create or edit a ProductCategory
+          </h2>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -77,6 +79,7 @@ export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
                 </Label>
                 <AvField
                   id="product-category-name"
+                  data-cy="name"
                   type="text"
                   name="name"
                   validate={{
@@ -88,7 +91,7 @@ export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
                 <Label id="descriptionLabel" for="product-category-description">
                   Description
                 </Label>
-                <AvField id="product-category-description" type="text" name="description" />
+                <AvField id="product-category-description" data-cy="description" type="text" name="description" />
               </AvGroup>
               <Button tag={Link} id="cancel-save" to="/product-category" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
@@ -96,7 +99,7 @@ export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
                 <span className="d-none d-md-inline">Back</span>
               </Button>
               &nbsp;
-              <Button color="primary" id="save-entity" type="submit" disabled={updating}>
+              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
                 <FontAwesomeIcon icon="save" />
                 &nbsp; Save
               </Button>

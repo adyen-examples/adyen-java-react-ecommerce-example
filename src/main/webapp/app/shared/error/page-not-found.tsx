@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Row, Col, Alert } from 'reactstrap';
+import { Alert } from 'reactstrap';
 
 class PageNotFound extends React.Component {
   render() {

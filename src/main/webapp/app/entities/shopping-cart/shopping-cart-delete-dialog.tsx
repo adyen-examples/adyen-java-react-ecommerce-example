@@ -2,10 +2,9 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import { ICrudGetAction, ICrudDeleteAction } from 'react-jhipster';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IShoppingCart } from 'app/shared/model/shopping-cart.model';
 import { IRootState } from 'app/shared/reducers';
 import { getEntity, deleteEntity } from './shopping-cart.reducer';
 
@@ -33,14 +32,16 @@ export const ShoppingCartDeleteDialog = (props: IShoppingCartDeleteDialogProps) 
   const { shoppingCartEntity } = props;
   return (
     <Modal isOpen toggle={handleClose}>
-      <ModalHeader toggle={handleClose}>Confirm delete operation</ModalHeader>
+      <ModalHeader toggle={handleClose} data-cy="shoppingCartDeleteDialogHeading">
+        Confirm delete operation
+      </ModalHeader>
       <ModalBody id="storeApp.shoppingCart.delete.question">Are you sure you want to delete this ShoppingCart?</ModalBody>
       <ModalFooter>
         <Button color="secondary" onClick={handleClose}>
           <FontAwesomeIcon icon="ban" />
           &nbsp; Cancel
         </Button>
-        <Button id="jhi-confirm-delete-shoppingCart" color="danger" onClick={confirmDelete}>
+        <Button id="jhi-confirm-delete-shoppingCart" data-cy="entityConfirmDeleteButton" color="danger" onClick={confirmDelete}>
           <FontAwesomeIcon icon="trash" />
           &nbsp; Delete
         </Button>

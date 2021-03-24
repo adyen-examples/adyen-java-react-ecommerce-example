@@ -39,6 +39,7 @@ export const PasswordResetFinishPage = (props: IPasswordResetFinishProps) => {
             maxLength: { value: 50, errorMessage: 'Your password cannot be longer than 50 characters.' },
           }}
           onChange={updatePassword}
+          data-cy="resetPassword"
         />
         <PasswordStrengthBar password={password} />
         <AvField
@@ -52,8 +53,9 @@ export const PasswordResetFinishPage = (props: IPasswordResetFinishProps) => {
             maxLength: { value: 50, errorMessage: 'Your confirmation password cannot be longer than 50 characters.' },
             match: { value: 'newPassword', errorMessage: 'The password and its confirmation do not match!' },
           }}
+          data-cy="confirmResetPassword"
         />
-        <Button color="success" type="submit">
+        <Button color="success" type="submit" data-cy="submit">
           Validate new password
         </Button>
       </AvForm>

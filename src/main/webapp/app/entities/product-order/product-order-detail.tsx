@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { ICrudGetAction } from 'react-jhipster';
+import {} from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './product-order.reducer';
-import { IProductOrder } from 'app/shared/model/product-order.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
 export interface IProductOrderDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
@@ -21,10 +20,12 @@ export const ProductOrderDetail = (props: IProductOrderDetailProps) => {
   return (
     <Row>
       <Col md="8">
-        <h2>
-          ProductOrder [<b>{productOrderEntity.id}</b>]
-        </h2>
+        <h2 data-cy="productOrderDetailsHeading">ProductOrder</h2>
         <dl className="jh-entity-details">
+          <dt>
+            <span id="id">ID</span>
+          </dt>
+          <dd>{productOrderEntity.id}</dd>
           <dt>
             <span id="quantity">Quantity</span>
           </dt>
@@ -38,7 +39,7 @@ export const ProductOrderDetail = (props: IProductOrderDetailProps) => {
           <dt>Cart</dt>
           <dd>{productOrderEntity.cart ? productOrderEntity.cart.customerDetails?.user?.login : ''}</dd>
         </dl>
-        <Button tag={Link} to="/product-order" replace color="info">
+        <Button tag={Link} to="/product-order" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
         &nbsp;

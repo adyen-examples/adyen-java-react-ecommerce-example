@@ -42,6 +42,7 @@ export const PasswordPage = (props: IUserPasswordProps) => {
               validate={{
                 required: { value: true, errorMessage: 'Your password is required.' },
               }}
+              data-cy="currentPassword"
             />
             <AvField
               name="newPassword"
@@ -54,6 +55,7 @@ export const PasswordPage = (props: IUserPasswordProps) => {
                 maxLength: { value: 50, errorMessage: 'Your password cannot be longer than 50 characters.' },
               }}
               onChange={updatePassword}
+              data-cy="newPassword"
             />
             <PasswordStrengthBar password={password} />
             <AvField
@@ -79,8 +81,9 @@ export const PasswordPage = (props: IUserPasswordProps) => {
                   errorMessage: 'The password and its confirmation do not match!',
                 },
               }}
+              data-cy="confirmPassword"
             />
-            <Button color="success" type="submit">
+            <Button color="success" type="submit" data-cy="submit">
               Save
             </Button>
           </AvForm>

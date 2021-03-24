@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { ICrudGetAction } from 'react-jhipster';
+import {} from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './product-category.reducer';
-import { IProductCategory } from 'app/shared/model/product-category.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
 export interface IProductCategoryDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
@@ -21,10 +20,12 @@ export const ProductCategoryDetail = (props: IProductCategoryDetailProps) => {
   return (
     <Row>
       <Col md="8">
-        <h2>
-          ProductCategory [<b>{productCategoryEntity.id}</b>]
-        </h2>
+        <h2 data-cy="productCategoryDetailsHeading">ProductCategory</h2>
         <dl className="jh-entity-details">
+          <dt>
+            <span id="id">ID</span>
+          </dt>
+          <dd>{productCategoryEntity.id}</dd>
           <dt>
             <span id="name">Name</span>
           </dt>
@@ -34,7 +35,7 @@ export const ProductCategoryDetail = (props: IProductCategoryDetailProps) => {
           </dt>
           <dd>{productCategoryEntity.description}</dd>
         </dl>
-        <Button tag={Link} to="/product-category" replace color="info">
+        <Button tag={Link} to="/product-category" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
         &nbsp;

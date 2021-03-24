@@ -2,15 +2,13 @@ package com.adyen.demo.store.service;
 
 import com.adyen.demo.store.domain.CustomerDetails;
 import com.adyen.demo.store.repository.CustomerDetailsRepository;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link CustomerDetails}.
@@ -39,6 +37,44 @@ public class CustomerDetailsService {
     }
 
     /**
+     * Partially update a customerDetails.
+     *
+     * @param customerDetails the entity to update partially.
+     * @return the persisted entity.
+     */
+    public Optional<CustomerDetails> partialUpdate(CustomerDetails customerDetails) {
+        log.debug("Request to partially update CustomerDetails : {}", customerDetails);
+
+        return customerDetailsRepository
+            .findById(customerDetails.getId())
+            .map(
+                existingCustomerDetails -> {
+                    if (customerDetails.getGender() != null) {
+                        existingCustomerDetails.setGender(customerDetails.getGender());
+                    }
+                    if (customerDetails.getPhone() != null) {
+                        existingCustomerDetails.setPhone(customerDetails.getPhone());
+                    }
+                    if (customerDetails.getAddressLine1() != null) {
+                        existingCustomerDetails.setAddressLine1(customerDetails.getAddressLine1());
+                    }
+                    if (customerDetails.getAddressLine2() != null) {
+                        existingCustomerDetails.setAddressLine2(customerDetails.getAddressLine2());
+                    }
+                    if (customerDetails.getCity() != null) {
+                        existingCustomerDetails.setCity(customerDetails.getCity());
+                    }
+                    if (customerDetails.getCountry() != null) {
+                        existingCustomerDetails.setCountry(customerDetails.getCountry());
+                    }
+
+                    return existingCustomerDetails;
+                }
+            )
+            .map(customerDetailsRepository::save);
+    }
+
+    /**
      * Get all the customerDetails.
      *
      * @param pageable the pagination information.
@@ -49,7 +85,6 @@ public class CustomerDetailsService {
         log.debug("Request to get all CustomerDetails");
         return customerDetailsRepository.findAll(pageable);
     }
-
 
     /**
      * Get one customerDetails by id.

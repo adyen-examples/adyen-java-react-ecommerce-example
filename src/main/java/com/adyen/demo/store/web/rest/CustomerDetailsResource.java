@@ -1,12 +1,16 @@
 package com.adyen.demo.store.web.rest;
 
 import com.adyen.demo.store.domain.CustomerDetails;
+import com.adyen.demo.store.repository.CustomerDetailsRepository;
 import com.adyen.demo.store.service.CustomerDetailsService;
 import com.adyen.demo.store.web.rest.errors.BadRequestAlertException;
-
-import io.github.jhipster.web.util.HeaderUtil;
-import io.github.jhipster.web.util.PaginationUtil;
-import io.github.jhipster.web.util.ResponseUtil;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,15 +18,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import tech.jhipster.web.util.HeaderUtil;
+import tech.jhipster.web.util.PaginationUtil;
+import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.adyen.demo.store.domain.CustomerDetails}.
@@ -40,8 +41,11 @@ public class CustomerDetailsResource {
 
     private final CustomerDetailsService customerDetailsService;
 
-    public CustomerDetailsResource(CustomerDetailsService customerDetailsService) {
+    private final CustomerDetailsRepository customerDetailsRepository;
+
+    public CustomerDetailsResource(CustomerDetailsService customerDetailsService, CustomerDetailsRepository customerDetailsRepository) {
         this.customerDetailsService = customerDetailsService;
+        this.customerDetailsRepository = customerDetailsRepository;
     }
 
     /**
@@ -52,36 +56,87 @@ public class CustomerDetailsResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/customer-details")
-    public ResponseEntity<CustomerDetails> createCustomerDetails(@Valid @RequestBody CustomerDetails customerDetails) throws URISyntaxException {
+    public ResponseEntity<CustomerDetails> createCustomerDetails(@Valid @RequestBody CustomerDetails customerDetails)
+        throws URISyntaxException {
         log.debug("REST request to save CustomerDetails : {}", customerDetails);
         if (customerDetails.getId() != null) {
             throw new BadRequestAlertException("A new customerDetails cannot already have an ID", ENTITY_NAME, "idexists");
         }
         CustomerDetails result = customerDetailsService.save(customerDetails);
-        return ResponseEntity.created(new URI("/api/customer-details/" + result.getId()))
+        return ResponseEntity
+            .created(new URI("/api/customer-details/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
     /**
-     * {@code PUT  /customer-details} : Updates an existing customerDetails.
+     * {@code PUT  /customer-details/:id} : Updates an existing customerDetails.
      *
+     * @param id the id of the customerDetails to save.
      * @param customerDetails the customerDetails to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated customerDetails,
      * or with status {@code 400 (Bad Request)} if the customerDetails is not valid,
      * or with status {@code 500 (Internal Server Error)} if the customerDetails couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/customer-details")
-    public ResponseEntity<CustomerDetails> updateCustomerDetails(@Valid @RequestBody CustomerDetails customerDetails) throws URISyntaxException {
-        log.debug("REST request to update CustomerDetails : {}", customerDetails);
+    @PutMapping("/customer-details/{id}")
+    public ResponseEntity<CustomerDetails> updateCustomerDetails(
+        @PathVariable(value = "id", required = false) final Long id,
+        @Valid @RequestBody CustomerDetails customerDetails
+    ) throws URISyntaxException {
+        log.debug("REST request to update CustomerDetails : {}, {}", id, customerDetails);
         if (customerDetails.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        if (!Objects.equals(id, customerDetails.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!customerDetailsRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
         CustomerDetails result = customerDetailsService.save(customerDetails);
-        return ResponseEntity.ok()
+        return ResponseEntity
+            .ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, customerDetails.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * {@code PATCH  /customer-details/:id} : Partial updates given fields of an existing customerDetails, field will ignore if it is null
+     *
+     * @param id the id of the customerDetails to save.
+     * @param customerDetails the customerDetails to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated customerDetails,
+     * or with status {@code 400 (Bad Request)} if the customerDetails is not valid,
+     * or with status {@code 404 (Not Found)} if the customerDetails is not found,
+     * or with status {@code 500 (Internal Server Error)} if the customerDetails couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PatchMapping(value = "/customer-details/{id}", consumes = "application/merge-patch+json")
+    public ResponseEntity<CustomerDetails> partialUpdateCustomerDetails(
+        @PathVariable(value = "id", required = false) final Long id,
+        @NotNull @RequestBody CustomerDetails customerDetails
+    ) throws URISyntaxException {
+        log.debug("REST request to partial update CustomerDetails partially : {}, {}", id, customerDetails);
+        if (customerDetails.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (!Objects.equals(id, customerDetails.getId())) {
+            throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
+        }
+
+        if (!customerDetailsRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+
+        Optional<CustomerDetails> result = customerDetailsService.partialUpdate(customerDetails);
+
+        return ResponseUtil.wrapOrNotFound(
+            result,
+            HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, customerDetails.getId().toString())
+        );
     }
 
     /**
@@ -121,6 +176,9 @@ public class CustomerDetailsResource {
     public ResponseEntity<Void> deleteCustomerDetails(@PathVariable Long id) {
         log.debug("REST request to delete CustomerDetails : {}", id);
         customerDetailsService.delete(id);
-        return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString())).build();
+        return ResponseEntity
+            .noContent()
+            .headers(HeaderUtil.createEntityDeletionAlert(applicationName, false, ENTITY_NAME, id.toString()))
+            .build();
     }
 }

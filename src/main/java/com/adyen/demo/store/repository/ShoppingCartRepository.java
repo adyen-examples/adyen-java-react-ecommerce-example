@@ -8,7 +8,7 @@ import com.adyen.demo.store.domain.ShoppingCart;
 import com.adyen.demo.store.domain.enumeration.OrderStatus;
 
 /**
- * Spring Data  repository for the ShoppingCart entity.
+ * Spring Data SQL repository for the ShoppingCart entity.
  */
 @SuppressWarnings("unused")
 @Repository

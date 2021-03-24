@@ -9,7 +9,7 @@
     {
       "fieldName": "status",
       "fieldType": "OrderStatus",
-      "fieldValues": "COMPLETED,PAID,PENDING,CANCELLED,REFUNDED",
+      "fieldValues": "REFUND_INITIATED, REFUND_FAILED, PAID, PENDING, OPEN, CANCELLED, REFUNDED",
       "fieldValidateRules": ["required"]
     },
     {
@@ -58,6 +58,5 @@
   "fluentMethods": true,
   "readOnly": false,
   "embedded": false,
-  "clientRootFolder": "",
   "applications": ["store"]
 }

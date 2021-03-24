@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Col, Row, Table } from 'reactstrap';
-import { ICrudGetAllAction } from 'react-jhipster';
+import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
@@ -17,15 +17,24 @@ export const ProductOrder = (props: IProductOrderProps) => {
     props.getEntities();
   }, []);
 
+  const handleSyncList = () => {
+    props.getEntities();
+  };
+
   const { productOrderList, match, loading } = props;
   return (
     <div>
-      <h2 id="product-order-heading">
+      <h2 id="product-order-heading" data-cy="ProductOrderHeading">
         Product Orders
-        <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
-          <FontAwesomeIcon icon="plus" />
-          &nbsp; Create new Product Order
-        </Link>
+        <div className="d-flex justify-content-end">
+          <Button className="mr-2" color="info" onClick={handleSyncList} disabled={loading}>
+            <FontAwesomeIcon icon="sync" spin={loading} /> Refresh List
+          </Button>
+          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+            <FontAwesomeIcon icon="plus" />
+            &nbsp; Create new Product Order
+          </Link>
+        </div>
       </h2>
       <div className="table-responsive">
         {productOrderList && productOrderList.length > 0 ? (
@@ -42,25 +51,32 @@ export const ProductOrder = (props: IProductOrderProps) => {
             </thead>
             <tbody>
               {productOrderList.map((productOrder, i) => (
-                <tr key={`entity-${i}`}>
+                <tr key={`entity-${i}`} data-cy="entityTable">
                   <td>
                     <Button tag={Link} to={`${match.url}/${productOrder.id}`} color="link" size="sm">
                       {productOrder.id}
                     </Button>
                   </td>
+                  <td>{productOrder.id}</td>
                   <td>{productOrder.quantity}</td>
                   <td>{productOrder.totalPrice}</td>
                   <td>{productOrder.product ? <Link to={`product/${productOrder.product.id}`}>{productOrder.product.name}</Link> : ''}</td>
                   <td>{productOrder.cart ? <Link to={`shopping-cart/${productOrder.cart.id}`}>{productOrder.cart.customerDetails?.user?.login}</Link> : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${productOrder.id}`} color="info" size="sm">
+                      <Button tag={Link} to={`${match.url}/${productOrder.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                       </Button>
-                      <Button tag={Link} to={`${match.url}/${productOrder.id}/edit`} color="primary" size="sm">
+                      <Button tag={Link} to={`${match.url}/${productOrder.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
                         <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
                       </Button>
-                      <Button tag={Link} to={`${match.url}/${productOrder.id}/delete`} color="danger" size="sm">
+                      <Button
+                        tag={Link}
+                        to={`${match.url}/${productOrder.id}/delete`}
+                        color="danger"
+                        size="sm"
+                        data-cy="entityDeleteButton"
+                      >
                         <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
                       </Button>
                     </div>

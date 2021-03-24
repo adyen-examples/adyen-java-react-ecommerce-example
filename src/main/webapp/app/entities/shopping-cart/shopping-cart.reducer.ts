@@ -13,6 +13,7 @@ export const ACTION_TYPES = {
   FETCH_SHOPPINGCART: 'shoppingCart/FETCH_SHOPPINGCART',
   CREATE_SHOPPINGCART: 'shoppingCart/CREATE_SHOPPINGCART',
   UPDATE_SHOPPINGCART: 'shoppingCart/UPDATE_SHOPPINGCART',
+  PARTIAL_UPDATE_SHOPPINGCART: 'shoppingCart/PARTIAL_UPDATE_SHOPPINGCART',
   DELETE_SHOPPINGCART: 'shoppingCart/DELETE_SHOPPINGCART',
   ADD_PRODUCT: 'shoppingCart/ADD_PRODUCT',
   REMOVE_PRODUCT: 'shoppingCart/REMOVE_PRODUCT',
@@ -47,6 +48,7 @@ export default (state: ShoppingCartState = initialState, action): ShoppingCartSt
     case REQUEST(ACTION_TYPES.DELETE_SHOPPINGCART):
     case REQUEST(ACTION_TYPES.ADD_PRODUCT):
     case REQUEST(ACTION_TYPES.REMOVE_PRODUCT):
+    case REQUEST(ACTION_TYPES.PARTIAL_UPDATE_SHOPPINGCART):
       return {
         ...state,
         errorMessage: null,
@@ -57,6 +59,7 @@ export default (state: ShoppingCartState = initialState, action): ShoppingCartSt
     case FAILURE(ACTION_TYPES.FETCH_SHOPPINGCART):
     case FAILURE(ACTION_TYPES.CREATE_SHOPPINGCART):
     case FAILURE(ACTION_TYPES.UPDATE_SHOPPINGCART):
+    case FAILURE(ACTION_TYPES.PARTIAL_UPDATE_SHOPPINGCART):
     case FAILURE(ACTION_TYPES.DELETE_SHOPPINGCART):
     case FAILURE(ACTION_TYPES.ADD_PRODUCT):
     case FAILURE(ACTION_TYPES.REMOVE_PRODUCT):
@@ -83,6 +86,7 @@ export default (state: ShoppingCartState = initialState, action): ShoppingCartSt
     case SUCCESS(ACTION_TYPES.UPDATE_SHOPPINGCART):
     case SUCCESS(ACTION_TYPES.ADD_PRODUCT):
     case SUCCESS(ACTION_TYPES.REMOVE_PRODUCT):
+    case SUCCESS(ACTION_TYPES.PARTIAL_UPDATE_SHOPPINGCART):
       return {
         ...state,
         updating: false,
@@ -150,7 +154,15 @@ export const createEntity: ICrudPutAction<IShoppingCart> = entity => async dispa
 export const updateEntity: ICrudPutAction<IShoppingCart> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_SHOPPINGCART,
-    payload: axios.put(apiUrl, cleanEntity(entity)),
+    payload: axios.put(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
+  });
+  return result;
+};
+
+export const partialUpdate: ICrudPutAction<IShoppingCart> = entity => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.PARTIAL_UPDATE_SHOPPINGCART,
+    payload: axios.patch(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
   });
   return result;
 };

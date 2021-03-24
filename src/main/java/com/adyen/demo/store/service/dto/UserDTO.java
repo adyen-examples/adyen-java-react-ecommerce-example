@@ -2,23 +2,17 @@ package com.adyen.demo.store.service.dto;
 
 import java.time.Instant;
 import java.util.Set;
-import java.util.stream.Collectors;
-import javax.validation.constraints.*;
-import com.adyen.demo.store.config.Constants;
-import com.adyen.demo.store.domain.Authority;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
 import com.adyen.demo.store.domain.User;
-import com.adyen.demo.store.domain.enumeration.Gender;
 
 /**
- * A DTO representing a user, with his authorities.
+ * A DTO representing a user, with only the public attributes.
  */
 public class UserDTO {
 
     private Long id;
 
-    @NotBlank
-    @Pattern(regexp = Constants.LOGIN_REGEX)
-    @Size(min = 1, max = 50)
     private String login;
 
     @Size(max = 50)
@@ -49,38 +43,14 @@ public class UserDTO {
 
     private Set<String> authorities;
 
-    private Gender gender;
-
-    private String phone;
-
-    private String addressLine1;
-
-    private String addressLine2;
-
-    private String city;
-
-    private String country;
-
     public UserDTO() {
         // Empty constructor needed for Jackson.
     }
 
     public UserDTO(User user) {
         this.id = user.getId();
+        // Customize it here if you need, or not, firstName/lastName/etc
         this.login = user.getLogin();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.email = user.getEmail();
-        this.activated = user.getActivated();
-        this.imageUrl = user.getImageUrl();
-        this.langKey = user.getLangKey();
-        this.createdBy = user.getCreatedBy();
-        this.createdDate = user.getCreatedDate();
-        this.lastModifiedBy = user.getLastModifiedBy();
-        this.lastModifiedDate = user.getLastModifiedDate();
-        this.authorities = user.getAuthorities().stream()
-            .map(Authority::getName)
-            .collect(Collectors.toSet());
     }
 
     public Long getId() {
@@ -187,60 +157,6 @@ public class UserDTO {
         this.authorities = authorities;
     }
 
-    public Gender getGender() {
-        return gender;
-    }
-
-    public UserDTO setGender(final Gender gender) {
-        this.gender = gender;
-        return this;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public UserDTO setPhone(final String phone) {
-        this.phone = phone;
-        return this;
-    }
-
-    public String getAddressLine1() {
-        return addressLine1;
-    }
-
-    public UserDTO setAddressLine1(final String addressLine1) {
-        this.addressLine1 = addressLine1;
-        return this;
-    }
-
-    public String getAddressLine2() {
-        return addressLine2;
-    }
-
-    public UserDTO setAddressLine2(final String addressLine2) {
-        this.addressLine2 = addressLine2;
-        return this;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public UserDTO setCity(final String city) {
-        this.city = city;
-        return this;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public UserDTO setCountry(final String country) {
-        this.country = country;
-        return this;
-    }
-
     // prettier-ignore
     @Override
     public String toString() {
@@ -257,12 +173,6 @@ public class UserDTO {
             ", lastModifiedBy='" + lastModifiedBy + '\'' +
             ", lastModifiedDate=" + lastModifiedDate +
             ", authorities=" + authorities +
-            ", gender=" + gender +
-            ", phone='" + phone + '\'' +
-            ", addressLine1='" + addressLine1 + '\'' +
-            ", addressLine2='" + addressLine2 + '\'' +
-            ", city='" + city + '\'' +
-            ", country='" + country + '\'' +
             '}';
     }
 }

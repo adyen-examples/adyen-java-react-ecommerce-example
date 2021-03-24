@@ -11,6 +11,7 @@ export const ACTION_TYPES = {
   FETCH_PRODUCTORDER: 'productOrder/FETCH_PRODUCTORDER',
   CREATE_PRODUCTORDER: 'productOrder/CREATE_PRODUCTORDER',
   UPDATE_PRODUCTORDER: 'productOrder/UPDATE_PRODUCTORDER',
+  PARTIAL_UPDATE_PRODUCTORDER: 'productOrder/PARTIAL_UPDATE_PRODUCTORDER',
   DELETE_PRODUCTORDER: 'productOrder/DELETE_PRODUCTORDER',
   RESET: 'productOrder/RESET',
 };
@@ -41,6 +42,7 @@ export default (state: ProductOrderState = initialState, action): ProductOrderSt
     case REQUEST(ACTION_TYPES.CREATE_PRODUCTORDER):
     case REQUEST(ACTION_TYPES.UPDATE_PRODUCTORDER):
     case REQUEST(ACTION_TYPES.DELETE_PRODUCTORDER):
+    case REQUEST(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTORDER):
       return {
         ...state,
         errorMessage: null,
@@ -51,6 +53,7 @@ export default (state: ProductOrderState = initialState, action): ProductOrderSt
     case FAILURE(ACTION_TYPES.FETCH_PRODUCTORDER):
     case FAILURE(ACTION_TYPES.CREATE_PRODUCTORDER):
     case FAILURE(ACTION_TYPES.UPDATE_PRODUCTORDER):
+    case FAILURE(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTORDER):
     case FAILURE(ACTION_TYPES.DELETE_PRODUCTORDER):
       return {
         ...state,
@@ -73,6 +76,7 @@ export default (state: ProductOrderState = initialState, action): ProductOrderSt
       };
     case SUCCESS(ACTION_TYPES.CREATE_PRODUCTORDER):
     case SUCCESS(ACTION_TYPES.UPDATE_PRODUCTORDER):
+    case SUCCESS(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTORDER):
       return {
         ...state,
         updating: false,
@@ -124,7 +128,15 @@ export const createEntity: ICrudPutAction<IProductOrder> = entity => async dispa
 export const updateEntity: ICrudPutAction<IProductOrder> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_PRODUCTORDER,
-    payload: axios.put(apiUrl, cleanEntity(entity)),
+    payload: axios.put(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
+  });
+  return result;
+};
+
+export const partialUpdate: ICrudPutAction<IProductOrder> = entity => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.PARTIAL_UPDATE_PRODUCTORDER,
+    payload: axios.patch(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
   });
   return result;
 };

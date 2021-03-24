@@ -2,13 +2,12 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { ICrudGetAction, openFile, byteSize } from 'react-jhipster';
+import { openFile, byteSize } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './product.reducer';
-import { IProduct } from 'app/shared/model/product.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
+import { AUTHORITIES } from 'app/config/constants';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
 
 export interface IProductDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
@@ -22,10 +21,12 @@ export const ProductDetail = (props: IProductDetailProps) => {
   return (
     <Row>
       <Col md="8">
-        <h2>
-          Product [<b>{productEntity.id}</b>]
-        </h2>
+        <h2 data-cy="productDetailsHeading">Product</h2>
         <dl className="jh-entity-details">
+          <dt>
+            <span id="id">ID</span>
+          </dt>
+          <dd>{productEntity.id}</dd>
           <dt>
             <span id="name">Name</span>
           </dt>

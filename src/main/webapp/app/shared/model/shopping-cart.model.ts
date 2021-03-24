@@ -1,4 +1,4 @@
-import { Moment } from 'moment';
+import dayjs from 'dayjs';
 import { IProductOrder } from 'app/shared/model/product-order.model';
 import { ICustomerDetails } from 'app/shared/model/customer-details.model';
 import { OrderStatus } from 'app/shared/model/enumerations/order-status.model';
@@ -10,9 +10,9 @@ export interface IShoppingCart {
   status?: OrderStatus;
   totalPrice?: number;
   paymentMethod?: PaymentMethod;
-  paymentReference?: string;
-  paymentModificationReference?: string;
-  orders?: IProductOrder[];
+  paymentReference?: string | null;
+  paymentModificationReference?: string | null;
+  orders?: IProductOrder[] | null;
   customerDetails?: ICustomerDetails;
 }
 

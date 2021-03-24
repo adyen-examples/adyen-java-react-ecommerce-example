@@ -2,7 +2,7 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
     <!--
         Added the constraints for entity CustomerDetails.
     -->
@@ -10,7 +10,7 @@
         
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="customer_details"
-                                 constraintName="fk_customer_details_user_id"
+                                 constraintName="fk_customer_details__user_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
 

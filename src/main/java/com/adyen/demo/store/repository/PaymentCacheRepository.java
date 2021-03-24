@@ -8,12 +8,11 @@ import org.springframework.stereotype.Repository;
 import com.adyen.demo.store.domain.PaymentCache;
 
 /**
- * Spring Data  repository for the PaymentCache entity.
+ * Spring Data SQL repository for the PaymentCache entity.
  */
 @SuppressWarnings("unused")
 @Repository
 public interface PaymentCacheRepository extends JpaRepository<PaymentCache, Long> {
-
     @Query("select paymentCache from PaymentCache paymentCache where paymentCache.user.login = ?#{principal.username}")
     List<PaymentCache> findByUserIsCurrentUser();
 

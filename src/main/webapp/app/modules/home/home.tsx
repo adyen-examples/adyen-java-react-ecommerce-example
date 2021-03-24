@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Row, Col, Alert, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getSortState, JhiItemCount, JhiPagination, TextFormat } from 'react-jhipster';
+import { getSortState, JhiItemCount, JhiPagination } from 'react-jhipster';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntities } from 'app/entities/product/product.reducer';
@@ -17,7 +17,7 @@ import { IProduct } from 'app/shared/model/product.model';
 export interface IHomeProp extends IProductProps, StateProps, DispatchProps {}
 
 export const Home = (props: IHomeProp) => {
-  const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE));
+  const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE, 'id'));
   const [filterState, setFilterState] = useState('');
 
   const getAllEntities = () => {
@@ -39,7 +39,7 @@ export const Home = (props: IHomeProp) => {
     setPaginationState({
       ...paginationState,
       order: paginationState.order === 'asc' ? 'desc' : 'asc',
-      sort: p
+      sort: p,
     });
   };
 
@@ -48,7 +48,7 @@ export const Home = (props: IHomeProp) => {
   const handlePagination = currentPage =>
     setPaginationState({
       ...paginationState,
-      activePage: currentPage
+      activePage: currentPage,
     });
 
   const handleFilter = evt => setFilterState(evt.target.value);
@@ -171,6 +171,7 @@ export const Home = (props: IHomeProp) => {
           <div>
             <Alert color="warning">
               If you want to
+              <span>&nbsp;</span>
               <Link to="/login" className="alert-link">
                 {' '}
                 sign in
@@ -203,7 +204,7 @@ const mapStateToProps = ({ product, authentication }: IRootState) => ({
 
 const mapDispatchToProps = {
   getEntities,
-  addProduct
+  addProduct,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

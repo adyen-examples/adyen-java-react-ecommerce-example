@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.adyen.demo.store.domain.CustomerDetails;
 
 /**
- * Spring Data  repository for the CustomerDetails entity.
+ * Spring Data SQL repository for the CustomerDetails entity.
  */
 @SuppressWarnings("unused")
 @Repository

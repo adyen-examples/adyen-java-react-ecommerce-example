@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Col, Row, Table } from 'reactstrap';
-import { ICrudGetAllAction, getSortState, IPaginationBaseState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { Translate, getSortState, IPaginationBaseState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
@@ -16,7 +16,7 @@ export interface ICustomerDetailsProps extends StateProps, DispatchProps, RouteC
 
 export const CustomerDetails = (props: ICustomerDetailsProps) => {
   const [paginationState, setPaginationState] = useState(
-    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE), props.location.search)
+    overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
 
   const getAllEntities = () => {
@@ -64,15 +64,24 @@ export const CustomerDetails = (props: ICustomerDetailsProps) => {
       activePage: currentPage,
     });
 
+  const handleSyncList = () => {
+    sortEntities();
+  };
+
   const { customerDetailsList, match, loading, totalItems } = props;
   return (
     <div>
-      <h2 id="customer-details-heading">
+      <h2 id="customer-details-heading" data-cy="CustomerDetailsHeading">
         Customer Details
-        <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
-          <FontAwesomeIcon icon="plus" />
-          &nbsp; Create new Customer Details
-        </Link>
+        <div className="d-flex justify-content-end">
+          <Button className="mr-2" color="info" onClick={handleSyncList} disabled={loading}>
+            <FontAwesomeIcon icon="sync" spin={loading} /> Refresh List
+          </Button>
+          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+            <FontAwesomeIcon icon="plus" />
+            &nbsp; Create new Customer Details
+          </Link>
+        </div>
       </h2>
       <div className="table-responsive">
         {customerDetailsList && customerDetailsList.length > 0 ? (
@@ -108,12 +117,13 @@ export const CustomerDetails = (props: ICustomerDetailsProps) => {
             </thead>
             <tbody>
               {customerDetailsList.map((customerDetails, i) => (
-                <tr key={`entity-${i}`}>
+                <tr key={`entity-${i}`} data-cy="entityTable">
                   <td>
                     <Button tag={Link} to={`${match.url}/${customerDetails.id}`} color="link" size="sm">
                       {customerDetails.id}
                     </Button>
                   </td>
+                  <td>{customerDetails.id}</td>
                   <td>{customerDetails.gender}</td>
                   <td>{customerDetails.phone}</td>
                   <td>{customerDetails.addressLine1}</td>
@@ -123,7 +133,7 @@ export const CustomerDetails = (props: ICustomerDetailsProps) => {
                   <td>{customerDetails.user ? customerDetails.user.login : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${customerDetails.id}`} color="info" size="sm">
+                      <Button tag={Link} to={`${match.url}/${customerDetails.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                       </Button>
                       <Button
@@ -131,6 +141,7 @@ export const CustomerDetails = (props: ICustomerDetailsProps) => {
                         to={`${match.url}/${customerDetails.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                         color="primary"
                         size="sm"
+                        data-cy="entityEditButton"
                       >
                         <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
                       </Button>
@@ -139,6 +150,7 @@ export const CustomerDetails = (props: ICustomerDetailsProps) => {
                         to={`${match.url}/${customerDetails.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                         color="danger"
                         size="sm"
+                        data-cy="entityDeleteButton"
                       >
                         <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
                       </Button>

@@ -2,15 +2,13 @@ package com.adyen.demo.store.service;
 
 import com.adyen.demo.store.domain.ProductCategory;
 import com.adyen.demo.store.repository.ProductCategoryRepository;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
  * Service Implementation for managing {@link ProductCategory}.
@@ -39,6 +37,32 @@ public class ProductCategoryService {
     }
 
     /**
+     * Partially update a productCategory.
+     *
+     * @param productCategory the entity to update partially.
+     * @return the persisted entity.
+     */
+    public Optional<ProductCategory> partialUpdate(ProductCategory productCategory) {
+        log.debug("Request to partially update ProductCategory : {}", productCategory);
+
+        return productCategoryRepository
+            .findById(productCategory.getId())
+            .map(
+                existingProductCategory -> {
+                    if (productCategory.getName() != null) {
+                        existingProductCategory.setName(productCategory.getName());
+                    }
+                    if (productCategory.getDescription() != null) {
+                        existingProductCategory.setDescription(productCategory.getDescription());
+                    }
+
+                    return existingProductCategory;
+                }
+            )
+            .map(productCategoryRepository::save);
+    }
+
+    /**
      * Get all the productCategories.
      *
      * @param pageable the pagination information.
@@ -49,7 +73,6 @@ public class ProductCategoryService {
         log.debug("Request to get all ProductCategories");
         return productCategoryRepository.findAll(pageable);
     }
-
 
     /**
      * Get one productCategory by id.

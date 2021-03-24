@@ -4,11 +4,11 @@ import { Size } from 'app/shared/model/enumerations/size.model';
 export interface IProduct {
   id?: number;
   name?: string;
-  description?: string;
+  description?: string | null;
   price?: number;
   itemSize?: Size;
-  imageContentType?: string;
-  image?: any;
+  imageContentType?: string | null;
+  image?: string | null;
   productCategory?: IProductCategory;
 }
 

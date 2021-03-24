@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Col, Alert, Row } from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import { connect } from 'react-redux';
 
 import { AvForm, AvField } from 'availity-reactstrap-validation';
@@ -47,6 +47,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
                 maxLength: { value: 50, errorMessage: 'Your first name cannot be longer than 50 characters' },
               }}
               value={props.account.firstName}
+              data-cy="firstname"
             />
             {/* Last name */}
             <AvField
@@ -61,6 +62,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
                 maxLength: { value: 50, errorMessage: 'Your last name cannot be longer than 50 characters' },
               }}
               value={props.account.lastName}
+              data-cy="lastname"
             />
             {/* Email */}
             <AvField
@@ -74,8 +76,9 @@ export const SettingsPage = (props: IUserSettingsProps) => {
                 maxLength: { value: 254, errorMessage: 'Your email cannot be longer than 50 characters.' },
               }}
               value={props.account.email}
+              data-cy="email"
             />
-            <Button color="primary" type="submit">
+            <Button color="primary" type="submit" data-cy="submit">
               Save
             </Button>
           </AvForm>

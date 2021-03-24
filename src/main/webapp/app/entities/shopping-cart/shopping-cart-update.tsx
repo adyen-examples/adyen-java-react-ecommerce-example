@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label } from 'reactstrap';
 import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
+import { translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
@@ -17,8 +17,7 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 export interface IShoppingCartUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
-  const [customerDetailsId, setCustomerDetailsId] = useState('0');
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const { shoppingCartEntity, customerDetails, loading, updating } = props;
 
@@ -49,6 +48,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
       const entity = {
         ...shoppingCartEntity,
         ...values,
+        customerDetails: customerDetails.find(it => it.id.toString() === values.customerDetailsId.toString()),
       };
 
       if (isNew) {
@@ -63,7 +63,9 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="storeApp.shoppingCart.home.createOrEditLabel">Create or edit a ShoppingCart</h2>
+          <h2 id="storeApp.shoppingCart.home.createOrEditLabel" data-cy="ShoppingCartCreateUpdateHeading">
+            Create or edit a ShoppingCart
+          </h2>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -84,6 +86,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                 </Label>
                 <AvInput
                   id="shopping-cart-placedDate"
+                  data-cy="placedDate"
                   type="datetime-local"
                   className="form-control"
                   name="placedDate"
@@ -100,6 +103,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                 </Label>
                 <AvInput
                   id="shopping-cart-status"
+                  data-cy="status"
                   type="select"
                   className="form-control"
                   name="status"
@@ -118,6 +122,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                 </Label>
                 <AvField
                   id="shopping-cart-totalPrice"
+                  data-cy="totalPrice"
                   type="text"
                   name="totalPrice"
                   validate={{
@@ -133,6 +138,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                 </Label>
                 <AvInput
                   id="shopping-cart-paymentMethod"
+                  data-cy="paymentMethod"
                   type="select"
                   className="form-control"
                   name="paymentMethod"
@@ -146,24 +152,30 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                 <Label id="paymentReferenceLabel" for="shopping-cart-paymentReference">
                   Payment Reference
                 </Label>
-                <AvField id="shopping-cart-paymentReference" type="text" name="paymentReference" />
+                <AvField id="shopping-cart-paymentReference" data-cy="paymentReference" type="text" name="paymentReference" />
               </AvGroup>
               <AvGroup>
                 <Label id="paymentModificationReferenceLabel" for="shopping-cart-paymentModificationReference">
                   Payment Modification Reference
                 </Label>
-                <AvField id="shopping-cart-paymentModificationReference" type="text" name="paymentModificationReference" />
+                <AvField
+                  id="shopping-cart-paymentModificationReference"
+                  data-cy="paymentModificationReference"
+                  type="text"
+                  name="paymentModificationReference"
+                />
               </AvGroup>
               <AvGroup>
                 <Label for="shopping-cart-customerDetails">Customer Details</Label>
                 <AvInput
                   id="shopping-cart-customerDetails"
+                  data-cy="customerDetails"
                   type="select"
                   className="form-control"
-                  name="customerDetails.id"
-                  value={isNew ? customerDetails[0] && customerDetails[0].id : shoppingCartEntity.customerDetails?.id}
+                  name="customerDetailsId"
                   required
                 >
+                  <option value="" key="0" />
                   {customerDetails
                     ? customerDetails.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
@@ -180,7 +192,7 @@ export const ShoppingCartUpdate = (props: IShoppingCartUpdateProps) => {
                 <span className="d-none d-md-inline">Back</span>
               </Button>
               &nbsp;
-              <Button color="primary" id="save-entity" type="submit" disabled={updating}>
+              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
                 <FontAwesomeIcon icon="save" />
                 &nbsp; Save
               </Button>

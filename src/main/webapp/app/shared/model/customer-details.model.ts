@@ -7,11 +7,11 @@ export interface ICustomerDetails {
   gender?: Gender;
   phone?: string;
   addressLine1?: string;
-  addressLine2?: string;
+  addressLine2?: string | null;
   city?: string;
   country?: string;
   user?: IUser;
-  carts?: IShoppingCart[];
+  carts?: IShoppingCart[] | null;
 }
 
 export const defaultValue: Readonly<ICustomerDetails> = {};

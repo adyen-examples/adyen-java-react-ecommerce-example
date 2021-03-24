@@ -1,6 +1,6 @@
 {
-  "name": "store",
-  "short_name": "store",
+  "name": "Store",
+  "short_name": "Store",
   "icons": [
       {
           "src": "./content/images/logo.svg",

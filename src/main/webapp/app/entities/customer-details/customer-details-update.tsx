@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label } from 'reactstrap';
 import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
+import { translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
@@ -17,8 +17,7 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 export interface ICustomerDetailsUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
-  const [userId, setUserId] = useState('0');
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const { customerDetailsEntity, users, loading, updating } = props;
 
@@ -47,6 +46,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
       const entity = {
         ...customerDetailsEntity,
         ...values,
+        user: users.find(it => it.id.toString() === values.userId.toString()),
       };
       entity.user = values.user;
 
@@ -62,7 +62,9 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="storeApp.customerDetails.home.createOrEditLabel">Create or edit a CustomerDetails</h2>
+          <h2 id="storeApp.customerDetails.home.createOrEditLabel" data-cy="CustomerDetailsCreateUpdateHeading">
+            Create or edit a CustomerDetails
+          </h2>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -83,6 +85,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                 </Label>
                 <AvInput
                   id="customer-details-gender"
+                  data-cy="gender"
                   type="select"
                   className="form-control"
                   name="gender"
@@ -99,6 +102,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                 </Label>
                 <AvField
                   id="customer-details-phone"
+                  data-cy="phone"
                   type="text"
                   name="phone"
                   validate={{
@@ -112,6 +116,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                 </Label>
                 <AvField
                   id="customer-details-addressLine1"
+                  data-cy="addressLine1"
                   type="text"
                   name="addressLine1"
                   validate={{
@@ -123,7 +128,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                 <Label id="addressLine2Label" for="customer-details-addressLine2">
                   Address Line 2
                 </Label>
-                <AvField id="customer-details-addressLine2" type="text" name="addressLine2" />
+                <AvField id="customer-details-addressLine2" data-cy="addressLine2" type="text" name="addressLine2" />
               </AvGroup>
               <AvGroup>
                 <Label id="cityLabel" for="customer-details-city">
@@ -131,6 +136,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                 </Label>
                 <AvField
                   id="customer-details-city"
+                  data-cy="city"
                   type="text"
                   name="city"
                   validate={{
@@ -144,6 +150,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                 </Label>
                 <AvField
                   id="customer-details-country"
+                  data-cy="country"
                   type="text"
                   name="country"
                   validate={{
@@ -153,14 +160,8 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
               </AvGroup>
               <AvGroup>
                 <Label for="customer-details-user">User</Label>
-                <AvInput
-                  id="customer-details-user"
-                  type="select"
-                  className="form-control"
-                  name="user.id"
-                  value={isNew ? users[0] && users[0].id : customerDetailsEntity.user?.id}
-                  required
-                >
+                <AvInput id="customer-details-user" data-cy="user" type="select" className="form-control" name="userId" required>
+                  <option value="" key="0" />
                   {users
                     ? users.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
@@ -177,7 +178,7 @@ export const CustomerDetailsUpdate = (props: ICustomerDetailsUpdateProps) => {
                 <span className="d-none d-md-inline">Back</span>
               </Button>
               &nbsp;
-              <Button color="primary" id="save-entity" type="submit" disabled={updating}>
+              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
                 <FontAwesomeIcon icon="save" />
                 &nbsp; Save
               </Button>

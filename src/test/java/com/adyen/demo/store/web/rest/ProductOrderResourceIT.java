@@ -1,38 +1,34 @@
 package com.adyen.demo.store.web.rest;
 
+import static com.adyen.demo.store.web.rest.TestUtil.sameNumber;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.adyen.demo.store.IntegrationTest;
+import com.adyen.demo.store.domain.Product;
+import com.adyen.demo.store.domain.ProductOrder;
+import com.adyen.demo.store.domain.ShoppingCart;
+import com.adyen.demo.store.repository.ProductOrderRepository;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import com.adyen.demo.store.StoreApp;
-import com.adyen.demo.store.domain.Product;
-import com.adyen.demo.store.domain.ProductOrder;
-import com.adyen.demo.store.domain.ShoppingCart;
-import com.adyen.demo.store.repository.ProductOrderRepository;
-import com.adyen.demo.store.service.ProductOrderService;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Integration tests for the {@link ProductOrderResource} REST controller.
  */
-@SpringBootTest(classes = StoreApp.class)
+@IntegrationTest
 @AutoConfigureMockMvc
 @WithMockUser(username="admin", authorities={"ROLE_ADMIN"}, password = "admin")
 public class ProductOrderResourceIT {
@@ -43,11 +39,14 @@ public class ProductOrderResourceIT {
     private static final BigDecimal DEFAULT_TOTAL_PRICE = new BigDecimal(0);
     private static final BigDecimal UPDATED_TOTAL_PRICE = new BigDecimal(1);
 
-    @Autowired
-    private ProductOrderRepository productOrderRepository;
+    private static final String ENTITY_API_URL = "/api/product-orders";
+    private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+
+    private static Random random = new Random();
+    private static AtomicLong count = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     @Autowired
-    private ProductOrderService productOrderService;
+    private ProductOrderRepository productOrderRepository;
 
     @Autowired
     private EntityManager em;
@@ -64,9 +63,7 @@ public class ProductOrderResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ProductOrder createEntity(EntityManager em) {
-        ProductOrder productOrder = new ProductOrder()
-            .quantity(DEFAULT_QUANTITY)
-            .totalPrice(DEFAULT_TOTAL_PRICE);
+        ProductOrder productOrder = new ProductOrder().quantity(DEFAULT_QUANTITY).totalPrice(DEFAULT_TOTAL_PRICE);
         // Add required entity
         Product product;
         if (TestUtil.findAll(em, Product.class).isEmpty()) {
@@ -89,6 +86,7 @@ public class ProductOrderResourceIT {
         productOrder.setCart(shoppingCart);
         return productOrder;
     }
+
     /**
      * Create an updated entity for this test.
      *
@@ -96,9 +94,7 @@ public class ProductOrderResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static ProductOrder createUpdatedEntity(EntityManager em) {
-        ProductOrder productOrder = new ProductOrder()
-            .quantity(UPDATED_QUANTITY)
-            .totalPrice(UPDATED_TOTAL_PRICE);
+        ProductOrder productOrder = new ProductOrder().quantity(UPDATED_QUANTITY).totalPrice(UPDATED_TOTAL_PRICE);
         // Add required entity
         Product product;
         if (TestUtil.findAll(em, Product.class).isEmpty()) {
@@ -129,12 +125,11 @@ public class ProductOrderResourceIT {
 
     @Test
     @Transactional
-    public void createProductOrder() throws Exception {
+    void createProductOrder() throws Exception {
         int databaseSizeBeforeCreate = productOrderRepository.findAll().size();
         // Create the ProductOrder
-        restProductOrderMockMvc.perform(post("/api/product-orders")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(productOrder)))
+        restProductOrderMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(productOrder)))
             .andExpect(status().isCreated());
 
         // Validate the ProductOrder in the database
@@ -142,21 +137,20 @@ public class ProductOrderResourceIT {
         assertThat(productOrderList).hasSize(databaseSizeBeforeCreate + 1);
         ProductOrder testProductOrder = productOrderList.get(productOrderList.size() - 1);
         assertThat(testProductOrder.getQuantity()).isEqualTo(DEFAULT_QUANTITY);
-        assertThat(testProductOrder.getTotalPrice()).isEqualTo(DEFAULT_TOTAL_PRICE);
+        assertThat(testProductOrder.getTotalPrice()).isEqualByComparingTo(DEFAULT_TOTAL_PRICE);
     }
 
     @Test
     @Transactional
-    public void createProductOrderWithExistingId() throws Exception {
-        int databaseSizeBeforeCreate = productOrderRepository.findAll().size();
-
+    void createProductOrderWithExistingId() throws Exception {
         // Create the ProductOrder with an existing ID
         productOrder.setId(1L);
 
+        int databaseSizeBeforeCreate = productOrderRepository.findAll().size();
+
         // An entity with an existing ID cannot be created, so this API call must fail
-        restProductOrderMockMvc.perform(post("/api/product-orders")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(productOrder)))
+        restProductOrderMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(productOrder)))
             .andExpect(status().isBadRequest());
 
         // Validate the ProductOrder in the database
@@ -164,20 +158,17 @@ public class ProductOrderResourceIT {
         assertThat(productOrderList).hasSize(databaseSizeBeforeCreate);
     }
 
-
     @Test
     @Transactional
-    public void checkQuantityIsRequired() throws Exception {
+    void checkQuantityIsRequired() throws Exception {
         int databaseSizeBeforeTest = productOrderRepository.findAll().size();
         // set the field null
         productOrder.setQuantity(null);
 
         // Create the ProductOrder, which fails.
 
-
-        restProductOrderMockMvc.perform(post("/api/product-orders")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(productOrder)))
+        restProductOrderMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(productOrder)))
             .andExpect(status().isBadRequest());
 
         List<ProductOrder> productOrderList = productOrderRepository.findAll();
@@ -186,17 +177,15 @@ public class ProductOrderResourceIT {
 
     @Test
     @Transactional
-    public void checkTotalPriceIsRequired() throws Exception {
+    void checkTotalPriceIsRequired() throws Exception {
         int databaseSizeBeforeTest = productOrderRepository.findAll().size();
         // set the field null
         productOrder.setTotalPrice(null);
 
         // Create the ProductOrder, which fails.
 
-
-        restProductOrderMockMvc.perform(post("/api/product-orders")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(productOrder)))
+        restProductOrderMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(productOrder)))
             .andExpect(status().isBadRequest());
 
         List<ProductOrder> productOrderList = productOrderRepository.findAll();
@@ -205,46 +194,48 @@ public class ProductOrderResourceIT {
 
     @Test
     @Transactional
-    public void getAllProductOrders() throws Exception {
+    void getAllProductOrders() throws Exception {
         // Initialize the database
         productOrderRepository.saveAndFlush(productOrder);
 
         // Get all the productOrderList
-        restProductOrderMockMvc.perform(get("/api/product-orders?sort=id,desc"))
+        restProductOrderMockMvc
+            .perform(get(ENTITY_API_URL + "?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(productOrder.getId().intValue())))
             .andExpect(jsonPath("$.[*].quantity").value(hasItem(DEFAULT_QUANTITY)))
-            .andExpect(jsonPath("$.[*].totalPrice").value(hasItem(DEFAULT_TOTAL_PRICE.intValue())));
+            .andExpect(jsonPath("$.[*].totalPrice").value(hasItem(sameNumber(DEFAULT_TOTAL_PRICE))));
     }
 
     @Test
     @Transactional
-    public void getProductOrder() throws Exception {
+    void getProductOrder() throws Exception {
         // Initialize the database
         productOrderRepository.saveAndFlush(productOrder);
 
         // Get the productOrder
-        restProductOrderMockMvc.perform(get("/api/product-orders/{id}", productOrder.getId()))
+        restProductOrderMockMvc
+            .perform(get(ENTITY_API_URL_ID, productOrder.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(productOrder.getId().intValue()))
             .andExpect(jsonPath("$.quantity").value(DEFAULT_QUANTITY))
-            .andExpect(jsonPath("$.totalPrice").value(DEFAULT_TOTAL_PRICE.intValue()));
-    }
-    @Test
-    @Transactional
-    public void getNonExistingProductOrder() throws Exception {
-        // Get the productOrder
-        restProductOrderMockMvc.perform(get("/api/product-orders/{id}", Long.MAX_VALUE))
-            .andExpect(status().isNotFound());
+            .andExpect(jsonPath("$.totalPrice").value(sameNumber(DEFAULT_TOTAL_PRICE)));
     }
 
     @Test
     @Transactional
-    public void updateProductOrder() throws Exception {
+    void getNonExistingProductOrder() throws Exception {
+        // Get the productOrder
+        restProductOrderMockMvc.perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE)).andExpect(status().isNotFound());
+    }
+
+    @Test
+    @Transactional
+    void putNewProductOrder() throws Exception {
         // Initialize the database
-        productOrderService.save(productOrder);
+        productOrderRepository.saveAndFlush(productOrder);
 
         int databaseSizeBeforeUpdate = productOrderRepository.findAll().size();
 
@@ -252,13 +243,14 @@ public class ProductOrderResourceIT {
         ProductOrder updatedProductOrder = productOrderRepository.findById(productOrder.getId()).get();
         // Disconnect from session so that the updates on updatedProductOrder are not directly saved in db
         em.detach(updatedProductOrder);
-        updatedProductOrder
-            .quantity(UPDATED_QUANTITY)
-            .totalPrice(UPDATED_TOTAL_PRICE);
+        updatedProductOrder.quantity(UPDATED_QUANTITY).totalPrice(UPDATED_TOTAL_PRICE);
 
-        restProductOrderMockMvc.perform(put("/api/product-orders")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(updatedProductOrder)))
+        restProductOrderMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, updatedProductOrder.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(updatedProductOrder))
+            )
             .andExpect(status().isOk());
 
         // Validate the ProductOrder in the database
@@ -271,13 +263,17 @@ public class ProductOrderResourceIT {
 
     @Test
     @Transactional
-    public void updateNonExistingProductOrder() throws Exception {
+    void putNonExistingProductOrder() throws Exception {
         int databaseSizeBeforeUpdate = productOrderRepository.findAll().size();
+        productOrder.setId(count.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
-        restProductOrderMockMvc.perform(put("/api/product-orders")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(productOrder)))
+        restProductOrderMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, productOrder.getId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(productOrder))
+            )
             .andExpect(status().isBadRequest());
 
         // Validate the ProductOrder in the database
@@ -287,15 +283,167 @@ public class ProductOrderResourceIT {
 
     @Test
     @Transactional
-    public void deleteProductOrder() throws Exception {
+    void putWithIdMismatchProductOrder() throws Exception {
+        int databaseSizeBeforeUpdate = productOrderRepository.findAll().size();
+        productOrder.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restProductOrderMockMvc
+            .perform(
+                put(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(TestUtil.convertObjectToJsonBytes(productOrder))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the ProductOrder in the database
+        List<ProductOrder> productOrderList = productOrderRepository.findAll();
+        assertThat(productOrderList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void putWithMissingIdPathParamProductOrder() throws Exception {
+        int databaseSizeBeforeUpdate = productOrderRepository.findAll().size();
+        productOrder.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restProductOrderMockMvc
+            .perform(put(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(TestUtil.convertObjectToJsonBytes(productOrder)))
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the ProductOrder in the database
+        List<ProductOrder> productOrderList = productOrderRepository.findAll();
+        assertThat(productOrderList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void partialUpdateProductOrderWithPatch() throws Exception {
         // Initialize the database
-        productOrderService.save(productOrder);
+        productOrderRepository.saveAndFlush(productOrder);
+
+        int databaseSizeBeforeUpdate = productOrderRepository.findAll().size();
+
+        // Update the productOrder using partial update
+        ProductOrder partialUpdatedProductOrder = new ProductOrder();
+        partialUpdatedProductOrder.setId(productOrder.getId());
+
+        restProductOrderMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedProductOrder.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedProductOrder))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the ProductOrder in the database
+        List<ProductOrder> productOrderList = productOrderRepository.findAll();
+        assertThat(productOrderList).hasSize(databaseSizeBeforeUpdate);
+        ProductOrder testProductOrder = productOrderList.get(productOrderList.size() - 1);
+        assertThat(testProductOrder.getQuantity()).isEqualTo(DEFAULT_QUANTITY);
+        assertThat(testProductOrder.getTotalPrice()).isEqualByComparingTo(DEFAULT_TOTAL_PRICE);
+    }
+
+    @Test
+    @Transactional
+    void fullUpdateProductOrderWithPatch() throws Exception {
+        // Initialize the database
+        productOrderRepository.saveAndFlush(productOrder);
+
+        int databaseSizeBeforeUpdate = productOrderRepository.findAll().size();
+
+        // Update the productOrder using partial update
+        ProductOrder partialUpdatedProductOrder = new ProductOrder();
+        partialUpdatedProductOrder.setId(productOrder.getId());
+
+        partialUpdatedProductOrder.quantity(UPDATED_QUANTITY).totalPrice(UPDATED_TOTAL_PRICE);
+
+        restProductOrderMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, partialUpdatedProductOrder.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(partialUpdatedProductOrder))
+            )
+            .andExpect(status().isOk());
+
+        // Validate the ProductOrder in the database
+        List<ProductOrder> productOrderList = productOrderRepository.findAll();
+        assertThat(productOrderList).hasSize(databaseSizeBeforeUpdate);
+        ProductOrder testProductOrder = productOrderList.get(productOrderList.size() - 1);
+        assertThat(testProductOrder.getQuantity()).isEqualTo(UPDATED_QUANTITY);
+        assertThat(testProductOrder.getTotalPrice()).isEqualByComparingTo(UPDATED_TOTAL_PRICE);
+    }
+
+    @Test
+    @Transactional
+    void patchNonExistingProductOrder() throws Exception {
+        int databaseSizeBeforeUpdate = productOrderRepository.findAll().size();
+        productOrder.setId(count.incrementAndGet());
+
+        // If the entity doesn't have an ID, it will throw BadRequestAlertException
+        restProductOrderMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, productOrder.getId())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(productOrder))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the ProductOrder in the database
+        List<ProductOrder> productOrderList = productOrderRepository.findAll();
+        assertThat(productOrderList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithIdMismatchProductOrder() throws Exception {
+        int databaseSizeBeforeUpdate = productOrderRepository.findAll().size();
+        productOrder.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restProductOrderMockMvc
+            .perform(
+                patch(ENTITY_API_URL_ID, count.incrementAndGet())
+                    .contentType("application/merge-patch+json")
+                    .content(TestUtil.convertObjectToJsonBytes(productOrder))
+            )
+            .andExpect(status().isBadRequest());
+
+        // Validate the ProductOrder in the database
+        List<ProductOrder> productOrderList = productOrderRepository.findAll();
+        assertThat(productOrderList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void patchWithMissingIdPathParamProductOrder() throws Exception {
+        int databaseSizeBeforeUpdate = productOrderRepository.findAll().size();
+        productOrder.setId(count.incrementAndGet());
+
+        // If url ID doesn't match entity ID, it will throw BadRequestAlertException
+        restProductOrderMockMvc
+            .perform(
+                patch(ENTITY_API_URL).contentType("application/merge-patch+json").content(TestUtil.convertObjectToJsonBytes(productOrder))
+            )
+            .andExpect(status().isMethodNotAllowed());
+
+        // Validate the ProductOrder in the database
+        List<ProductOrder> productOrderList = productOrderRepository.findAll();
+        assertThat(productOrderList).hasSize(databaseSizeBeforeUpdate);
+    }
+
+    @Test
+    @Transactional
+    void deleteProductOrder() throws Exception {
+        // Initialize the database
+        productOrderRepository.saveAndFlush(productOrder);
 
         int databaseSizeBeforeDelete = productOrderRepository.findAll().size();
 
         // Delete the productOrder
-        restProductOrderMockMvc.perform(delete("/api/product-orders/{id}", productOrder.getId())
-            .accept(MediaType.APPLICATION_JSON))
+        restProductOrderMockMvc
+            .perform(delete(ENTITY_API_URL_ID, productOrder.getId()).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNoContent());
 
         // Validate the database contains one less item

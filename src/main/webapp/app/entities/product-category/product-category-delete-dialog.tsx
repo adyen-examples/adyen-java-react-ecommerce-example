@@ -2,10 +2,9 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import { ICrudGetAction, ICrudDeleteAction } from 'react-jhipster';
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IProductCategory } from 'app/shared/model/product-category.model';
 import { IRootState } from 'app/shared/reducers';
 import { getEntity, deleteEntity } from './product-category.reducer';
 
@@ -33,14 +32,16 @@ export const ProductCategoryDeleteDialog = (props: IProductCategoryDeleteDialogP
   const { productCategoryEntity } = props;
   return (
     <Modal isOpen toggle={handleClose}>
-      <ModalHeader toggle={handleClose}>Confirm delete operation</ModalHeader>
+      <ModalHeader toggle={handleClose} data-cy="productCategoryDeleteDialogHeading">
+        Confirm delete operation
+      </ModalHeader>
       <ModalBody id="storeApp.productCategory.delete.question">Are you sure you want to delete this ProductCategory?</ModalBody>
       <ModalFooter>
         <Button color="secondary" onClick={handleClose}>
           <FontAwesomeIcon icon="ban" />
           &nbsp; Cancel
         </Button>
-        <Button id="jhi-confirm-delete-productCategory" color="danger" onClick={confirmDelete}>
+        <Button id="jhi-confirm-delete-productCategory" data-cy="entityConfirmDeleteButton" color="danger" onClick={confirmDelete}>
           <FontAwesomeIcon icon="trash" />
           &nbsp; Delete
         </Button>

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Table } from 'reactstrap';
-import { TextFormat } from 'react-jhipster';
+import { Button, Col, Row, Table } from 'reactstrap';
+import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
@@ -22,15 +22,24 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
     props.refundPayment(ref, props.getEntities);
   };
 
+  const handleSyncList = () => {
+    props.getEntities();
+  };
+
   const { shoppingCartList, match, loading } = props;
   return (
     <div>
-      <h2 id="shopping-cart-heading">
+      <h2 id="shopping-cart-heading" data-cy="ShoppingCartHeading">
         Shopping Carts
-        <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
-          <FontAwesomeIcon icon="plus" />
-          &nbsp; Create new Shopping Cart
-        </Link>
+        <div className="d-flex justify-content-end">
+          <Button className="mr-2" color="info" onClick={handleSyncList} disabled={loading}>
+            <FontAwesomeIcon icon="sync" spin={loading} /> Refresh List
+          </Button>
+          <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+            <FontAwesomeIcon icon="plus" />
+            &nbsp; Create new Shopping Cart
+          </Link>
+        </div>
       </h2>
       <div className="table-responsive">
         {shoppingCartList && shoppingCartList.length > 0 ? (
@@ -50,12 +59,13 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
             </thead>
             <tbody>
               {shoppingCartList.map((shoppingCart, i) => (
-                <tr key={`entity-${i}`}>
+                <tr key={`entity-${i}`} data-cy="entityTable">
                   <td>
                     <Button tag={Link} to={`${match.url}/${shoppingCart.id}`} color="link" size="sm">
                       {shoppingCart.id}
                     </Button>
                   </td>
+                  <td>{shoppingCart.id}</td>
                   <td>
                     {shoppingCart.placedDate ? <TextFormat type="date" value={shoppingCart.placedDate} format={APP_DATE_FORMAT} /> : null}
                   </td>
@@ -73,7 +83,7 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
                   </td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${shoppingCart.id}`} color="info" size="sm">
+                      <Button tag={Link} to={`${match.url}/${shoppingCart.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                       </Button>
                       {shoppingCart.status === OrderStatus.PAID || shoppingCart.status === OrderStatus.REFUND_FAILED ? (
@@ -81,10 +91,16 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
                           <FontAwesomeIcon icon="sync" /> <span className="d-none d-md-inline">Refund</span>
                         </Button>
                       ) : null}
-                      <Button tag={Link} to={`${match.url}/${shoppingCart.id}/edit`} color="primary" size="sm">
+                      <Button tag={Link} to={`${match.url}/${shoppingCart.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
                         <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
                       </Button>
-                      <Button tag={Link} to={`${match.url}/${shoppingCart.id}/delete`} color="danger" size="sm">
+                      <Button
+                        tag={Link}
+                        to={`${match.url}/${shoppingCart.id}/delete`}
+                        color="danger"
+                        size="sm"
+                        data-cy="entityDeleteButton"
+                      >
                         <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
                       </Button>
                     </div>

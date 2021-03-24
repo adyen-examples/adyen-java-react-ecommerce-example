@@ -52,6 +52,44 @@ public class ShoppingCartService {
     }
 
     /**
+     * Partially update a shoppingCart.
+     *
+     * @param shoppingCart the entity to update partially.
+     * @return the persisted entity.
+     */
+    public Optional<ShoppingCart> partialUpdate(ShoppingCart shoppingCart) {
+        log.debug("Request to partially update ShoppingCart : {}", shoppingCart);
+
+        return shoppingCartRepository
+            .findById(shoppingCart.getId())
+            .map(
+                existingShoppingCart -> {
+                    if (shoppingCart.getPlacedDate() != null) {
+                        existingShoppingCart.setPlacedDate(shoppingCart.getPlacedDate());
+                    }
+                    if (shoppingCart.getStatus() != null) {
+                        existingShoppingCart.setStatus(shoppingCart.getStatus());
+                    }
+                    if (shoppingCart.getTotalPrice() != null) {
+                        existingShoppingCart.setTotalPrice(shoppingCart.getTotalPrice());
+                    }
+                    if (shoppingCart.getPaymentMethod() != null) {
+                        existingShoppingCart.setPaymentMethod(shoppingCart.getPaymentMethod());
+                    }
+                    if (shoppingCart.getPaymentReference() != null) {
+                        existingShoppingCart.setPaymentReference(shoppingCart.getPaymentReference());
+                    }
+                    if (shoppingCart.getPaymentModificationReference() != null) {
+                        existingShoppingCart.setPaymentModificationReference(shoppingCart.getPaymentModificationReference());
+                    }
+
+                    return existingShoppingCart;
+                }
+            )
+            .map(shoppingCartRepository::save);
+    }
+
+    /**
      * Get all the shoppingCarts.
      *
      * @return the list of entities.
@@ -61,7 +99,6 @@ public class ShoppingCartService {
         log.debug("Request to get all ShoppingCarts");
         return shoppingCartRepository.findAll();
     }
-
 
     /**
      * Get one shoppingCart by id.

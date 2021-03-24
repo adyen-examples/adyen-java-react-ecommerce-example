@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label } from 'reactstrap';
 import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
-import { ICrudGetAction, ICrudGetAllAction, setFileData, openFile, byteSize, ICrudPutAction } from 'react-jhipster';
+import { setFileData, openFile, byteSize, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
@@ -17,8 +17,7 @@ import { mapIdList } from 'app/shared/util/entity-utils';
 export interface IProductUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const ProductUpdate = (props: IProductUpdateProps) => {
-  const [productCategoryId, setProductCategoryId] = useState('0');
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const { productEntity, productCategories, loading, updating } = props;
 
@@ -57,6 +56,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
       const entity = {
         ...productEntity,
         ...values,
+        productCategory: productCategories.find(it => it.id.toString() === values.productCategoryId.toString()),
       };
 
       if (isNew) {
@@ -71,7 +71,9 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="storeApp.product.home.createOrEditLabel">Create or edit a Product</h2>
+          <h2 id="storeApp.product.home.createOrEditLabel" data-cy="ProductCreateUpdateHeading">
+            Create or edit a Product
+          </h2>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -92,6 +94,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                 </Label>
                 <AvField
                   id="product-name"
+                  data-cy="name"
                   type="text"
                   name="name"
                   validate={{
@@ -103,7 +106,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                 <Label id="descriptionLabel" for="product-description">
                   Description
                 </Label>
-                <AvField id="product-description" type="text" name="description" />
+                <AvField id="product-description" data-cy="description" type="text" name="description" />
               </AvGroup>
               <AvGroup>
                 <Label id="priceLabel" for="product-price">
@@ -111,6 +114,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                 </Label>
                 <AvField
                   id="product-price"
+                  data-cy="price"
                   type="text"
                   name="price"
                   validate={{
@@ -126,6 +130,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                 </Label>
                 <AvInput
                   id="product-itemSize"
+                  data-cy="itemSize"
                   type="select"
                   className="form-control"
                   name="itemSize"
@@ -166,7 +171,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                       </Row>
                     </div>
                   ) : null}
-                  <input id="file_image" type="file" onChange={onBlobChange(true, 'image')} accept="image/*" />
+                  <input id="file_image" data-cy="image" type="file" onChange={onBlobChange(true, 'image')} accept="image/*" />
                   <AvInput type="hidden" name="image" value={image} />
                 </AvGroup>
               </AvGroup>
@@ -174,12 +179,13 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                 <Label for="product-productCategory">Product Category</Label>
                 <AvInput
                   id="product-productCategory"
+                  data-cy="productCategory"
                   type="select"
                   className="form-control"
-                  name="productCategory.id"
-                  value={isNew ? productCategories[0] && productCategories[0].id : productEntity.productCategory?.id}
+                  name="productCategoryId"
                   required
                 >
+                  <option value="" key="0" />
                   {productCategories
                     ? productCategories.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
@@ -196,7 +202,7 @@ export const ProductUpdate = (props: IProductUpdateProps) => {
                 <span className="d-none d-md-inline">Back</span>
               </Button>
               &nbsp;
-              <Button color="primary" id="save-entity" type="submit" disabled={updating}>
+              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
                 <FontAwesomeIcon icon="save" />
                 &nbsp; Save
               </Button>

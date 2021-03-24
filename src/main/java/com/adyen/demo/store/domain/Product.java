@@ -1,17 +1,14 @@
 package com.adyen.demo.store.domain;
 
+import com.adyen.demo.store.domain.enumeration.Size;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import javax.persistence.*;
-import javax.validation.constraints.*;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
-
-import com.adyen.demo.store.domain.enumeration.Size;
+import javax.persistence.*;
+import javax.validation.constraints.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Product sold by the Online store
@@ -54,7 +51,7 @@ public class Product implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = "products", allowSetters = true)
+    @JsonIgnoreProperties(value = { "products" }, allowSetters = true)
     private ProductCategory productCategory;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -66,8 +63,13 @@ public class Product implements Serializable {
         this.id = id;
     }
 
+    public Product id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public Product name(String name) {
@@ -80,7 +82,7 @@ public class Product implements Serializable {
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public Product description(String description) {
@@ -93,7 +95,7 @@ public class Product implements Serializable {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return this.price;
     }
 
     public Product price(BigDecimal price) {
@@ -106,7 +108,7 @@ public class Product implements Serializable {
     }
 
     public Size getItemSize() {
-        return itemSize;
+        return this.itemSize;
     }
 
     public Product itemSize(Size itemSize) {
@@ -119,7 +121,7 @@ public class Product implements Serializable {
     }
 
     public byte[] getImage() {
-        return image;
+        return this.image;
     }
 
     public Product image(byte[] image) {
@@ -132,7 +134,7 @@ public class Product implements Serializable {
     }
 
     public String getImageContentType() {
-        return imageContentType;
+        return this.imageContentType;
     }
 
     public Product imageContentType(String imageContentType) {
@@ -145,17 +147,18 @@ public class Product implements Serializable {
     }
 
     public ProductCategory getProductCategory() {
-        return productCategory;
+        return this.productCategory;
     }
 
     public Product productCategory(ProductCategory productCategory) {
-        this.productCategory = productCategory;
+        this.setProductCategory(productCategory);
         return this;
     }
 
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -171,7 +174,8 @@ public class Product implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

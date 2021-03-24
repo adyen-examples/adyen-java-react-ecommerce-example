@@ -7,8 +7,8 @@ import { Link } from 'react-router-dom';
 export interface ILoginModalProps {
   showModal: boolean;
   loginError: boolean;
-  handleLogin: Function;
-  handleClose: Function;
+  handleLogin: (username: string, password: string, rememberMe: boolean) => void;
+  handleClose: () => void;
 }
 
 class LoginModal extends React.Component<ILoginModalProps> {
@@ -23,14 +23,14 @@ class LoginModal extends React.Component<ILoginModalProps> {
     return (
       <Modal isOpen={this.props.showModal} toggle={handleClose} backdrop="static" id="login-page" autoFocus={false}>
         <AvForm onSubmit={this.handleSubmit}>
-          <ModalHeader id="login-title" toggle={handleClose}>
+          <ModalHeader id="login-title" data-cy="loginTitle" toggle={handleClose}>
             Sign in
           </ModalHeader>
           <ModalBody>
             <Row>
               <Col md="12">
                 {loginError ? (
-                  <Alert color="danger">
+                  <Alert color="danger" data-cy="loginError">
                     <strong>Failed to sign in!</strong> Please check your credentials and try again.
                   </Alert>
                 ) : null}
@@ -43,6 +43,7 @@ class LoginModal extends React.Component<ILoginModalProps> {
                   required
                   errorMessage="Username cannot be empty!"
                   autoFocus
+                  data-cy="username"
                 />
                 <AvField
                   name="password"
@@ -51,6 +52,7 @@ class LoginModal extends React.Component<ILoginModalProps> {
                   placeholder="Your password"
                   required
                   errorMessage="Password cannot be empty!"
+                  data-cy="password"
                 />
                 <AvGroup check inline>
                   <Label className="form-check-label">
@@ -61,17 +63,19 @@ class LoginModal extends React.Component<ILoginModalProps> {
             </Row>
             <div className="mt-1">&nbsp;</div>
             <Alert color="warning">
-              <Link to="/account/reset/request">Did you forget your password?</Link>
+              <Link to="/account/reset/request" data-cy="forgetYourPasswordSelector">
+                Did you forget your password?
+              </Link>
             </Alert>
             <Alert color="warning">
               <span>You don&apos;t have an account yet?</span> <Link to="/account/register">Register a new account</Link>
             </Alert>
           </ModalBody>
           <ModalFooter>
-            <Button color="secondary" onClick={handleClose} tabIndex="1">
+            <Button color="secondary" onClick={handleClose} tabIndex={1}>
               Cancel
             </Button>{' '}
-            <Button color="primary" type="submit">
+            <Button color="primary" type="submit" data-cy="submit">
               Sign in
             </Button>
           </ModalFooter>

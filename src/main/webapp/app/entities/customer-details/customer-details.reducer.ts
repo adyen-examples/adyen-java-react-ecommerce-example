@@ -11,6 +11,7 @@ export const ACTION_TYPES = {
   FETCH_CUSTOMERDETAILS: 'customerDetails/FETCH_CUSTOMERDETAILS',
   CREATE_CUSTOMERDETAILS: 'customerDetails/CREATE_CUSTOMERDETAILS',
   UPDATE_CUSTOMERDETAILS: 'customerDetails/UPDATE_CUSTOMERDETAILS',
+  PARTIAL_UPDATE_CUSTOMERDETAILS: 'customerDetails/PARTIAL_UPDATE_CUSTOMERDETAILS',
   DELETE_CUSTOMERDETAILS: 'customerDetails/DELETE_CUSTOMERDETAILS',
   RESET: 'customerDetails/RESET',
 };
@@ -42,6 +43,7 @@ export default (state: CustomerDetailsState = initialState, action): CustomerDet
     case REQUEST(ACTION_TYPES.CREATE_CUSTOMERDETAILS):
     case REQUEST(ACTION_TYPES.UPDATE_CUSTOMERDETAILS):
     case REQUEST(ACTION_TYPES.DELETE_CUSTOMERDETAILS):
+    case REQUEST(ACTION_TYPES.PARTIAL_UPDATE_CUSTOMERDETAILS):
       return {
         ...state,
         errorMessage: null,
@@ -52,6 +54,7 @@ export default (state: CustomerDetailsState = initialState, action): CustomerDet
     case FAILURE(ACTION_TYPES.FETCH_CUSTOMERDETAILS):
     case FAILURE(ACTION_TYPES.CREATE_CUSTOMERDETAILS):
     case FAILURE(ACTION_TYPES.UPDATE_CUSTOMERDETAILS):
+    case FAILURE(ACTION_TYPES.PARTIAL_UPDATE_CUSTOMERDETAILS):
     case FAILURE(ACTION_TYPES.DELETE_CUSTOMERDETAILS):
       return {
         ...state,
@@ -75,6 +78,7 @@ export default (state: CustomerDetailsState = initialState, action): CustomerDet
       };
     case SUCCESS(ACTION_TYPES.CREATE_CUSTOMERDETAILS):
     case SUCCESS(ACTION_TYPES.UPDATE_CUSTOMERDETAILS):
+    case SUCCESS(ACTION_TYPES.PARTIAL_UPDATE_CUSTOMERDETAILS):
       return {
         ...state,
         updating: false,
@@ -129,7 +133,15 @@ export const createEntity: ICrudPutAction<ICustomerDetails> = entity => async di
 export const updateEntity: ICrudPutAction<ICustomerDetails> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_CUSTOMERDETAILS,
-    payload: axios.put(apiUrl, cleanEntity(entity)),
+    payload: axios.put(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
+  });
+  return result;
+};
+
+export const partialUpdate: ICrudPutAction<ICustomerDetails> = entity => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.PARTIAL_UPDATE_CUSTOMERDETAILS,
+    payload: axios.patch(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
   });
   return result;
 };

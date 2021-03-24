@@ -36,6 +36,38 @@ public class PaymentCacheService {
     }
 
     /**
+     * Partially update a paymentCache.
+     *
+     * @param paymentCache the entity to update partially.
+     * @return the persisted entity.
+     */
+    public Optional<PaymentCache> partialUpdate(PaymentCache paymentCache) {
+        log.debug("Request to partially update PaymentCache : {}", paymentCache);
+
+        return paymentCacheRepository
+            .findById(paymentCache.getId())
+            .map(
+                existingPaymentCache -> {
+                    if (paymentCache.getOrderRef() != null) {
+                        existingPaymentCache.setOrderRef(paymentCache.getOrderRef());
+                    }
+                    if (paymentCache.getOriginalHost() != null) {
+                        existingPaymentCache.setOriginalHost(paymentCache.getOriginalHost());
+                    }
+                    if (paymentCache.getPaymentData() != null) {
+                        existingPaymentCache.setPaymentData(paymentCache.getPaymentData());
+                    }
+                    if (paymentCache.getPaymentType() != null) {
+                        existingPaymentCache.setPaymentType(paymentCache.getPaymentType());
+                    }
+
+                    return existingPaymentCache;
+                }
+            )
+            .map(paymentCacheRepository::save);
+    }
+
+    /**
      * Get all the paymentCaches.
      *
      * @return the list of entities.
@@ -45,7 +77,6 @@ public class PaymentCacheService {
         log.debug("Request to get all PaymentCaches");
         return paymentCacheRepository.findAll();
     }
-
 
     /**
      * Get one paymentCache by id.

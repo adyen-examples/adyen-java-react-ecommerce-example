@@ -11,6 +11,7 @@ export const ACTION_TYPES = {
   FETCH_PRODUCTCATEGORY: 'productCategory/FETCH_PRODUCTCATEGORY',
   CREATE_PRODUCTCATEGORY: 'productCategory/CREATE_PRODUCTCATEGORY',
   UPDATE_PRODUCTCATEGORY: 'productCategory/UPDATE_PRODUCTCATEGORY',
+  PARTIAL_UPDATE_PRODUCTCATEGORY: 'productCategory/PARTIAL_UPDATE_PRODUCTCATEGORY',
   DELETE_PRODUCTCATEGORY: 'productCategory/DELETE_PRODUCTCATEGORY',
   RESET: 'productCategory/RESET',
 };
@@ -42,6 +43,7 @@ export default (state: ProductCategoryState = initialState, action): ProductCate
     case REQUEST(ACTION_TYPES.CREATE_PRODUCTCATEGORY):
     case REQUEST(ACTION_TYPES.UPDATE_PRODUCTCATEGORY):
     case REQUEST(ACTION_TYPES.DELETE_PRODUCTCATEGORY):
+    case REQUEST(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY):
       return {
         ...state,
         errorMessage: null,
@@ -52,6 +54,7 @@ export default (state: ProductCategoryState = initialState, action): ProductCate
     case FAILURE(ACTION_TYPES.FETCH_PRODUCTCATEGORY):
     case FAILURE(ACTION_TYPES.CREATE_PRODUCTCATEGORY):
     case FAILURE(ACTION_TYPES.UPDATE_PRODUCTCATEGORY):
+    case FAILURE(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY):
     case FAILURE(ACTION_TYPES.DELETE_PRODUCTCATEGORY):
       return {
         ...state,
@@ -75,6 +78,7 @@ export default (state: ProductCategoryState = initialState, action): ProductCate
       };
     case SUCCESS(ACTION_TYPES.CREATE_PRODUCTCATEGORY):
     case SUCCESS(ACTION_TYPES.UPDATE_PRODUCTCATEGORY):
+    case SUCCESS(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY):
       return {
         ...state,
         updating: false,
@@ -129,7 +133,15 @@ export const createEntity: ICrudPutAction<IProductCategory> = entity => async di
 export const updateEntity: ICrudPutAction<IProductCategory> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.UPDATE_PRODUCTCATEGORY,
-    payload: axios.put(apiUrl, cleanEntity(entity)),
+    payload: axios.put(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
+  });
+  return result;
+};
+
+export const partialUpdate: ICrudPutAction<IProductCategory> = entity => async dispatch => {
+  const result = await dispatch({
+    type: ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY,
+    payload: axios.patch(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
   });
   return result;
 };

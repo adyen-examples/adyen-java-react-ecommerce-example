@@ -6,7 +6,6 @@ application {
     prodDatabaseType mysql
     buildTool gradle
     clientFramework react
-    useSass true
     enableTranslation false
   }
   entities *

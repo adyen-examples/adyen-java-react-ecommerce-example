@@ -1,13 +1,10 @@
 package com.adyen.demo.store.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
+import java.io.Serializable;
 import javax.persistence.*;
 import javax.validation.constraints.*;
-
-import java.io.Serializable;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * A PaymentCache.
@@ -38,7 +35,6 @@ public class PaymentCache implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = "paymentCaches", allowSetters = true)
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -50,8 +46,13 @@ public class PaymentCache implements Serializable {
         this.id = id;
     }
 
+    public PaymentCache id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public String getOrderRef() {
-        return orderRef;
+        return this.orderRef;
     }
 
     public PaymentCache orderRef(String orderRef) {
@@ -64,7 +65,7 @@ public class PaymentCache implements Serializable {
     }
 
     public String getOriginalHost() {
-        return originalHost;
+        return this.originalHost;
     }
 
     public PaymentCache originalHost(String originalHost) {
@@ -77,7 +78,7 @@ public class PaymentCache implements Serializable {
     }
 
     public String getPaymentData() {
-        return paymentData;
+        return this.paymentData;
     }
 
     public PaymentCache paymentData(String paymentData) {
@@ -90,7 +91,7 @@ public class PaymentCache implements Serializable {
     }
 
     public String getPaymentType() {
-        return paymentType;
+        return this.paymentType;
     }
 
     public PaymentCache paymentType(String paymentType) {
@@ -103,17 +104,18 @@ public class PaymentCache implements Serializable {
     }
 
     public User getUser() {
-        return user;
+        return this.user;
     }
 
     public PaymentCache user(User user) {
-        this.user = user;
+        this.setUser(user);
         return this;
     }
 
     public void setUser(User user) {
         this.user = user;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -129,7 +131,8 @@ public class PaymentCache implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

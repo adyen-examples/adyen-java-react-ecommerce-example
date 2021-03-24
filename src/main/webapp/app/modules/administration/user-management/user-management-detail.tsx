@@ -22,7 +22,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
   return (
     <div>
       <h2>
-        User [<b>{user.login}</b>]
+        User [<strong>{user.login}</strong>]
       </h2>
       <Row size="md">
         <dl className="jh-entity-details">

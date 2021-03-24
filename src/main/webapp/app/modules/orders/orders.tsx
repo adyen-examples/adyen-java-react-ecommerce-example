@@ -46,7 +46,7 @@ export const Orders = (props: IOrdersProp) => {
           <>
             <h2>
               Your Orders
-              <Button color="primary" className="float-right jh-create-entity" onClick={props.getCartsForCurrentUser}>
+              <Button color="primary" className="float-right jh-create-entity" onClick={() => props.getCartsForCurrentUser()}>
                 <FontAwesomeIcon icon="sync" />
                 &nbsp; Refresh
               </Button>
@@ -103,12 +103,12 @@ export const Orders = (props: IOrdersProp) => {
 const mapStateToProps = ({ authentication, shoppingCart }: IRootState) => ({
   isAuthenticated: authentication.isAuthenticated,
   carts: shoppingCart.entities,
-  loading: shoppingCart.loading
+  loading: shoppingCart.loading,
 });
 
 const mapDispatchToProps = {
   getCartsForCurrentUser,
-  refundPayment
+  refundPayment,
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

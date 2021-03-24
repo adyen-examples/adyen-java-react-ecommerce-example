@@ -2,12 +2,11 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col } from 'reactstrap';
-import { ICrudGetAction } from 'react-jhipster';
+import {} from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './customer-details.reducer';
-import { ICustomerDetails } from 'app/shared/model/customer-details.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
 export interface ICustomerDetailsDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
@@ -21,10 +20,12 @@ export const CustomerDetailsDetail = (props: ICustomerDetailsDetailProps) => {
   return (
     <Row>
       <Col md="8">
-        <h2>
-          CustomerDetails [<b>{customerDetailsEntity.id}</b>]
-        </h2>
+        <h2 data-cy="customerDetailsDetailsHeading">CustomerDetails</h2>
         <dl className="jh-entity-details">
+          <dt>
+            <span id="id">ID</span>
+          </dt>
+          <dd>{customerDetailsEntity.id}</dd>
           <dt>
             <span id="gender">Gender</span>
           </dt>
@@ -52,7 +53,7 @@ export const CustomerDetailsDetail = (props: ICustomerDetailsDetailProps) => {
           <dt>User</dt>
           <dd>{customerDetailsEntity.user ? customerDetailsEntity.user.login : ''}</dd>
         </dl>
-        <Button tag={Link} to="/customer-details" replace color="info">
+        <Button tag={Link} to="/customer-details" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
         &nbsp;

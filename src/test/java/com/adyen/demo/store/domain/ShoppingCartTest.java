@@ -1,13 +1,14 @@
 package com.adyen.demo.store.domain;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.adyen.demo.store.web.rest.TestUtil;
 
-public class ShoppingCartTest {
+import com.adyen.demo.store.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+class ShoppingCartTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(ShoppingCart.class);
         ShoppingCart shoppingCart1 = new ShoppingCart();
         shoppingCart1.setId(1L);

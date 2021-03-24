@@ -3,25 +3,17 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label } from 'reactstrap';
 import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
-import { IProduct } from 'app/shared/model/product.model';
 import { getEntities as getProducts } from 'app/entities/product/product.reducer';
-import { IShoppingCart } from 'app/shared/model/shopping-cart.model';
 import { getEntities as getShoppingCarts } from 'app/entities/shopping-cart/shopping-cart.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './product-order.reducer';
-import { IProductOrder } from 'app/shared/model/product-order.model';
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 
 export interface IProductOrderUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
-  const [productId, setProductId] = useState('0');
-  const [cartId, setCartId] = useState('0');
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const { productOrderEntity, products, shoppingCarts, loading, updating } = props;
 
@@ -51,6 +43,8 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
       const entity = {
         ...productOrderEntity,
         ...values,
+        product: products.find(it => it.id.toString() === values.productId.toString()),
+        cart: shoppingCarts.find(it => it.id.toString() === values.cartId.toString()),
       };
 
       if (isNew) {
@@ -65,7 +59,9 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="storeApp.productOrder.home.createOrEditLabel">Create or edit a ProductOrder</h2>
+          <h2 id="storeApp.productOrder.home.createOrEditLabel" data-cy="ProductOrderCreateUpdateHeading">
+            Create or edit a ProductOrder
+          </h2>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -86,6 +82,7 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
                 </Label>
                 <AvField
                   id="product-order-quantity"
+                  data-cy="quantity"
                   type="string"
                   className="form-control"
                   name="quantity"
@@ -102,6 +99,7 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
                 </Label>
                 <AvField
                   id="product-order-totalPrice"
+                  data-cy="totalPrice"
                   type="text"
                   name="totalPrice"
                   validate={{
@@ -116,11 +114,13 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
                 <AvInput
                   id="product-order-product"
                   type="select"
+                  data-cy="product"
                   className="form-control"
-                  name="product.id"
+                  name="productId"
                   value={isNew ? products[0] && products[0].id : productOrderEntity?.product?.id}
                   required
                 >
+                  <option value="" key="0" />
                   {products
                     ? products.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
@@ -136,11 +136,13 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
                 <AvInput
                   id="product-order-cart"
                   type="select"
+                  data-cy="cart"
                   className="form-control"
-                  name="cart.id"
+                  name="cartId"
                   value={isNew ? shoppingCarts[0] && shoppingCarts[0].id : productOrderEntity?.cart?.id}
                   required
                 >
+                  <option value="" key="0" />
                   {shoppingCarts
                     ? shoppingCarts.map(otherEntity => (
                         <option value={otherEntity.id} key={otherEntity.id}>
@@ -157,7 +159,7 @@ export const ProductOrderUpdate = (props: IProductOrderUpdateProps) => {
                 <span className="d-none d-md-inline">Back</span>
               </Button>
               &nbsp;
-              <Button color="primary" id="save-entity" type="submit" disabled={updating}>
+              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
                 <FontAwesomeIcon icon="save" />
                 &nbsp; Save
               </Button>

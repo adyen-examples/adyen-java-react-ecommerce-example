@@ -13,9 +13,10 @@ jib {
             JHIPSTER_SLEEP: "0"
         ]
         creationTime = "USE_CURRENT_TIMESTAMP"
+        user = 1000
     }
     extraDirectories {
-      paths = file("src/main/jib")
+      paths = file("src/main/docker/jib")
       permissions = ["/entrypoint.sh": "755"]
     }
 }

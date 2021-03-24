@@ -163,9 +163,9 @@ public class CheckoutResource {
      * @throws ApiException            from Adyen API.
      */
     @PostMapping("/checkout/submit-additional-details")
-    public ResponseEntity<PaymentsResponse> payments(@RequestBody PaymentsDetailsRequest detailsRequest) throws IOException, ApiException {
+    public ResponseEntity<PaymentsDetailsResponse> payments(@RequestBody PaymentsDetailsRequest detailsRequest) throws IOException, ApiException {
         log.debug("REST request to make Adyen payment details {}", detailsRequest);
-        PaymentsResponse response = checkout.paymentsDetails(detailsRequest);
+        PaymentsDetailsResponse response = checkout.paymentsDetails(detailsRequest);
         return ResponseEntity.ok()
             .body(response);
     }
@@ -234,7 +234,7 @@ public class CheckoutResource {
         PaymentCache paymentCache = paymentCacheService.findOneByOrderRef(orderRef).orElseThrow(() -> new EntityNotFoundException("PaymentData"));
         detailsRequest.setPaymentData(paymentCache.getPaymentData());
 
-        PaymentsResponse response = checkout.paymentsDetails(detailsRequest);
+        PaymentsDetailsResponse response = checkout.paymentsDetails(detailsRequest);
         String redirectURL = paymentCache.getOriginalHost() + "/status/";
         switch (response.getResultCode()) {
             case AUTHORISED:

@@ -1,18 +1,17 @@
 package com.adyen.demo.store.domain;
 
+import com.adyen.demo.store.domain.enumeration.OrderStatus;
+import com.adyen.demo.store.domain.enumeration.PaymentMethod;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import com.adyen.demo.store.domain.enumeration.OrderStatus;
-import com.adyen.demo.store.domain.enumeration.PaymentMethod;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * A ShoppingCart.
@@ -55,11 +54,12 @@ public class ShoppingCart implements Serializable {
 
     @OneToMany(mappedBy = "cart")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "product", "cart" }, allowSetters = true)
     private Set<ProductOrder> orders = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = "carts", allowSetters = true)
+    @JsonIgnoreProperties(value = { "user", "carts" }, allowSetters = true)
     private CustomerDetails customerDetails;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
@@ -71,8 +71,13 @@ public class ShoppingCart implements Serializable {
         this.id = id;
     }
 
+    public ShoppingCart id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public Instant getPlacedDate() {
-        return placedDate;
+        return this.placedDate;
     }
 
     public ShoppingCart placedDate(Instant placedDate) {
@@ -85,7 +90,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public OrderStatus getStatus() {
-        return status;
+        return this.status;
     }
 
     public ShoppingCart status(OrderStatus status) {
@@ -98,7 +103,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public BigDecimal getTotalPrice() {
-        return totalPrice;
+        return this.totalPrice;
     }
 
     public ShoppingCart totalPrice(BigDecimal totalPrice) {
@@ -117,7 +122,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
+        return this.paymentMethod;
     }
 
     public ShoppingCart paymentMethod(PaymentMethod paymentMethod) {
@@ -130,7 +135,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public String getPaymentReference() {
-        return paymentReference;
+        return this.paymentReference;
     }
 
     public ShoppingCart paymentReference(String paymentReference) {
@@ -143,7 +148,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public String getPaymentModificationReference() {
-        return paymentModificationReference;
+        return this.paymentModificationReference;
     }
 
     public ShoppingCart paymentModificationReference(String paymentModificationReference) {
@@ -156,11 +161,11 @@ public class ShoppingCart implements Serializable {
     }
 
     public Set<ProductOrder> getOrders() {
-        return orders;
+        return this.orders;
     }
 
     public ShoppingCart orders(Set<ProductOrder> productOrders) {
-        this.orders = productOrders;
+        this.setOrders(productOrders);
         calculateTotalPrice();
         return this;
     }
@@ -180,22 +185,29 @@ public class ShoppingCart implements Serializable {
     }
 
     public void setOrders(Set<ProductOrder> productOrders) {
+        if (this.orders != null) {
+            this.orders.forEach(i -> i.setCart(null));
+        }
+        if (productOrders != null) {
+            productOrders.forEach(i -> i.setCart(this));
+        }
         this.orders = productOrders;
         calculateTotalPrice();
     }
 
     public CustomerDetails getCustomerDetails() {
-        return customerDetails;
+        return this.customerDetails;
     }
 
     public ShoppingCart customerDetails(CustomerDetails customerDetails) {
-        this.customerDetails = customerDetails;
+        this.setCustomerDetails(customerDetails);
         return this;
     }
 
     public void setCustomerDetails(CustomerDetails customerDetails) {
         this.customerDetails = customerDetails;
     }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
 
@@ -223,7 +235,8 @@ public class ShoppingCart implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        // see https://vladmihalcea.com/how-to-implement-equals-and-hashcode-using-the-jpa-entity-identifier/
+        return getClass().hashCode();
     }
 
     // prettier-ignore

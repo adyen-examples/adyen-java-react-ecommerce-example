@@ -30,7 +30,9 @@ export const RegisterPage = (props: IRegisterProps) => {
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h1 id="register-title">Registration</h1>
+          <h1 id="register-title" data-cy="registerTitle">
+            Registration
+          </h1>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -49,6 +51,7 @@ export const RegisterPage = (props: IRegisterProps) => {
                 minLength: { value: 1, errorMessage: 'Your username is required to be at least 1 character.' },
                 maxLength: { value: 50, errorMessage: 'Your username cannot be longer than 50 characters.' },
               }}
+              data-cy="username"
             />
             <AvField
               name="email"
@@ -60,6 +63,7 @@ export const RegisterPage = (props: IRegisterProps) => {
                 minLength: { value: 5, errorMessage: 'Your email is required to be at least 5 characters.' },
                 maxLength: { value: 254, errorMessage: 'Your email cannot be longer than 50 characters.' },
               }}
+              data-cy="email"
             />
             <AvField
               name="firstPassword"
@@ -72,6 +76,7 @@ export const RegisterPage = (props: IRegisterProps) => {
                 minLength: { value: 4, errorMessage: 'Your password is required to be at least 4 characters.' },
                 maxLength: { value: 50, errorMessage: 'Your password cannot be longer than 50 characters.' },
               }}
+              data-cy="firstPassword"
             />
             <PasswordStrengthBar password={password} />
             <AvField
@@ -85,6 +90,7 @@ export const RegisterPage = (props: IRegisterProps) => {
                 maxLength: { value: 50, errorMessage: 'Your confirmation password cannot be longer than 50 characters.' },
                 match: { value: 'firstPassword', errorMessage: 'The password and its confirmation do not match!' },
               }}
+              data-cy="secondPassword"
             />
             <AvField
               name="firstName"

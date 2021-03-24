@@ -1,13 +1,14 @@
 package com.adyen.demo.store.domain;
 
-import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
-import com.adyen.demo.store.web.rest.TestUtil;
 
-public class CustomerDetailsTest {
+import com.adyen.demo.store.web.rest.TestUtil;
+import org.junit.jupiter.api.Test;
+
+class CustomerDetailsTest {
 
     @Test
-    public void equalsVerifier() throws Exception {
+    void equalsVerifier() throws Exception {
         TestUtil.equalsVerifier(CustomerDetails.class);
         CustomerDetails customerDetails1 = new CustomerDetails();
         customerDetails1.setId(1L);
