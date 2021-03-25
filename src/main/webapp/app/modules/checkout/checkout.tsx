@@ -31,7 +31,7 @@ class CheckoutContainer extends React.Component<ICheckoutProp> {
     if (paymentMethodsRes && config && (paymentMethodsRes !== prevProps.paymentMethodsRes || config !== prevProps.config)) {
       this.checkout = new AdyenCheckout({
         ...config,
-        paymentMethodsResponse: this.removeNilFields(paymentMethodsRes),
+        paymentMethodsResponse: paymentMethodsRes,
         onAdditionalDetails: this.onAdditionalDetails,
         onSubmit: this.onSubmit
       });
@@ -43,15 +43,6 @@ class CheckoutContainer extends React.Component<ICheckoutProp> {
       this.processPaymentResponse(paymentDetailsRes);
     }
   }
-
-  removeNilFields = obj => {
-    for (const propName in obj) {
-      if (obj[propName] === null || obj[propName] === undefined) {
-        delete obj[propName];
-      }
-    }
-    return obj;
-  };
 
   processPaymentResponse = paymentRes => {
     if (paymentRes.action) {

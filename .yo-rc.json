@@ -33,7 +33,7 @@
     "clientTheme": "none",
     "clientThemeVariant": "",
     "applicationType": "monolith",
-    "entities": ["Product", "ProductCategory", "CustomerDetails", "ShoppingCart", "ProductOrder", "PaymentCache"],
+    "entities": ["Product", "ProductCategory", "CustomerDetails", "ShoppingCart", "ProductOrder"],
     "skipCheckLengthOfIdentifier": false,
     "skipFakeData": false,
     "blueprints": [],

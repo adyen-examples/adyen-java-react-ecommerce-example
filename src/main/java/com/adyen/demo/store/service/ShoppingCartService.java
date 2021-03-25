@@ -159,7 +159,7 @@ public class ShoppingCartService {
         }
         activeCart.calculateTotalPrice();
         productOrderService.save(order);
-        return shoppingCartRepository.save(activeCart);
+        return save(activeCart);
     }
 
     public ShoppingCart removeProductOrderForUser(final Long id, final String user) {
@@ -172,15 +172,27 @@ public class ShoppingCartService {
             activeCart.removeOrder(order);
             productOrderService.delete(order.getId());
         }
-        return shoppingCartRepository.save(activeCart);
+        return save(activeCart);
     }
 
-    public ShoppingCart updateCartForUser(final String user, final String paymentType, final String paymentRef, OrderStatus status) {
-        ShoppingCart activeCart = findActiveCartByUser(user);
-        activeCart.setStatus(status);
-        activeCart.setPaymentReference(paymentRef);
-        activeCart.setPaymentMethod(PaymentMethod.fromLabel(paymentType));
-        return shoppingCartRepository.save(activeCart);
+    public ShoppingCart updateCartWithPayment(final String user, final String paymentType, final String paymentRef, OrderStatus status) {
+        ShoppingCart cart = findActiveCartByUser(user);
+        cart.setStatus(status);
+        cart.setPaymentReference(paymentRef);
+        cart.setPaymentMethod(PaymentMethod.fromLabel(paymentType));
+        return updateCartWithPayment(cart, paymentType, paymentRef, status);
+    }
+
+    public ShoppingCart updateCartWithPayment(final Long id, final String paymentType, final String paymentRef, OrderStatus status) {
+        ShoppingCart cart = findOne(id).orElseThrow(() -> new EntityNotFoundException("Cart not found"));
+        return updateCartWithPayment(cart, paymentType, paymentRef, status);
+    }
+
+    private ShoppingCart updateCartWithPayment(ShoppingCart cart, final String paymentType, final String paymentRef, OrderStatus status) {
+        cart.setStatus(status);
+        cart.setPaymentReference(paymentRef);
+        cart.setPaymentMethod(PaymentMethod.fromLabel(paymentType));
+        return save(cart);
     }
 
     public Optional<ShoppingCart> findOneByPaymentModificationReference(final String paymentRef) {

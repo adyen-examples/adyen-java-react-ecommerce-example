@@ -1,12 +1,14 @@
 package com.adyen.demo.store.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * A ProductOrder.
@@ -34,12 +36,12 @@ public class ProductOrder implements Serializable {
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "productCategory" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "productOrders" }, allowSetters = true)
     private Product product;
 
     @ManyToOne(optional = false)
     @NotNull
-    @JsonIgnoreProperties(value = { "orders", "customerDetails" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "orders" }, allowSetters = true)
     private ShoppingCart cart;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

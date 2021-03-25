@@ -65,17 +65,6 @@ entity ProductOrder {
     totalPrice BigDecimal required min(0)
 }
 
-entity PaymentCache {
-	orderRef String required
-    originalHost String
-    paymentData String
-    paymentType String
-}
-
-relationship ManyToOne {
-    PaymentCache{user(login) required} to User
-}
-
 relationship OneToOne {
     CustomerDetails{user(login) required} to User
 }

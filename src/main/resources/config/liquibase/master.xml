@@ -20,13 +20,11 @@
     <include file="config/liquibase/changelog/20200424080300_added_entity_CustomerDetails.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200424080400_added_entity_ShoppingCart.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200424080500_added_entity_ProductOrder.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20201218114000_added_entity_PaymentCache.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
     <include file="config/liquibase/changelog/20200424080100_added_entity_constraints_Product.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200424080300_added_entity_constraints_CustomerDetails.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200424080400_added_entity_constraints_ShoppingCart.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20200424080500_added_entity_constraints_ProductOrder.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20201218114000_added_entity_constraints_PaymentCache.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

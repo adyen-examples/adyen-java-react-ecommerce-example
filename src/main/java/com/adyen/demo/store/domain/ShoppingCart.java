@@ -1,17 +1,18 @@
 package com.adyen.demo.store.domain;
 
-import com.adyen.demo.store.domain.enumeration.OrderStatus;
-import com.adyen.demo.store.domain.enumeration.PaymentMethod;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import com.adyen.demo.store.domain.enumeration.OrderStatus;
+import com.adyen.demo.store.domain.enumeration.PaymentMethod;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * A ShoppingCart.
@@ -54,7 +55,7 @@ public class ShoppingCart implements Serializable {
 
     @OneToMany(mappedBy = "cart")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "product", "cart" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "cart" }, allowSetters = true)
     private Set<ProductOrder> orders = new HashSet<>();
 
     @ManyToOne(optional = false)
