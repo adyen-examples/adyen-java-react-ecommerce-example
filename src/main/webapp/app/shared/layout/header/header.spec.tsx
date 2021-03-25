@@ -92,7 +92,7 @@ describe('Header', () => {
     // Not find AdminMenu component
     expect(html).not.toContain('admin-menu');
     // Find EntitiesMenu component
-    expect(html).toContain('entity-menu');
+    expect(html).not.toContain('entity-menu');
     // Find AccountMenu component
     expect(html).toContain('account-menu');
   });

@@ -28,6 +28,7 @@ spring:
     hikari:
       auto-commit: false
   jackson:
+    default-property-inclusion: non_null
     serialization:
       write-durations-as-timestamps: false
   jpa:
