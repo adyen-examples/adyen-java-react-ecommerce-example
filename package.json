@@ -70,7 +70,7 @@
     "@fortawesome/free-solid-svg-icons": "5.15.3",
     "@fortawesome/react-fontawesome": "0.1.14",
     "availity-reactstrap-validation": "2.7.0",
-    "axios": "0.21.1",
+    "axios": "0.21.2",
     "bootstrap": "4.6.0",
     "dayjs": "1.10.4",
     "loaders.css": "0.1.2",
