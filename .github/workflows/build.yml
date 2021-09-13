@@ -27,3 +27,9 @@ jobs:
     - run: npm install
     - run: npm run build --if-present
     - run: npm run test
+    - run: backend:unit:test
+      env:
+        ADYEN_API_KEY: "yourAdyenApiKey"
+        ADYEN_MERCHANT_ACCOUNT: "yourAdyenMerchantAccount"
+        ADYEN_CLIENT_KEY: "yourAdyenClientKey"
+        ADYEN_HMAC_KEY: "yourNotificationSetupHMACkey"
