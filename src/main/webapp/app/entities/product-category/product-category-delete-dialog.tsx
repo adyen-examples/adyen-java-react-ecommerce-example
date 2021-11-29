@@ -1,35 +1,39 @@
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IRootState } from 'app/shared/reducers';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntity, deleteEntity } from './product-category.reducer';
 
-export interface IProductCategoryDeleteDialogProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
+export const ProductCategoryDeleteDialog = (props: RouteComponentProps<{ id: string }>) => {
+  const [loadModal, setLoadModal] = useState(false);
+  const dispatch = useAppDispatch();
 
-export const ProductCategoryDeleteDialog = (props: IProductCategoryDeleteDialogProps) => {
   useEffect(() => {
-    props.getEntity(props.match.params.id);
+    dispatch(getEntity(props.match.params.id));
+    setLoadModal(true);
   }, []);
+
+  const productCategoryEntity = useAppSelector(state => state.productCategory.entity);
+  const updateSuccess = useAppSelector(state => state.productCategory.updateSuccess);
 
   const handleClose = () => {
     props.history.push('/product-category' + props.location.search);
   };
 
   useEffect(() => {
-    if (props.updateSuccess) {
+    if (updateSuccess && loadModal) {
       handleClose();
+      setLoadModal(false);
     }
-  }, [props.updateSuccess]);
+  }, [updateSuccess]);
 
   const confirmDelete = () => {
-    props.deleteEntity(props.productCategoryEntity.id);
+    dispatch(deleteEntity(productCategoryEntity.id));
   };
 
-  const { productCategoryEntity } = props;
   return (
     <Modal isOpen toggle={handleClose}>
       <ModalHeader toggle={handleClose} data-cy="productCategoryDeleteDialogHeading">
@@ -50,14 +54,4 @@ export const ProductCategoryDeleteDialog = (props: IProductCategoryDeleteDialogP
   );
 };
 
-const mapStateToProps = ({ productCategory }: IRootState) => ({
-  productCategoryEntity: productCategory.entity,
-  updateSuccess: productCategory.updateSuccess,
-});
-
-const mapDispatchToProps = { getEntity, deleteEntity };
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductCategoryDeleteDialog);
+export default ProductCategoryDeleteDialog;

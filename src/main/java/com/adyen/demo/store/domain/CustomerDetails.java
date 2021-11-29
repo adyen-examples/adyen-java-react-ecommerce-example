@@ -22,6 +22,7 @@ public class CustomerDetails implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -59,17 +60,18 @@ public class CustomerDetails implements Serializable {
     private Set<ShoppingCart> carts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public CustomerDetails id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public CustomerDetails id(Long id) {
-        this.id = id;
-        return this;
     }
 
     public Gender getGender() {
@@ -77,7 +79,7 @@ public class CustomerDetails implements Serializable {
     }
 
     public CustomerDetails gender(Gender gender) {
-        this.gender = gender;
+        this.setGender(gender);
         return this;
     }
 
@@ -90,7 +92,7 @@ public class CustomerDetails implements Serializable {
     }
 
     public CustomerDetails phone(String phone) {
-        this.phone = phone;
+        this.setPhone(phone);
         return this;
     }
 
@@ -103,7 +105,7 @@ public class CustomerDetails implements Serializable {
     }
 
     public CustomerDetails addressLine1(String addressLine1) {
-        this.addressLine1 = addressLine1;
+        this.setAddressLine1(addressLine1);
         return this;
     }
 
@@ -116,7 +118,7 @@ public class CustomerDetails implements Serializable {
     }
 
     public CustomerDetails addressLine2(String addressLine2) {
-        this.addressLine2 = addressLine2;
+        this.setAddressLine2(addressLine2);
         return this;
     }
 
@@ -129,7 +131,7 @@ public class CustomerDetails implements Serializable {
     }
 
     public CustomerDetails city(String city) {
-        this.city = city;
+        this.setCity(city);
         return this;
     }
 
@@ -142,7 +144,7 @@ public class CustomerDetails implements Serializable {
     }
 
     public CustomerDetails country(String country) {
-        this.country = country;
+        this.setCountry(country);
         return this;
     }
 
@@ -154,17 +156,27 @@ public class CustomerDetails implements Serializable {
         return this.user;
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public CustomerDetails user(User user) {
         this.setUser(user);
         return this;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public Set<ShoppingCart> getCarts() {
         return this.carts;
+    }
+
+    public void setCarts(Set<ShoppingCart> shoppingCarts) {
+        if (this.carts != null) {
+            this.carts.forEach(i -> i.setCustomerDetails(null));
+        }
+        if (shoppingCarts != null) {
+            shoppingCarts.forEach(i -> i.setCustomerDetails(this));
+        }
+        this.carts = shoppingCarts;
     }
 
     public CustomerDetails carts(Set<ShoppingCart> shoppingCarts) {
@@ -182,16 +194,6 @@ public class CustomerDetails implements Serializable {
         this.carts.remove(shoppingCart);
         shoppingCart.setCustomerDetails(null);
         return this;
-    }
-
-    public void setCarts(Set<ShoppingCart> shoppingCarts) {
-        if (this.carts != null) {
-            this.carts.forEach(i -> i.setCustomerDetails(null));
-        }
-        if (shoppingCarts != null) {
-            shoppingCarts.forEach(i -> i.setCustomerDetails(this));
-        }
-        this.carts = shoppingCarts;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

@@ -410,7 +410,11 @@ class CustomerDetailsResourceIT {
         CustomerDetails partialUpdatedCustomerDetails = new CustomerDetails();
         partialUpdatedCustomerDetails.setId(customerDetails.getId());
 
-        partialUpdatedCustomerDetails.phone(UPDATED_PHONE).addressLine1(UPDATED_ADDRESS_LINE_1).city(UPDATED_CITY);
+        partialUpdatedCustomerDetails
+            .phone(UPDATED_PHONE)
+            .addressLine1(UPDATED_ADDRESS_LINE_1)
+            .addressLine2(UPDATED_ADDRESS_LINE_2)
+            .country(UPDATED_COUNTRY);
 
         restCustomerDetailsMockMvc
             .perform(
@@ -427,9 +431,9 @@ class CustomerDetailsResourceIT {
         assertThat(testCustomerDetails.getGender()).isEqualTo(DEFAULT_GENDER);
         assertThat(testCustomerDetails.getPhone()).isEqualTo(UPDATED_PHONE);
         assertThat(testCustomerDetails.getAddressLine1()).isEqualTo(UPDATED_ADDRESS_LINE_1);
-        assertThat(testCustomerDetails.getAddressLine2()).isEqualTo(DEFAULT_ADDRESS_LINE_2);
-        assertThat(testCustomerDetails.getCity()).isEqualTo(UPDATED_CITY);
-        assertThat(testCustomerDetails.getCountry()).isEqualTo(DEFAULT_COUNTRY);
+        assertThat(testCustomerDetails.getAddressLine2()).isEqualTo(UPDATED_ADDRESS_LINE_2);
+        assertThat(testCustomerDetails.getCity()).isEqualTo(DEFAULT_CITY);
+        assertThat(testCustomerDetails.getCountry()).isEqualTo(UPDATED_COUNTRY);
     }
 
     @Test

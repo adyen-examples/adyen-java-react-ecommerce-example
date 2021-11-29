@@ -19,11 +19,11 @@ bootRun {
     args = []
 }
 
-task webapp_test(type: NpmTask, dependsOn: "npmInstall") {
+task webapp_test(type: NpmTask, dependsOn: "npm_install") {
     args = ["run", "webapp:test"]
 }
 
-task webapp(type: NpmTask, dependsOn: "npmInstall") {
+task webapp(type: NpmTask, dependsOn: "npm_install") {
     args = ["run", "webapp:prod"]
     environment = [APP_VERSION: project.version]
 }

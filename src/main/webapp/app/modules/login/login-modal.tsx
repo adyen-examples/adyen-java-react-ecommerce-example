@@ -1,8 +1,8 @@
 import React from 'react';
-
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Label, Alert, Row, Col } from 'reactstrap';
-import { AvForm, AvField, AvGroup, AvInput } from 'availity-reactstrap-validation';
+import { ValidatedField } from 'react-jhipster';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert, Row, Col, Form } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 
 export interface ILoginModalProps {
   showModal: boolean;
@@ -11,78 +11,83 @@ export interface ILoginModalProps {
   handleClose: () => void;
 }
 
-class LoginModal extends React.Component<ILoginModalProps> {
-  handleSubmit = (event, errors, { username, password, rememberMe }) => {
-    const { handleLogin } = this.props;
-    handleLogin(username, password, rememberMe);
+const LoginModal = (props: ILoginModalProps) => {
+  const login = ({ username, password, rememberMe }) => {
+    props.handleLogin(username, password, rememberMe);
   };
 
-  render() {
-    const { loginError, handleClose } = this.props;
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, touchedFields },
+  } = useForm({ mode: 'onTouched' });
 
-    return (
-      <Modal isOpen={this.props.showModal} toggle={handleClose} backdrop="static" id="login-page" autoFocus={false}>
-        <AvForm onSubmit={this.handleSubmit}>
-          <ModalHeader id="login-title" data-cy="loginTitle" toggle={handleClose}>
+  const { loginError, handleClose } = props;
+
+  return (
+    <Modal isOpen={props.showModal} toggle={handleClose} backdrop="static" id="login-page" autoFocus={false}>
+      <Form onSubmit={handleSubmit(login)}>
+        <ModalHeader id="login-title" data-cy="loginTitle" toggle={handleClose}>
+          Sign in
+        </ModalHeader>
+        <ModalBody>
+          <Row>
+            <Col md="12">
+              {loginError ? (
+                <Alert color="danger" data-cy="loginError">
+                  <strong>Failed to sign in!</strong> Please check your credentials and try again.
+                </Alert>
+              ) : null}
+            </Col>
+            <Col md="12">
+              <ValidatedField
+                name="username"
+                label="Username"
+                placeholder="Your username"
+                required
+                autoFocus
+                data-cy="username"
+                validate={{ required: 'Username cannot be empty!' }}
+                register={register}
+                error={errors.username}
+                isTouched={touchedFields.username}
+              />
+              <ValidatedField
+                name="password"
+                type="password"
+                label="Password"
+                placeholder="Your password"
+                required
+                data-cy="password"
+                validate={{ required: 'Password cannot be empty!' }}
+                register={register}
+                error={errors.password}
+                isTouched={touchedFields.password}
+              />
+              <ValidatedField name="rememberMe" type="checkbox" check label="Remember me" value={true} register={register} />
+            </Col>
+          </Row>
+          <div className="mt-1">&nbsp;</div>
+          <Alert color="warning">
+            <Link to="/account/reset/request" data-cy="forgetYourPasswordSelector">
+              Did you forget your password?
+            </Link>
+          </Alert>
+          <Alert color="warning">
+            <span>You don&apos;t have an account yet?</span> <Link to="/account/register">Register a new account</Link>
+          </Alert>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={handleClose} tabIndex={1}>
+            Cancel
+          </Button>{' '}
+          <Button color="primary" type="submit" data-cy="submit">
             Sign in
-          </ModalHeader>
-          <ModalBody>
-            <Row>
-              <Col md="12">
-                {loginError ? (
-                  <Alert color="danger" data-cy="loginError">
-                    <strong>Failed to sign in!</strong> Please check your credentials and try again.
-                  </Alert>
-                ) : null}
-              </Col>
-              <Col md="12">
-                <AvField
-                  name="username"
-                  label="Username"
-                  placeholder="Your username"
-                  required
-                  errorMessage="Username cannot be empty!"
-                  autoFocus
-                  data-cy="username"
-                />
-                <AvField
-                  name="password"
-                  type="password"
-                  label="Password"
-                  placeholder="Your password"
-                  required
-                  errorMessage="Password cannot be empty!"
-                  data-cy="password"
-                />
-                <AvGroup check inline>
-                  <Label className="form-check-label">
-                    <AvInput type="checkbox" name="rememberMe" /> Remember me
-                  </Label>
-                </AvGroup>
-              </Col>
-            </Row>
-            <div className="mt-1">&nbsp;</div>
-            <Alert color="warning">
-              <Link to="/account/reset/request" data-cy="forgetYourPasswordSelector">
-                Did you forget your password?
-              </Link>
-            </Alert>
-            <Alert color="warning">
-              <span>You don&apos;t have an account yet?</span> <Link to="/account/register">Register a new account</Link>
-            </Alert>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="secondary" onClick={handleClose} tabIndex={1}>
-              Cancel
-            </Button>{' '}
-            <Button color="primary" type="submit" data-cy="submit">
-              Sign in
-            </Button>
-          </ModalFooter>
-        </AvForm>
-      </Modal>
-    );
-  }
-}
+          </Button>
+        </ModalFooter>
+      </Form>
+    </Modal>
+  );
+};
 
 export default LoginModal;

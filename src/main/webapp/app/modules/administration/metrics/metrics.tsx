@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Button, Col, Row } from 'reactstrap';
 import {
   CacheMetrics,
@@ -10,30 +9,30 @@ import {
   JvmThreads,
   EndpointsRequestsMetrics,
   SystemMetrics,
-  Translate,
 } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_TIMESTAMP_FORMAT, APP_TWO_DIGITS_AFTER_POINT_NUMBER_FORMAT, APP_WHOLE_NUMBER_FORMAT } from 'app/config/constants';
-import { systemMetrics, systemThreadDump } from '../administration.reducer';
-import { IRootState } from 'app/shared/reducers';
+import { getSystemMetrics, getSystemThreadDump } from '../administration.reducer';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export interface IMetricsPageProps extends StateProps, DispatchProps {}
+export const MetricsPage = () => {
+  const dispatch = useAppDispatch();
+  const metrics = useAppSelector(state => state.administration.metrics);
+  const isFetching = useAppSelector(state => state.administration.loading);
+  const threadDump = useAppSelector(state => state.administration.threadDump);
 
-export const MetricsPage = (props: IMetricsPageProps) => {
   useEffect(() => {
-    props.systemMetrics();
-    props.systemThreadDump();
+    dispatch(getSystemMetrics());
+    dispatch(getSystemThreadDump());
   }, []);
 
   const getMetrics = () => {
-    if (!props.isFetching) {
-      props.systemMetrics();
-      props.systemThreadDump();
+    if (!isFetching) {
+      dispatch(getSystemMetrics());
+      dispatch(getSystemThreadDump());
     }
   };
-
-  const { metrics, threadDump, isFetching } = props;
 
   return (
     <div>
@@ -52,12 +51,10 @@ export const MetricsPage = (props: IMetricsPageProps) => {
         <Col sm="12">
           <h3>JVM Metrics</h3>
           <Row>
-            <Col md="4">
-              {metrics && metrics.jvm ? <JvmMemory jvmMetrics={metrics.jvm} wholeNumberFormat={APP_WHOLE_NUMBER_FORMAT} /> : ''}
-            </Col>
+            <Col md="4">{metrics?.jvm ? <JvmMemory jvmMetrics={metrics.jvm} wholeNumberFormat={APP_WHOLE_NUMBER_FORMAT} /> : ''}</Col>
             <Col md="4">{threadDump ? <JvmThreads jvmThreads={threadDump} wholeNumberFormat={APP_WHOLE_NUMBER_FORMAT} /> : ''}</Col>
             <Col md="4">
-              {metrics && metrics.processMetrics ? (
+              {metrics?.processMetrics ? (
                 <SystemMetrics
                   systemMetrics={metrics.processMetrics}
                   wholeNumberFormat={APP_WHOLE_NUMBER_FORMAT}
@@ -71,7 +68,7 @@ export const MetricsPage = (props: IMetricsPageProps) => {
         </Col>
       </Row>
 
-      {metrics && metrics.garbageCollector ? (
+      {metrics?.garbageCollector ? (
         <GarbageCollectorMetrics garbageCollectorMetrics={metrics.garbageCollector} wholeNumberFormat={APP_WHOLE_NUMBER_FORMAT} />
       ) : (
         ''
@@ -85,13 +82,13 @@ export const MetricsPage = (props: IMetricsPageProps) => {
       ) : (
         ''
       )}
-      {metrics && metrics.services ? (
+      {metrics?.services ? (
         <EndpointsRequestsMetrics endpointsRequestsMetrics={metrics.services} wholeNumberFormat={APP_WHOLE_NUMBER_FORMAT} />
       ) : (
         ''
       )}
 
-      {metrics.cache ? (
+      {metrics?.cache ? (
         <Row>
           <Col sm="12">
             <CacheMetrics cacheMetrics={metrics.cache} twoDigitAfterPointFormat={APP_TWO_DIGITS_AFTER_POINT_NUMBER_FORMAT} />
@@ -101,7 +98,7 @@ export const MetricsPage = (props: IMetricsPageProps) => {
         ''
       )}
 
-      {metrics.databases && JSON.stringify(metrics.databases) !== '{}' ? (
+      {metrics?.databases && JSON.stringify(metrics.databases) !== '{}' ? (
         <Row>
           <Col sm="12">
             <DatasourceMetrics datasourceMetrics={metrics.databases} twoDigitAfterPointFormat={APP_TWO_DIGITS_AFTER_POINT_NUMBER_FORMAT} />
@@ -114,15 +111,4 @@ export const MetricsPage = (props: IMetricsPageProps) => {
   );
 };
 
-const mapStateToProps = (storeState: IRootState) => ({
-  metrics: storeState.administration.metrics,
-  isFetching: storeState.administration.loading,
-  threadDump: storeState.administration.threadDump,
-});
-
-const mapDispatchToProps = { systemMetrics, systemThreadDump };
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(MetricsPage);
+export default MetricsPage;

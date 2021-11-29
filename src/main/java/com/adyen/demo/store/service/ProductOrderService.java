@@ -46,18 +46,16 @@ public class ProductOrderService {
 
         return productOrderRepository
             .findById(productOrder.getId())
-            .map(
-                existingProductOrder -> {
-                    if (productOrder.getQuantity() != null) {
-                        existingProductOrder.setQuantity(productOrder.getQuantity());
-                    }
-                    if (productOrder.getTotalPrice() != null) {
-                        existingProductOrder.setTotalPrice(productOrder.getTotalPrice());
-                    }
-
-                    return existingProductOrder;
+            .map(existingProductOrder -> {
+                if (productOrder.getQuantity() != null) {
+                    existingProductOrder.setQuantity(productOrder.getQuantity());
                 }
-            )
+                if (productOrder.getTotalPrice() != null) {
+                    existingProductOrder.setTotalPrice(productOrder.getTotalPrice());
+                }
+
+                return existingProductOrder;
+            })
             .map(productOrderRepository::save);
     }
 

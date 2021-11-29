@@ -7,7 +7,6 @@ import com.adyen.demo.store.service.MailService;
 import com.adyen.demo.store.service.UserService;
 import com.adyen.demo.store.service.dto.AdminUserDTO;
 import com.adyen.demo.store.service.dto.PasswordChangeDTO;
-import com.adyen.demo.store.service.dto.UserDTO;
 import com.adyen.demo.store.web.rest.errors.*;
 import com.adyen.demo.store.web.rest.vm.KeyAndPasswordVM;
 import com.adyen.demo.store.web.rest.vm.ManagedUserVM;

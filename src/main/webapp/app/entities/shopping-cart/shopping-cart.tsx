@@ -1,33 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Col, Row, Table } from 'reactstrap';
+import { Button, Table } from 'reactstrap';
 import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IRootState } from 'app/shared/reducers';
 import { getEntities } from './shopping-cart.reducer';
 import { IShoppingCart } from 'app/shared/model/shopping-cart.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export interface IShoppingCartProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
+export const ShoppingCart = (props: RouteComponentProps<{ url: string }>) => {
+  const dispatch = useAppDispatch();
 
-export const ShoppingCart = (props: IShoppingCartProps) => {
+  const shoppingCartList = useAppSelector(state => state.shoppingCart.entities);
+  const loading = useAppSelector(state => state.shoppingCart.loading);
+
   useEffect(() => {
-    props.getEntities();
+    dispatch(getEntities({}));
   }, []);
 
   const handleSyncList = () => {
-    props.getEntities();
+    dispatch(getEntities({}));
   };
 
-  const { shoppingCartList, match, loading } = props;
+  const { match } = props;
+
   return (
     <div>
       <h2 id="shopping-cart-heading" data-cy="ShoppingCartHeading">
         Shopping Carts
         <div className="d-flex justify-content-end">
-          <Button className="mr-2" color="info" onClick={handleSyncList} disabled={loading}>
+          <Button className="me-2" color="info" onClick={handleSyncList} disabled={loading}>
             <FontAwesomeIcon icon="sync" spin={loading} /> Refresh List
           </Button>
           <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
@@ -60,7 +63,6 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
                       {shoppingCart.id}
                     </Button>
                   </td>
-                  <td>{shoppingCart.id}</td>
                   <td>
                     {shoppingCart.placedDate ? <TextFormat type="date" value={shoppingCart.placedDate} format={APP_DATE_FORMAT} /> : null}
                   </td>
@@ -76,7 +78,7 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
                       ''
                     )}
                   </td>
-                  <td className="text-right">
+                  <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${shoppingCart.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
@@ -107,16 +109,4 @@ export const ShoppingCart = (props: IShoppingCartProps) => {
   );
 };
 
-const mapStateToProps = ({ shoppingCart }: IRootState) => ({
-  shoppingCartList: shoppingCart.entities,
-  loading: shoppingCart.loading,
-});
-
-const mapDispatchToProps = {
-  getEntities,
-};
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(ShoppingCart);
+export default ShoppingCart;

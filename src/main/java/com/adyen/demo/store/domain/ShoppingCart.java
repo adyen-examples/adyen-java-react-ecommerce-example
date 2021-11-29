@@ -25,6 +25,7 @@ public class ShoppingCart implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -63,17 +64,18 @@ public class ShoppingCart implements Serializable {
     private CustomerDetails customerDetails;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public ShoppingCart id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public ShoppingCart id(Long id) {
-        this.id = id;
-        return this;
     }
 
     public Instant getPlacedDate() {
@@ -81,7 +83,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public ShoppingCart placedDate(Instant placedDate) {
-        this.placedDate = placedDate;
+        this.setPlacedDate(placedDate);
         return this;
     }
 
@@ -94,7 +96,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public ShoppingCart status(OrderStatus status) {
-        this.status = status;
+        this.setStatus(status);
         return this;
     }
 
@@ -107,7 +109,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public ShoppingCart totalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
+        this.setTotalPrice(totalPrice);
         return this;
     }
 
@@ -120,7 +122,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public ShoppingCart paymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
+        this.setPaymentMethod(paymentMethod);
         return this;
     }
 
@@ -133,7 +135,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public ShoppingCart paymentReference(String paymentReference) {
-        this.paymentReference = paymentReference;
+        this.setPaymentReference(paymentReference);
         return this;
     }
 
@@ -146,7 +148,7 @@ public class ShoppingCart implements Serializable {
     }
 
     public ShoppingCart paymentModificationReference(String paymentModificationReference) {
-        this.paymentModificationReference = paymentModificationReference;
+        this.setPaymentModificationReference(paymentModificationReference);
         return this;
     }
 
@@ -156,6 +158,16 @@ public class ShoppingCart implements Serializable {
 
     public Set<ProductOrder> getOrders() {
         return this.orders;
+    }
+
+    public void setOrders(Set<ProductOrder> productOrders) {
+        if (this.orders != null) {
+            this.orders.forEach(i -> i.setCart(null));
+        }
+        if (productOrders != null) {
+            productOrders.forEach(i -> i.setCart(this));
+        }
+        this.orders = productOrders;
     }
 
     public ShoppingCart orders(Set<ProductOrder> productOrders) {
@@ -175,27 +187,17 @@ public class ShoppingCart implements Serializable {
         return this;
     }
 
-    public void setOrders(Set<ProductOrder> productOrders) {
-        if (this.orders != null) {
-            this.orders.forEach(i -> i.setCart(null));
-        }
-        if (productOrders != null) {
-            productOrders.forEach(i -> i.setCart(this));
-        }
-        this.orders = productOrders;
-    }
-
     public CustomerDetails getCustomerDetails() {
         return this.customerDetails;
+    }
+
+    public void setCustomerDetails(CustomerDetails customerDetails) {
+        this.customerDetails = customerDetails;
     }
 
     public ShoppingCart customerDetails(CustomerDetails customerDetails) {
         this.setCustomerDetails(customerDetails);
         return this;
-    }
-
-    public void setCustomerDetails(CustomerDetails customerDetails) {
-        this.customerDetails = customerDetails;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

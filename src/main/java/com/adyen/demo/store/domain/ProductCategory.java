@@ -21,6 +21,7 @@ public class ProductCategory implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -36,17 +37,18 @@ public class ProductCategory implements Serializable {
     private Set<Product> products = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public ProductCategory id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public ProductCategory id(Long id) {
-        this.id = id;
-        return this;
     }
 
     public String getName() {
@@ -54,7 +56,7 @@ public class ProductCategory implements Serializable {
     }
 
     public ProductCategory name(String name) {
-        this.name = name;
+        this.setName(name);
         return this;
     }
 
@@ -67,7 +69,7 @@ public class ProductCategory implements Serializable {
     }
 
     public ProductCategory description(String description) {
-        this.description = description;
+        this.setDescription(description);
         return this;
     }
 
@@ -77,6 +79,16 @@ public class ProductCategory implements Serializable {
 
     public Set<Product> getProducts() {
         return this.products;
+    }
+
+    public void setProducts(Set<Product> products) {
+        if (this.products != null) {
+            this.products.forEach(i -> i.setProductCategory(null));
+        }
+        if (products != null) {
+            products.forEach(i -> i.setProductCategory(this));
+        }
+        this.products = products;
     }
 
     public ProductCategory products(Set<Product> products) {
@@ -94,16 +106,6 @@ public class ProductCategory implements Serializable {
         this.products.remove(product);
         product.setProductCategory(null);
         return this;
-    }
-
-    public void setProducts(Set<Product> products) {
-        if (this.products != null) {
-            this.products.forEach(i -> i.setProductCategory(null));
-        }
-        if (products != null) {
-            products.forEach(i -> i.setProductCategory(this));
-        }
-        this.products = products;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

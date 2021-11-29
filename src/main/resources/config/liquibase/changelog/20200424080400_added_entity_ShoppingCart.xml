@@ -3,7 +3,7 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd
                         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <!--
@@ -54,9 +54,10 @@
         <loadData
                   file="config/liquibase/fake-data/shopping_cart.csv"
                   separator=";"
-                  tableName="shopping_cart">
+                  tableName="shopping_cart"
+                  usePreparedStatements="true">
             <column name="id" type="numeric"/>
-            <column name="placed_date" type="${datetimeType}"/>
+            <column name="placed_date" type="date"/>
             <column name="status" type="string"/>
             <column name="total_price" type="numeric"/>
             <column name="payment_method" type="string"/>

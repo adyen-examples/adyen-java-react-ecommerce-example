@@ -1,21 +1,19 @@
 import axios from 'axios';
 
 import configureStore from 'redux-mock-store';
-import promiseMiddleware from 'redux-promise-middleware';
 import thunk from 'redux-thunk';
 import sinon from 'sinon';
 
 import reducer, {
-  ACTION_TYPES,
   createEntity,
   deleteEntity,
   getEntities,
   getEntity,
   updateEntity,
-  partialUpdate,
+  partialUpdateEntity,
   reset,
 } from './product-category.reducer';
-import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { EntityState } from 'app/shared/reducers/reducer.utils';
 import { IProductCategory, defaultValue } from 'app/shared/model/product-category.model';
 
 describe('Entities reducer tests', () => {
@@ -27,10 +25,10 @@ describe('Entities reducer tests', () => {
     }
   }
 
-  const initialState = {
+  const initialState: EntityState<IProductCategory> = {
     loading: false,
     errorMessage: null,
-    entities: [] as ReadonlyArray<IProductCategory>,
+    entities: [],
     entity: defaultValue,
     totalItems: 0,
     updating: false,
@@ -48,21 +46,21 @@ describe('Entities reducer tests', () => {
     expect(isEmpty(state.entity));
   }
 
-  function testMultipleTypes(types, payload, testFunction) {
+  function testMultipleTypes(types, payload, testFunction, error?) {
     types.forEach(e => {
-      testFunction(reducer(undefined, { type: e, payload }));
+      testFunction(reducer(undefined, { type: e, payload, error }));
     });
   }
 
   describe('Common', () => {
     it('should return the initial state', () => {
-      testInitialState(reducer(undefined, {}));
+      testInitialState(reducer(undefined, { type: '' }));
     });
   });
 
   describe('Requests', () => {
     it('should set state to loading', () => {
-      testMultipleTypes([REQUEST(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST), REQUEST(ACTION_TYPES.FETCH_PRODUCTCATEGORY)], {}, state => {
+      testMultipleTypes([getEntities.pending.type, getEntity.pending.type], {}, state => {
         expect(state).toMatchObject({
           errorMessage: null,
           updateSuccess: false,
@@ -73,12 +71,7 @@ describe('Entities reducer tests', () => {
 
     it('should set state to updating', () => {
       testMultipleTypes(
-        [
-          REQUEST(ACTION_TYPES.CREATE_PRODUCTCATEGORY),
-          REQUEST(ACTION_TYPES.UPDATE_PRODUCTCATEGORY),
-          REQUEST(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY),
-          REQUEST(ACTION_TYPES.DELETE_PRODUCTCATEGORY),
-        ],
+        [createEntity.pending.type, updateEntity.pending.type, partialUpdateEntity.pending.type, deleteEntity.pending.type],
         {},
         state => {
           expect(state).toMatchObject({
@@ -91,14 +84,7 @@ describe('Entities reducer tests', () => {
     });
 
     it('should reset the state', () => {
-      expect(
-        reducer(
-          { ...initialState, loading: true },
-          {
-            type: ACTION_TYPES.RESET,
-          }
-        )
-      ).toEqual({
+      expect(reducer({ ...initialState, loading: true }, reset())).toEqual({
         ...initialState,
       });
     });
@@ -108,20 +94,23 @@ describe('Entities reducer tests', () => {
     it('should set a message in errorMessage', () => {
       testMultipleTypes(
         [
-          FAILURE(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST),
-          FAILURE(ACTION_TYPES.FETCH_PRODUCTCATEGORY),
-          FAILURE(ACTION_TYPES.CREATE_PRODUCTCATEGORY),
-          FAILURE(ACTION_TYPES.UPDATE_PRODUCTCATEGORY),
-          FAILURE(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY),
-          FAILURE(ACTION_TYPES.DELETE_PRODUCTCATEGORY),
+          getEntities.rejected.type,
+          getEntity.rejected.type,
+          createEntity.rejected.type,
+          updateEntity.rejected.type,
+          partialUpdateEntity.rejected.type,
+          deleteEntity.rejected.type,
         ],
-        'error message',
+        'some message',
         state => {
           expect(state).toMatchObject({
             errorMessage: 'error message',
             updateSuccess: false,
             updating: false,
           });
+        },
+        {
+          message: 'error message',
         }
       );
     });
@@ -132,7 +121,7 @@ describe('Entities reducer tests', () => {
       const payload = { data: [{ 1: 'fake1' }, { 2: 'fake2' }], headers: { 'x-total-count': 123 } };
       expect(
         reducer(undefined, {
-          type: SUCCESS(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST),
+          type: getEntities.fulfilled.type,
           payload,
         })
       ).toEqual({
@@ -147,7 +136,7 @@ describe('Entities reducer tests', () => {
       const payload = { data: { 1: 'fake1' } };
       expect(
         reducer(undefined, {
-          type: SUCCESS(ACTION_TYPES.FETCH_PRODUCTCATEGORY),
+          type: getEntity.fulfilled.type,
           payload,
         })
       ).toEqual({
@@ -161,7 +150,7 @@ describe('Entities reducer tests', () => {
       const payload = { data: 'fake payload' };
       expect(
         reducer(undefined, {
-          type: SUCCESS(ACTION_TYPES.CREATE_PRODUCTCATEGORY),
+          type: createEntity.fulfilled.type,
           payload,
         })
       ).toEqual({
@@ -175,7 +164,7 @@ describe('Entities reducer tests', () => {
     it('should delete entity', () => {
       const payload = 'fake payload';
       const toTest = reducer(undefined, {
-        type: SUCCESS(ACTION_TYPES.DELETE_PRODUCTCATEGORY),
+        type: deleteEntity.fulfilled.type,
         payload,
       });
       expect(toTest).toMatchObject({
@@ -190,7 +179,7 @@ describe('Entities reducer tests', () => {
 
     const resolvedObject = { value: 'whatever' };
     beforeEach(() => {
-      const mockStore = configureStore([thunk, promiseMiddleware]);
+      const mockStore = configureStore([thunk]);
       store = mockStore({});
       axios.get = sinon.stub().returns(Promise.resolve(resolvedObject));
       axios.post = sinon.stub().returns(Promise.resolve(resolvedObject));
@@ -199,104 +188,114 @@ describe('Entities reducer tests', () => {
       axios.delete = sinon.stub().returns(Promise.resolve(resolvedObject));
     });
 
-    it('dispatches ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST actions', async () => {
+    it('dispatches FETCH_PRODUCTCATEGORY_LIST actions', async () => {
       const expectedActions = [
         {
-          type: REQUEST(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST),
+          type: getEntities.pending.type,
         },
         {
-          type: SUCCESS(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST),
+          type: getEntities.fulfilled.type,
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(getEntities()).then(() => expect(store.getActions()).toEqual(expectedActions));
+      await store.dispatch(getEntities({}));
+      expect(store.getActions()[0]).toMatchObject(expectedActions[0]);
+      expect(store.getActions()[1]).toMatchObject(expectedActions[1]);
     });
 
-    it('dispatches ACTION_TYPES.FETCH_PRODUCTCATEGORY actions', async () => {
+    it('dispatches FETCH_PRODUCTCATEGORY actions', async () => {
       const expectedActions = [
         {
-          type: REQUEST(ACTION_TYPES.FETCH_PRODUCTCATEGORY),
+          type: getEntity.pending.type,
         },
         {
-          type: SUCCESS(ACTION_TYPES.FETCH_PRODUCTCATEGORY),
+          type: getEntity.fulfilled.type,
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(getEntity(42666)).then(() => expect(store.getActions()).toEqual(expectedActions));
+      await store.dispatch(getEntity(42666));
+      expect(store.getActions()[0]).toMatchObject(expectedActions[0]);
+      expect(store.getActions()[1]).toMatchObject(expectedActions[1]);
     });
 
-    it('dispatches ACTION_TYPES.CREATE_PRODUCTCATEGORY actions', async () => {
+    it('dispatches CREATE_PRODUCTCATEGORY actions', async () => {
       const expectedActions = [
         {
-          type: REQUEST(ACTION_TYPES.CREATE_PRODUCTCATEGORY),
+          type: createEntity.pending.type,
         },
         {
-          type: SUCCESS(ACTION_TYPES.CREATE_PRODUCTCATEGORY),
-          payload: resolvedObject,
+          type: getEntities.pending.type,
         },
         {
-          type: REQUEST(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST),
-        },
-        {
-          type: SUCCESS(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST),
+          type: createEntity.fulfilled.type,
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(createEntity({ id: 456 })).then(() => expect(store.getActions()).toEqual(expectedActions));
+      await store.dispatch(createEntity({ id: 456 }));
+      expect(store.getActions()[0]).toMatchObject(expectedActions[0]);
+      expect(store.getActions()[1]).toMatchObject(expectedActions[1]);
+      expect(store.getActions()[2]).toMatchObject(expectedActions[2]);
     });
 
-    it('dispatches ACTION_TYPES.UPDATE_PRODUCTCATEGORY actions', async () => {
+    it('dispatches UPDATE_PRODUCTCATEGORY actions', async () => {
       const expectedActions = [
         {
-          type: REQUEST(ACTION_TYPES.UPDATE_PRODUCTCATEGORY),
+          type: updateEntity.pending.type,
         },
         {
-          type: SUCCESS(ACTION_TYPES.UPDATE_PRODUCTCATEGORY),
+          type: getEntities.pending.type,
+        },
+        {
+          type: updateEntity.fulfilled.type,
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(updateEntity({ id: 456 })).then(() => expect(store.getActions()).toEqual(expectedActions));
+      await store.dispatch(updateEntity({ id: 456 }));
+      expect(store.getActions()[0]).toMatchObject(expectedActions[0]);
+      expect(store.getActions()[1]).toMatchObject(expectedActions[1]);
+      expect(store.getActions()[2]).toMatchObject(expectedActions[2]);
     });
 
-    it('dispatches ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY actions', async () => {
+    it('dispatches PARTIAL_UPDATE_PRODUCTCATEGORY actions', async () => {
       const expectedActions = [
         {
-          type: REQUEST(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY),
+          type: partialUpdateEntity.pending.type,
         },
         {
-          type: SUCCESS(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY),
+          type: getEntities.pending.type,
+        },
+        {
+          type: partialUpdateEntity.fulfilled.type,
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(partialUpdate({ id: 1 })).then(() => expect(store.getActions()).toEqual(expectedActions));
+      await store.dispatch(partialUpdateEntity({ id: 123 }));
+      expect(store.getActions()[0]).toMatchObject(expectedActions[0]);
+      expect(store.getActions()[1]).toMatchObject(expectedActions[1]);
+      expect(store.getActions()[2]).toMatchObject(expectedActions[2]);
     });
 
-    it('dispatches ACTION_TYPES.DELETE_PRODUCTCATEGORY actions', async () => {
+    it('dispatches DELETE_PRODUCTCATEGORY actions', async () => {
       const expectedActions = [
         {
-          type: REQUEST(ACTION_TYPES.DELETE_PRODUCTCATEGORY),
+          type: deleteEntity.pending.type,
         },
         {
-          type: SUCCESS(ACTION_TYPES.DELETE_PRODUCTCATEGORY),
-          payload: resolvedObject,
+          type: getEntities.pending.type,
         },
         {
-          type: REQUEST(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST),
-        },
-        {
-          type: SUCCESS(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST),
+          type: deleteEntity.fulfilled.type,
           payload: resolvedObject,
         },
       ];
-      await store.dispatch(deleteEntity(42666)).then(() => expect(store.getActions()).toEqual(expectedActions));
+      await store.dispatch(deleteEntity(42666));
+      expect(store.getActions()[0]).toMatchObject(expectedActions[0]);
+      expect(store.getActions()[1]).toMatchObject(expectedActions[1]);
+      expect(store.getActions()[2]).toMatchObject(expectedActions[2]);
     });
 
-    it('dispatches ACTION_TYPES.RESET actions', async () => {
-      const expectedActions = [
-        {
-          type: ACTION_TYPES.RESET,
-        },
-      ];
+    it('dispatches RESET actions', async () => {
+      const expectedActions = [reset()];
       await store.dispatch(reset());
       expect(store.getActions()).toEqual(expectedActions);
     });

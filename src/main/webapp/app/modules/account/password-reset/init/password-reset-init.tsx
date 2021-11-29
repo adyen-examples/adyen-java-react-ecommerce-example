@@ -1,58 +1,63 @@
-import React from 'react';
-
-import { connect } from 'react-redux';
-import { AvForm, AvField } from 'availity-reactstrap-validation';
+import React, { useEffect } from 'react';
+import { ValidatedField, ValidatedForm, isEmail } from 'react-jhipster';
 import { Button, Alert, Col, Row } from 'reactstrap';
+import { toast } from 'react-toastify';
 
 import { handlePasswordResetInit, reset } from '../password-reset.reducer';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export type IPasswordResetInitProps = DispatchProps;
+export const PasswordResetInit = () => {
+  const dispatch = useAppDispatch();
 
-export class PasswordResetInit extends React.Component<IPasswordResetInitProps> {
-  componentWillUnmount() {
-    this.props.reset();
-  }
+  useEffect(
+    () => () => {
+      dispatch(reset());
+    },
+    []
+  );
 
-  handleValidSubmit = (event, values) => {
-    this.props.handlePasswordResetInit(values.email);
-    event.preventDefault();
+  const handleValidSubmit = ({ email }) => {
+    dispatch(handlePasswordResetInit(email));
   };
 
-  render() {
-    return (
-      <div>
-        <Row className="justify-content-center">
-          <Col md="8">
-            <h1>Reset your password</h1>
-            <Alert color="warning">
-              <p>Enter the email address you used to register</p>
-            </Alert>
-            <AvForm onValidSubmit={this.handleValidSubmit}>
-              <AvField
-                name="email"
-                label="Email"
-                placeholder={'Your email'}
-                type="email"
-                validate={{
-                  required: { value: true, errorMessage: 'Your email is required.' },
-                  minLength: { value: 5, errorMessage: 'Your email is required to be at least 5 characters.' },
-                  maxLength: { value: 254, errorMessage: 'Your email cannot be longer than 50 characters.' },
-                }}
-                data-cy="emailResetPassword"
-              />
-              <Button color="primary" type="submit" data-cy="submit">
-                Reset password
-              </Button>
-            </AvForm>
-          </Col>
-        </Row>
-      </div>
-    );
-  }
-}
+  const successMessage = useAppSelector(state => state.passwordReset.successMessage);
 
-const mapDispatchToProps = { handlePasswordResetInit, reset };
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+    }
+  }, [successMessage]);
 
-type DispatchProps = typeof mapDispatchToProps;
+  return (
+    <div>
+      <Row className="justify-content-center">
+        <Col md="8">
+          <h1>Reset your password</h1>
+          <Alert color="warning">
+            <p>Enter the email address you used to register</p>
+          </Alert>
+          <ValidatedForm onSubmit={handleValidSubmit}>
+            <ValidatedField
+              name="email"
+              label="Email"
+              placeholder={'Your email'}
+              type="email"
+              validate={{
+                required: { value: true, message: 'Your email is required.' },
+                minLength: { value: 5, message: 'Your email is required to be at least 5 characters.' },
+                maxLength: { value: 254, message: 'Your email cannot be longer than 50 characters.' },
+                validate: v => isEmail(v) || 'Your email is invalid.',
+              }}
+              data-cy="emailResetPassword"
+            />
+            <Button color="primary" type="submit" data-cy="submit">
+              Reset password
+            </Button>
+          </ValidatedForm>
+        </Col>
+      </Row>
+    </div>
+  );
+};
 
-export default connect(null, mapDispatchToProps)(PasswordResetInit);
+export default PasswordResetInit;

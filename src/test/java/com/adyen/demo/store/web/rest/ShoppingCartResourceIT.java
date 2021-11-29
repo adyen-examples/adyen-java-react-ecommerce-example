@@ -392,12 +392,7 @@ class ShoppingCartResourceIT {
         ShoppingCart partialUpdatedShoppingCart = new ShoppingCart();
         partialUpdatedShoppingCart.setId(shoppingCart.getId());
 
-        partialUpdatedShoppingCart
-            .placedDate(UPDATED_PLACED_DATE)
-            .status(UPDATED_STATUS)
-            .paymentMethod(UPDATED_PAYMENT_METHOD)
-            .paymentReference(UPDATED_PAYMENT_REFERENCE)
-            .paymentModificationReference(UPDATED_PAYMENT_MODIFICATION_REFERENCE);
+        partialUpdatedShoppingCart.status(UPDATED_STATUS).paymentMethod(UPDATED_PAYMENT_METHOD);
 
         restShoppingCartMockMvc
             .perform(
@@ -411,12 +406,12 @@ class ShoppingCartResourceIT {
         List<ShoppingCart> shoppingCartList = shoppingCartRepository.findAll();
         assertThat(shoppingCartList).hasSize(databaseSizeBeforeUpdate);
         ShoppingCart testShoppingCart = shoppingCartList.get(shoppingCartList.size() - 1);
-        assertThat(testShoppingCart.getPlacedDate()).isEqualTo(UPDATED_PLACED_DATE);
+        assertThat(testShoppingCart.getPlacedDate()).isEqualTo(DEFAULT_PLACED_DATE);
         assertThat(testShoppingCart.getStatus()).isEqualTo(UPDATED_STATUS);
         assertThat(testShoppingCart.getTotalPrice()).isEqualByComparingTo(DEFAULT_TOTAL_PRICE);
         assertThat(testShoppingCart.getPaymentMethod()).isEqualTo(UPDATED_PAYMENT_METHOD);
-        assertThat(testShoppingCart.getPaymentReference()).isEqualTo(UPDATED_PAYMENT_REFERENCE);
-        assertThat(testShoppingCart.getPaymentModificationReference()).isEqualTo(UPDATED_PAYMENT_MODIFICATION_REFERENCE);
+        assertThat(testShoppingCart.getPaymentReference()).isEqualTo(DEFAULT_PAYMENT_REFERENCE);
+        assertThat(testShoppingCart.getPaymentModificationReference()).isEqualTo(DEFAULT_PAYMENT_MODIFICATION_REFERENCE);
     }
 
     @Test

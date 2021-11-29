@@ -1,26 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Col, Row, Table } from 'reactstrap';
-import { Translate, getSortState, IPaginationBaseState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { Button, Table } from 'reactstrap';
+import { Translate, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IRootState } from 'app/shared/reducers';
 import { getEntities } from './product-category.reducer';
 import { IProductCategory } from 'app/shared/model/product-category.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
-import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export interface IProductCategoryProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
+export const ProductCategory = (props: RouteComponentProps<{ url: string }>) => {
+  const dispatch = useAppDispatch();
 
-export const ProductCategory = (props: IProductCategoryProps) => {
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
 
+  const productCategoryList = useAppSelector(state => state.productCategory.entities);
+  const loading = useAppSelector(state => state.productCategory.loading);
+  const totalItems = useAppSelector(state => state.productCategory.totalItems);
+
   const getAllEntities = () => {
-    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+    dispatch(
+      getEntities({
+        page: paginationState.activePage - 1,
+        size: paginationState.itemsPerPage,
+        sort: `${paginationState.sort},${paginationState.order}`,
+      })
+    );
   };
 
   const sortEntities = () => {
@@ -38,7 +47,7 @@ export const ProductCategory = (props: IProductCategoryProps) => {
   useEffect(() => {
     const params = new URLSearchParams(props.location.search);
     const page = params.get('page');
-    const sort = params.get('sort');
+    const sort = params.get(SORT);
     if (page && sort) {
       const sortSplit = sort.split(',');
       setPaginationState({
@@ -53,7 +62,7 @@ export const ProductCategory = (props: IProductCategoryProps) => {
   const sort = p => () => {
     setPaginationState({
       ...paginationState,
-      order: paginationState.order === 'asc' ? 'desc' : 'asc',
+      order: paginationState.order === ASC ? DESC : ASC,
       sort: p,
     });
   };
@@ -68,13 +77,14 @@ export const ProductCategory = (props: IProductCategoryProps) => {
     sortEntities();
   };
 
-  const { productCategoryList, match, loading, totalItems } = props;
+  const { match } = props;
+
   return (
     <div>
       <h2 id="product-category-heading" data-cy="ProductCategoryHeading">
         Product Categories
         <div className="d-flex justify-content-end">
-          <Button className="mr-2" color="info" onClick={handleSyncList} disabled={loading}>
+          <Button className="me-2" color="info" onClick={handleSyncList} disabled={loading}>
             <FontAwesomeIcon icon="sync" spin={loading} /> Refresh List
           </Button>
           <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
@@ -108,10 +118,9 @@ export const ProductCategory = (props: IProductCategoryProps) => {
                       {productCategory.id}
                     </Button>
                   </td>
-                  <td>{productCategory.id}</td>
                   <td>{productCategory.name}</td>
                   <td>{productCategory.description}</td>
-                  <td className="text-right">
+                  <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${productCategory.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
@@ -144,20 +153,20 @@ export const ProductCategory = (props: IProductCategoryProps) => {
           !loading && <div className="alert alert-warning">No Product Categories found</div>
         )}
       </div>
-      {props.totalItems ? (
+      {totalItems ? (
         <div className={productCategoryList && productCategoryList.length > 0 ? '' : 'd-none'}>
-          <Row className="justify-content-center">
+          <div className="justify-content-center d-flex">
             <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} />
-          </Row>
-          <Row className="justify-content-center">
+          </div>
+          <div className="justify-content-center d-flex">
             <JhiPagination
               activePage={paginationState.activePage}
               onSelect={handlePagination}
               maxButtons={5}
               itemsPerPage={paginationState.itemsPerPage}
-              totalItems={props.totalItems}
+              totalItems={totalItems}
             />
-          </Row>
+          </div>
         </div>
       ) : (
         ''
@@ -166,17 +175,4 @@ export const ProductCategory = (props: IProductCategoryProps) => {
   );
 };
 
-const mapStateToProps = ({ productCategory }: IRootState) => ({
-  productCategoryList: productCategory.entities,
-  loading: productCategory.loading,
-  totalItems: productCategory.totalItems,
-});
-
-const mapDispatchToProps = {
-  getEntities,
-};
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductCategory);
+export default ProductCategory;

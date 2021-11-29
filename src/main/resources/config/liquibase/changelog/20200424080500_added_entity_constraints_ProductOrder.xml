@@ -2,12 +2,12 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
     <!--
         Added the constraints for entity ProductOrder.
     -->
     <changeSet id="20200424080500-2" author="jhipster">
-        
+
         <addForeignKeyConstraint baseColumnNames="product_id"
                                  baseTableName="product_order"
                                  constraintName="fk_product_order__product_id"
@@ -19,6 +19,5 @@
                                  constraintName="fk_product_order__cart_id"
                                  referencedColumnNames="id"
                                  referencedTableName="shopping_cart"/>
-
     </changeSet>
 </databaseChangeLog>

@@ -1,56 +1,61 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, Label } from 'reactstrap';
-import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
-import { translate } from 'react-jhipster';
+import { Button, Row, Col, FormText } from 'reactstrap';
+import { isNumber, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IRootState } from 'app/shared/reducers';
 
 import { getEntity, updateEntity, createEntity, reset } from './product-category.reducer';
 import { IProductCategory } from 'app/shared/model/product-category.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export interface IProductCategoryUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
+export const ProductCategoryUpdate = (props: RouteComponentProps<{ id: string }>) => {
+  const dispatch = useAppDispatch();
 
-export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
   const [isNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { productCategoryEntity, loading, updating } = props;
-
+  const productCategoryEntity = useAppSelector(state => state.productCategory.entity);
+  const loading = useAppSelector(state => state.productCategory.loading);
+  const updating = useAppSelector(state => state.productCategory.updating);
+  const updateSuccess = useAppSelector(state => state.productCategory.updateSuccess);
   const handleClose = () => {
     props.history.push('/product-category' + props.location.search);
   };
 
   useEffect(() => {
     if (isNew) {
-      props.reset();
+      dispatch(reset());
     } else {
-      props.getEntity(props.match.params.id);
+      dispatch(getEntity(props.match.params.id));
     }
   }, []);
 
   useEffect(() => {
-    if (props.updateSuccess) {
+    if (updateSuccess) {
       handleClose();
     }
-  }, [props.updateSuccess]);
+  }, [updateSuccess]);
 
-  const saveEntity = (event, errors, values) => {
-    if (errors.length === 0) {
-      const entity = {
-        ...productCategoryEntity,
-        ...values,
-      };
+  const saveEntity = values => {
+    const entity = {
+      ...productCategoryEntity,
+      ...values,
+    };
 
-      if (isNew) {
-        props.createEntity(entity);
-      } else {
-        props.updateEntity(entity);
-      }
+    if (isNew) {
+      dispatch(createEntity(entity));
+    } else {
+      dispatch(updateEntity(entity));
     }
   };
+
+  const defaultValues = () =>
+    isNew
+      ? {}
+      : {
+          ...productCategoryEntity,
+        };
 
   return (
     <div>
@@ -66,34 +71,22 @@ export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <AvForm model={isNew ? {} : productCategoryEntity} onSubmit={saveEntity}>
+            <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
               {!isNew ? (
-                <AvGroup>
-                  <Label for="product-category-id">ID</Label>
-                  <AvInput id="product-category-id" type="text" className="form-control" name="id" required readOnly />
-                </AvGroup>
+                <ValidatedField name="id" required readOnly id="product-category-id" label="ID" validate={{ required: true }} />
               ) : null}
-              <AvGroup>
-                <Label id="nameLabel" for="product-category-name">
-                  Name
-                </Label>
-                <AvField
-                  id="product-category-name"
-                  data-cy="name"
-                  type="text"
-                  name="name"
-                  validate={{
-                    required: { value: true, errorMessage: 'This field is required.' },
-                  }}
-                />
-              </AvGroup>
-              <AvGroup>
-                <Label id="descriptionLabel" for="product-category-description">
-                  Description
-                </Label>
-                <AvField id="product-category-description" data-cy="description" type="text" name="description" />
-              </AvGroup>
-              <Button tag={Link} id="cancel-save" to="/product-category" replace color="info">
+              <ValidatedField
+                label="Name"
+                id="product-category-name"
+                name="name"
+                data-cy="name"
+                type="text"
+                validate={{
+                  required: { value: true, message: 'This field is required.' },
+                }}
+              />
+              <ValidatedField label="Description" id="product-category-description" name="description" data-cy="description" type="text" />
+              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/product-category" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
                 <span className="d-none d-md-inline">Back</span>
@@ -103,7 +96,7 @@ export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
                 <FontAwesomeIcon icon="save" />
                 &nbsp; Save
               </Button>
-            </AvForm>
+            </ValidatedForm>
           )}
         </Col>
       </Row>
@@ -111,21 +104,4 @@ export const ProductCategoryUpdate = (props: IProductCategoryUpdateProps) => {
   );
 };
 
-const mapStateToProps = (storeState: IRootState) => ({
-  productCategoryEntity: storeState.productCategory.entity,
-  loading: storeState.productCategory.loading,
-  updating: storeState.productCategory.updating,
-  updateSuccess: storeState.productCategory.updateSuccess,
-});
-
-const mapDispatchToProps = {
-  getEntity,
-  updateEntity,
-  createEntity,
-  reset,
-};
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProductCategoryUpdate);
+export default ProductCategoryUpdate;
