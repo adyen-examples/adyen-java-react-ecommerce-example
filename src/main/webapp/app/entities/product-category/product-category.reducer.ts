@@ -1,161 +1,123 @@
 import axios from 'axios';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction } from 'react-jhipster';
+import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
-
+import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 import { IProductCategory, defaultValue } from 'app/shared/model/product-category.model';
 
-export const ACTION_TYPES = {
-  FETCH_PRODUCTCATEGORY_LIST: 'productCategory/FETCH_PRODUCTCATEGORY_LIST',
-  FETCH_PRODUCTCATEGORY: 'productCategory/FETCH_PRODUCTCATEGORY',
-  CREATE_PRODUCTCATEGORY: 'productCategory/CREATE_PRODUCTCATEGORY',
-  UPDATE_PRODUCTCATEGORY: 'productCategory/UPDATE_PRODUCTCATEGORY',
-  PARTIAL_UPDATE_PRODUCTCATEGORY: 'productCategory/PARTIAL_UPDATE_PRODUCTCATEGORY',
-  DELETE_PRODUCTCATEGORY: 'productCategory/DELETE_PRODUCTCATEGORY',
-  RESET: 'productCategory/RESET',
-};
-
-const initialState = {
+const initialState: EntityState<IProductCategory> = {
   loading: false,
   errorMessage: null,
-  entities: [] as ReadonlyArray<IProductCategory>,
+  entities: [],
   entity: defaultValue,
   updating: false,
   totalItems: 0,
   updateSuccess: false,
 };
 
-export type ProductCategoryState = Readonly<typeof initialState>;
-
-// Reducer
-
-export default (state: ProductCategoryState = initialState, action): ProductCategoryState => {
-  switch (action.type) {
-    case REQUEST(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST):
-    case REQUEST(ACTION_TYPES.FETCH_PRODUCTCATEGORY):
-      return {
-        ...state,
-        errorMessage: null,
-        updateSuccess: false,
-        loading: true,
-      };
-    case REQUEST(ACTION_TYPES.CREATE_PRODUCTCATEGORY):
-    case REQUEST(ACTION_TYPES.UPDATE_PRODUCTCATEGORY):
-    case REQUEST(ACTION_TYPES.DELETE_PRODUCTCATEGORY):
-    case REQUEST(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY):
-      return {
-        ...state,
-        errorMessage: null,
-        updateSuccess: false,
-        updating: true,
-      };
-    case FAILURE(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST):
-    case FAILURE(ACTION_TYPES.FETCH_PRODUCTCATEGORY):
-    case FAILURE(ACTION_TYPES.CREATE_PRODUCTCATEGORY):
-    case FAILURE(ACTION_TYPES.UPDATE_PRODUCTCATEGORY):
-    case FAILURE(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY):
-    case FAILURE(ACTION_TYPES.DELETE_PRODUCTCATEGORY):
-      return {
-        ...state,
-        loading: false,
-        updating: false,
-        updateSuccess: false,
-        errorMessage: action.payload,
-      };
-    case SUCCESS(ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST):
-      return {
-        ...state,
-        loading: false,
-        entities: action.payload.data,
-        totalItems: parseInt(action.payload.headers['x-total-count'], 10),
-      };
-    case SUCCESS(ACTION_TYPES.FETCH_PRODUCTCATEGORY):
-      return {
-        ...state,
-        loading: false,
-        entity: action.payload.data,
-      };
-    case SUCCESS(ACTION_TYPES.CREATE_PRODUCTCATEGORY):
-    case SUCCESS(ACTION_TYPES.UPDATE_PRODUCTCATEGORY):
-    case SUCCESS(ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY):
-      return {
-        ...state,
-        updating: false,
-        updateSuccess: true,
-        entity: action.payload.data,
-      };
-    case SUCCESS(ACTION_TYPES.DELETE_PRODUCTCATEGORY):
-      return {
-        ...state,
-        updating: false,
-        updateSuccess: true,
-        entity: {},
-      };
-    case ACTION_TYPES.RESET:
-      return {
-        ...initialState,
-      };
-    default:
-      return state;
-  }
-};
-
 const apiUrl = 'api/product-categories';
 
 // Actions
 
-export const getEntities: ICrudGetAllAction<IProductCategory> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
-  return {
-    type: ACTION_TYPES.FETCH_PRODUCTCATEGORY_LIST,
-    payload: axios.get<IProductCategory>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`),
-  };
-};
-
-export const getEntity: ICrudGetAction<IProductCategory> = id => {
-  const requestUrl = `${apiUrl}/${id}`;
-  return {
-    type: ACTION_TYPES.FETCH_PRODUCTCATEGORY,
-    payload: axios.get<IProductCategory>(requestUrl),
-  };
-};
-
-export const createEntity: ICrudPutAction<IProductCategory> = entity => async dispatch => {
-  const result = await dispatch({
-    type: ACTION_TYPES.CREATE_PRODUCTCATEGORY,
-    payload: axios.post(apiUrl, cleanEntity(entity)),
-  });
-  dispatch(getEntities());
-  return result;
-};
-
-export const updateEntity: ICrudPutAction<IProductCategory> = entity => async dispatch => {
-  const result = await dispatch({
-    type: ACTION_TYPES.UPDATE_PRODUCTCATEGORY,
-    payload: axios.put(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
-  });
-  return result;
-};
-
-export const partialUpdate: ICrudPutAction<IProductCategory> = entity => async dispatch => {
-  const result = await dispatch({
-    type: ACTION_TYPES.PARTIAL_UPDATE_PRODUCTCATEGORY,
-    payload: axios.patch(`${apiUrl}/${entity.id}`, cleanEntity(entity)),
-  });
-  return result;
-};
-
-export const deleteEntity: ICrudDeleteAction<IProductCategory> = id => async dispatch => {
-  const requestUrl = `${apiUrl}/${id}`;
-  const result = await dispatch({
-    type: ACTION_TYPES.DELETE_PRODUCTCATEGORY,
-    payload: axios.delete(requestUrl),
-  });
-  dispatch(getEntities());
-  return result;
-};
-
-export const reset = () => ({
-  type: ACTION_TYPES.RESET,
+export const getEntities = createAsyncThunk('productCategory/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
+  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}&` : '?'}cacheBuster=${new Date().getTime()}`;
+  return axios.get<IProductCategory[]>(requestUrl);
 });
+
+export const getEntity = createAsyncThunk(
+  'productCategory/fetch_entity',
+  async (id: string | number) => {
+    const requestUrl = `${apiUrl}/${id}`;
+    return axios.get<IProductCategory>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const createEntity = createAsyncThunk(
+  'productCategory/create_entity',
+  async (entity: IProductCategory, thunkAPI) => {
+    const result = await axios.post<IProductCategory>(apiUrl, cleanEntity(entity));
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const updateEntity = createAsyncThunk(
+  'productCategory/update_entity',
+  async (entity: IProductCategory, thunkAPI) => {
+    const result = await axios.put<IProductCategory>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const partialUpdateEntity = createAsyncThunk(
+  'productCategory/partial_update_entity',
+  async (entity: IProductCategory, thunkAPI) => {
+    const result = await axios.patch<IProductCategory>(`${apiUrl}/${entity.id}`, cleanEntity(entity));
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+export const deleteEntity = createAsyncThunk(
+  'productCategory/delete_entity',
+  async (id: string | number, thunkAPI) => {
+    const requestUrl = `${apiUrl}/${id}`;
+    const result = await axios.delete<IProductCategory>(requestUrl);
+    thunkAPI.dispatch(getEntities({}));
+    return result;
+  },
+  { serializeError: serializeAxiosError }
+);
+
+// slice
+
+export const ProductCategorySlice = createEntitySlice({
+  name: 'productCategory',
+  initialState,
+  extraReducers(builder) {
+    builder
+      .addCase(getEntity.fulfilled, (state, action) => {
+        state.loading = false;
+        state.entity = action.payload.data;
+      })
+      .addCase(deleteEntity.fulfilled, state => {
+        state.updating = false;
+        state.updateSuccess = true;
+        state.entity = {};
+      })
+      .addMatcher(isFulfilled(getEntities), (state, action) => {
+        return {
+          ...state,
+          loading: false,
+          entities: action.payload.data,
+          totalItems: parseInt(action.payload.headers['x-total-count'], 10),
+        };
+      })
+      .addMatcher(isFulfilled(createEntity, updateEntity, partialUpdateEntity), (state, action) => {
+        state.updating = false;
+        state.loading = false;
+        state.updateSuccess = true;
+        state.entity = action.payload.data;
+      })
+      .addMatcher(isPending(getEntities, getEntity), state => {
+        state.errorMessage = null;
+        state.updateSuccess = false;
+        state.loading = true;
+      })
+      .addMatcher(isPending(createEntity, updateEntity, partialUpdateEntity, deleteEntity), state => {
+        state.errorMessage = null;
+        state.updateSuccess = false;
+        state.updating = true;
+      });
+  },
+});
+
+export const { reset } = ProductCategorySlice.actions;
+
+// Reducer
+export default ProductCategorySlice.reducer;

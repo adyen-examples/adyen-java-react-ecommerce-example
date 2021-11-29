@@ -66,13 +66,11 @@ public class UserMapper {
             authorities =
                 authoritiesAsString
                     .stream()
-                    .map(
-                        string -> {
-                            Authority auth = new Authority();
-                            auth.setName(string);
-                            return auth;
-                        }
-                    )
+                    .map(string -> {
+                        Authority auth = new Authority();
+                        auth.setName(string);
+                        return auth;
+                    })
                     .collect(Collectors.toSet());
         }
 
@@ -105,7 +103,7 @@ public class UserMapper {
     @Mapping(target = "id", source = "id")
     public Set<UserDTO> toDtoIdSet(Set<User> users) {
         if (users == null) {
-            return null;
+            return Collections.emptySet();
         }
 
         Set<UserDTO> userSet = new HashSet<>();
@@ -136,7 +134,7 @@ public class UserMapper {
     @Mapping(target = "login", source = "login")
     public Set<UserDTO> toDtoLoginSet(Set<User> users) {
         if (users == null) {
-            return null;
+            return Collections.emptySet();
         }
 
         Set<UserDTO> userSet = new HashSet<>();

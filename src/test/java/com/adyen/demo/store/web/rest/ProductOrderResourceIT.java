@@ -329,6 +329,8 @@ public class ProductOrderResourceIT {
         ProductOrder partialUpdatedProductOrder = new ProductOrder();
         partialUpdatedProductOrder.setId(productOrder.getId());
 
+        partialUpdatedProductOrder.quantity(UPDATED_QUANTITY).totalPrice(UPDATED_TOTAL_PRICE);
+
         restProductOrderMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedProductOrder.getId())
@@ -341,8 +343,8 @@ public class ProductOrderResourceIT {
         List<ProductOrder> productOrderList = productOrderRepository.findAll();
         assertThat(productOrderList).hasSize(databaseSizeBeforeUpdate);
         ProductOrder testProductOrder = productOrderList.get(productOrderList.size() - 1);
-        assertThat(testProductOrder.getQuantity()).isEqualTo(DEFAULT_QUANTITY);
-        assertThat(testProductOrder.getTotalPrice()).isEqualByComparingTo(DEFAULT_TOTAL_PRICE);
+        assertThat(testProductOrder.getQuantity()).isEqualTo(UPDATED_QUANTITY);
+        assertThat(testProductOrder.getTotalPrice()).isEqualByComparingTo(UPDATED_TOTAL_PRICE);
     }
 
     @Test

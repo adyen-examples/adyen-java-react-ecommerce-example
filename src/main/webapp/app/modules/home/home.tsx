@@ -1,31 +1,33 @@
 import './home.scss';
 
-import React, { useEffect, useState } from 'react';
+import React , { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+
 import { Row, Col, Alert, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getSortState, JhiItemCount, JhiPagination } from 'react-jhipster';
 
-import { IRootState } from 'app/shared/reducers';
-import { getEntities } from 'app/entities/product/product.reducer';
-import { addProduct } from 'app/entities/shopping-cart/shopping-cart.reducer';
-import { IProductProps } from 'app/entities/product/product';
-import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
-import { IProduct } from 'app/shared/model/product.model';
+import { useAppSelector } from 'app/config/store';
 
-export interface IHomeProp extends IProductProps, StateProps, DispatchProps {}
+export const Home = () => {
+  const account = useAppSelector(state => state.authentication.account);
 
-export const Home = (props: IHomeProp) => {
+  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
+  const productList = useAppSelector(state => product.entities);
+  const loading = useAppSelector(product.loading);
+  const totalItems = useAppSelector(product.totalItems);
   const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE, 'id'));
   const [filterState, setFilterState] = useState('');
 
+  const dispatch = useAppDispatch();
+
   const getAllEntities = () => {
-    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+    dispatch(getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`));
   };
 
   const sortEntities = () => {
     getAllEntities();
+    // TODO: Fixme!
     props.history.push(
       `${props.location.pathname}?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`
     );
@@ -62,7 +64,7 @@ export const Home = (props: IHomeProp) => {
       <Col lg="9" md="12">
         <h2>Welcome to Adyen Demo Store!</h2>
         <p className="lead">This is an e-commerce application showcasing the Adyen Payment Platform</p>
-        {account && account.login ? (
+        {account?.login ? (
           <>
             <div>
               <Alert color="success">You are logged in with username {account.login}.</Alert>
@@ -194,20 +196,4 @@ export const Home = (props: IHomeProp) => {
   );
 };
 
-const mapStateToProps = ({ product, authentication }: IRootState) => ({
-  account: authentication.account,
-  isAuthenticated: authentication.isAuthenticated,
-  productList: product.entities,
-  loading: product.loading,
-  totalItems: product.totalItems,
-});
-
-const mapDispatchToProps = {
-  getEntities,
-  addProduct,
-};
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default Home;

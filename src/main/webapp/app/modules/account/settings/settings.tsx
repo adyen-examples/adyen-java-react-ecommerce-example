@@ -1,101 +1,90 @@
 import React, { useEffect } from 'react';
 import { Button, Col, Row } from 'reactstrap';
-import { connect } from 'react-redux';
+import { ValidatedField, ValidatedForm, isEmail } from 'react-jhipster';
+import { toast } from 'react-toastify';
 
-import { AvForm, AvField } from 'availity-reactstrap-validation';
-
-import { IRootState } from 'app/shared/reducers';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getSession } from 'app/shared/reducers/authentication';
 import { saveAccountSettings, reset } from './settings.reducer';
 
-export interface IUserSettingsProps extends StateProps, DispatchProps {}
+export const SettingsPage = () => {
+  const dispatch = useAppDispatch();
+  const account = useAppSelector(state => state.authentication.account);
+  const successMessage = useAppSelector(state => state.settings.successMessage);
 
-export const SettingsPage = (props: IUserSettingsProps) => {
   useEffect(() => {
-    props.getSession();
+    dispatch(getSession());
     return () => {
-      props.reset();
+      dispatch(reset());
     };
   }, []);
 
-  const handleValidSubmit = (event, values) => {
-    const account = {
-      ...props.account,
-      ...values,
-    };
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+    }
+  }, [successMessage]);
 
-    props.saveAccountSettings(account);
-    event.persist();
+  const handleValidSubmit = values => {
+    dispatch(
+      saveAccountSettings({
+        ...account,
+        ...values,
+      })
+    );
   };
 
   return (
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="settings-title">User settings for {props.account.login}</h2>
-          <AvForm id="settings-form" onValidSubmit={handleValidSubmit}>
-            {/* First name */}
-            <AvField
-              className="form-control"
+          <h2 id="settings-title">User settings for {account.login}</h2>
+          <ValidatedForm id="settings-form" onSubmit={handleValidSubmit} defaultValues={account}>
+            <ValidatedField
               name="firstName"
               label="First Name"
               id="firstName"
               placeholder="Your first name"
               validate={{
-                required: { value: true, errorMessage: 'Your first name is required.' },
-                minLength: { value: 1, errorMessage: 'Your first name is required to be at least 1 character' },
-                maxLength: { value: 50, errorMessage: 'Your first name cannot be longer than 50 characters' },
+                required: { value: true, message: 'Your first name is required.' },
+                minLength: { value: 1, message: 'Your first name is required to be at least 1 character' },
+                maxLength: { value: 50, message: 'Your first name cannot be longer than 50 characters' },
               }}
-              value={props.account.firstName}
               data-cy="firstname"
             />
-            {/* Last name */}
-            <AvField
-              className="form-control"
+            <ValidatedField
               name="lastName"
               label="Last Name"
               id="lastName"
               placeholder="Your last name"
               validate={{
-                required: { value: true, errorMessage: 'Your last name is required.' },
-                minLength: { value: 1, errorMessage: 'Your last name is required to be at least 1 character' },
-                maxLength: { value: 50, errorMessage: 'Your last name cannot be longer than 50 characters' },
+                required: { value: true, message: 'Your last name is required.' },
+                minLength: { value: 1, message: 'Your last name is required to be at least 1 character' },
+                maxLength: { value: 50, message: 'Your last name cannot be longer than 50 characters' },
               }}
-              value={props.account.lastName}
               data-cy="lastname"
             />
-            {/* Email */}
-            <AvField
+            <ValidatedField
               name="email"
               label="Email"
               placeholder={'Your email'}
               type="email"
               validate={{
-                required: { value: true, errorMessage: 'Your email is required.' },
-                minLength: { value: 5, errorMessage: 'Your email is required to be at least 5 characters.' },
-                maxLength: { value: 254, errorMessage: 'Your email cannot be longer than 50 characters.' },
+                required: { value: true, message: 'Your email is required.' },
+                minLength: { value: 5, message: 'Your email is required to be at least 5 characters.' },
+                maxLength: { value: 254, message: 'Your email cannot be longer than 50 characters.' },
+                validate: v => isEmail(v) || 'Your email is invalid.',
               }}
-              value={props.account.email}
               data-cy="email"
             />
             <Button color="primary" type="submit" data-cy="submit">
               Save
             </Button>
-          </AvForm>
+          </ValidatedForm>
         </Col>
       </Row>
     </div>
   );
 };
 
-const mapStateToProps = ({ authentication }: IRootState) => ({
-  account: authentication.account,
-  isAuthenticated: authentication.isAuthenticated,
-});
-
-const mapDispatchToProps = { getSession, saveAccountSettings, reset };
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(SettingsPage);
+export default SettingsPage;

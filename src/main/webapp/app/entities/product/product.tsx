@@ -1,26 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Col, Row, Table } from 'reactstrap';
-import { openFile, byteSize, Translate, getSortState, IPaginationBaseState, JhiPagination, JhiItemCount } from 'react-jhipster';
+import { Button, Table } from 'reactstrap';
+import { openFile, byteSize, Translate, getSortState, JhiPagination, JhiItemCount } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IRootState } from 'app/shared/reducers';
 import { getEntities } from './product.reducer';
 import { IProduct } from 'app/shared/model/product.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
-import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export interface IProductProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
+export const Product = (props: RouteComponentProps<{ url: string }>) => {
+  const dispatch = useAppDispatch();
 
-export const Product = (props: IProductProps) => {
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
 
+  const productList = useAppSelector(state => state.product.entities);
+  const loading = useAppSelector(state => state.product.loading);
+  const totalItems = useAppSelector(state => state.product.totalItems);
+
   const getAllEntities = () => {
-    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+    dispatch(
+      getEntities({
+        page: paginationState.activePage - 1,
+        size: paginationState.itemsPerPage,
+        sort: `${paginationState.sort},${paginationState.order}`,
+      })
+    );
   };
 
   const sortEntities = () => {
@@ -38,7 +47,7 @@ export const Product = (props: IProductProps) => {
   useEffect(() => {
     const params = new URLSearchParams(props.location.search);
     const page = params.get('page');
-    const sort = params.get('sort');
+    const sort = params.get(SORT);
     if (page && sort) {
       const sortSplit = sort.split(',');
       setPaginationState({
@@ -53,7 +62,7 @@ export const Product = (props: IProductProps) => {
   const sort = p => () => {
     setPaginationState({
       ...paginationState,
-      order: paginationState.order === 'asc' ? 'desc' : 'asc',
+      order: paginationState.order === ASC ? DESC : ASC,
       sort: p,
     });
   };
@@ -68,13 +77,14 @@ export const Product = (props: IProductProps) => {
     sortEntities();
   };
 
-  const { productList, match, loading, totalItems } = props;
+  const { match } = props;
+
   return (
     <div>
       <h2 id="product-heading" data-cy="ProductHeading">
         Products
         <div className="d-flex justify-content-end">
-          <Button className="mr-2" color="info" onClick={handleSyncList} disabled={loading}>
+          <Button className="me-2" color="info" onClick={handleSyncList} disabled={loading}>
             <FontAwesomeIcon icon="sync" spin={loading} /> Refresh List
           </Button>
           <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
@@ -120,7 +130,6 @@ export const Product = (props: IProductProps) => {
                       {product.id}
                     </Button>
                   </td>
-                  <td>{product.id}</td>
                   <td>{product.name}</td>
                   <td>{product.description}</td>
                   <td>{product.price}</td>
@@ -147,7 +156,7 @@ export const Product = (props: IProductProps) => {
                       ''
                     )}
                   </td>
-                  <td className="text-right">
+                  <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${product.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
@@ -180,20 +189,20 @@ export const Product = (props: IProductProps) => {
           !loading && <div className="alert alert-warning">No Products found</div>
         )}
       </div>
-      {props.totalItems ? (
+      {totalItems ? (
         <div className={productList && productList.length > 0 ? '' : 'd-none'}>
-          <Row className="justify-content-center">
+          <div className="justify-content-center d-flex">
             <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} />
-          </Row>
-          <Row className="justify-content-center">
+          </div>
+          <div className="justify-content-center d-flex">
             <JhiPagination
               activePage={paginationState.activePage}
               onSelect={handlePagination}
               maxButtons={5}
               itemsPerPage={paginationState.itemsPerPage}
-              totalItems={props.totalItems}
+              totalItems={totalItems}
             />
-          </Row>
+          </div>
         </div>
       ) : (
         ''
@@ -202,17 +211,4 @@ export const Product = (props: IProductProps) => {
   );
 };
 
-const mapStateToProps = ({ product }: IRootState) => ({
-  productList: product.entities,
-  loading: product.loading,
-  totalItems: product.totalItems,
-});
-
-const mapDispatchToProps = {
-  getEntities,
-};
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(Product);
+export default Product;

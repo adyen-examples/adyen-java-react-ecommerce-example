@@ -276,6 +276,8 @@ public class ProductCategoryResourceIT {
         ProductCategory partialUpdatedProductCategory = new ProductCategory();
         partialUpdatedProductCategory.setId(productCategory.getId());
 
+        partialUpdatedProductCategory.name(UPDATED_NAME);
+
         restProductCategoryMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedProductCategory.getId())
@@ -288,7 +290,7 @@ public class ProductCategoryResourceIT {
         List<ProductCategory> productCategoryList = productCategoryRepository.findAll();
         assertThat(productCategoryList).hasSize(databaseSizeBeforeUpdate);
         ProductCategory testProductCategory = productCategoryList.get(productCategoryList.size() - 1);
-        assertThat(testProductCategory.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testProductCategory.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testProductCategory.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
     }
 

@@ -1,25 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Table, Row, Badge } from 'reactstrap';
+import { Button, Table, Badge } from 'reactstrap';
 import { TextFormat, JhiPagination, JhiItemCount, getSortState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { APP_DATE_FORMAT } from 'app/config/constants';
-import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { getUsersAsAdmin, updateUser } from './user-management.reducer';
-import { IRootState } from 'app/shared/reducers';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export interface IUserManagementProps extends StateProps, DispatchProps, RouteComponentProps<any> {}
+export const UserManagement = (props: RouteComponentProps<any>) => {
+  const dispatch = useAppDispatch();
 
-export const UserManagement = (props: IUserManagementProps) => {
   const [pagination, setPagination] = useState(
     overridePaginationStateWithQueryParams(getSortState(props.location, ITEMS_PER_PAGE, 'id'), props.location.search)
   );
 
   const getUsersFromProps = () => {
-    props.getUsersAsAdmin(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
+    dispatch(
+      getUsersAsAdmin({
+        page: pagination.activePage - 1,
+        size: pagination.itemsPerPage,
+        sort: `${pagination.sort},${pagination.order}`,
+      })
+    );
     const endURL = `?page=${pagination.activePage}&sort=${pagination.sort},${pagination.order}`;
     if (props.location.search !== endURL) {
       props.history.push(`${props.location.pathname}${endURL}`);
@@ -33,7 +38,7 @@ export const UserManagement = (props: IUserManagementProps) => {
   useEffect(() => {
     const params = new URLSearchParams(props.location.search);
     const page = params.get('page');
-    const sortParam = params.get('sort');
+    const sortParam = params.get(SORT);
     if (page && sortParam) {
       const sortSplit = sortParam.split(',');
       setPagination({
@@ -48,7 +53,7 @@ export const UserManagement = (props: IUserManagementProps) => {
   const sort = p => () =>
     setPagination({
       ...pagination,
-      order: pagination.order === 'asc' ? 'desc' : 'asc',
+      order: pagination.order === ASC ? DESC : ASC,
       sort: p,
     });
 
@@ -63,18 +68,25 @@ export const UserManagement = (props: IUserManagementProps) => {
   };
 
   const toggleActive = user => () =>
-    props.updateUser({
-      ...user,
-      activated: !user.activated,
-    });
+    dispatch(
+      updateUser({
+        ...user,
+        activated: !user.activated,
+      })
+    );
 
-  const { users, account, match, totalItems, loading } = props;
+  const { match } = props;
+  const account = useAppSelector(state => state.authentication.account);
+  const users = useAppSelector(state => state.userManagement.users);
+  const totalItems = useAppSelector(state => state.userManagement.totalItems);
+  const loading = useAppSelector(state => state.userManagement.loading);
+
   return (
     <div>
       <h2 id="user-management-page-heading" data-cy="userManagementPageHeading">
         Users
         <div className="d-flex justify-content-end">
-          <Button className="mr-2" color="info" onClick={handleSyncList} disabled={loading}>
+          <Button className="me-2" color="info" onClick={handleSyncList} disabled={loading}>
             <FontAwesomeIcon icon="sync" spin={loading} /> Refresh List
           </Button>
           <Link to={`${match.url}/new`} className="btn btn-primary jh-create-entity">
@@ -153,7 +165,7 @@ export const UserManagement = (props: IUserManagementProps) => {
                   <TextFormat value={user.lastModifiedDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
                 ) : null}
               </td>
-              <td className="text-right">
+              <td className="text-end">
                 <div className="btn-group flex-btn-group-container">
                   <Button tag={Link} to={`${match.url}/${user.login}`} color="info" size="sm">
                     <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
@@ -176,20 +188,20 @@ export const UserManagement = (props: IUserManagementProps) => {
           ))}
         </tbody>
       </Table>
-      {props.totalItems ? (
-        <div className={users && users.length > 0 ? '' : 'd-none'}>
-          <Row className="justify-content-center">
+      {totalItems ? (
+        <div className={users?.length > 0 ? '' : 'd-none'}>
+          <div className="justify-content-center d-flex">
             <JhiItemCount page={pagination.activePage} total={totalItems} itemsPerPage={pagination.itemsPerPage} i18nEnabled />
-          </Row>
-          <Row className="justify-content-center">
+          </div>
+          <div className="justify-content-center d-flex">
             <JhiPagination
               activePage={pagination.activePage}
               onSelect={handlePagination}
               maxButtons={5}
               itemsPerPage={pagination.itemsPerPage}
-              totalItems={props.totalItems}
+              totalItems={totalItems}
             />
-          </Row>
+          </div>
         </div>
       ) : (
         ''
@@ -198,16 +210,4 @@ export const UserManagement = (props: IUserManagementProps) => {
   );
 };
 
-const mapStateToProps = (storeState: IRootState) => ({
-  loading: storeState.userManagement.loading,
-  users: storeState.userManagement.users,
-  totalItems: storeState.userManagement.totalItems,
-  account: storeState.authentication.account,
-});
-
-const mapDispatchToProps = { getUsersAsAdmin, updateUser };
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserManagement);
+export default UserManagement;

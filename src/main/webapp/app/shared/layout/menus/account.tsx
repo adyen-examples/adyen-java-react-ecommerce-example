@@ -3,7 +3,7 @@ import MenuItem from 'app/shared/layout/menus/menu-item';
 
 import { NavDropdown } from './menu-components';
 
-const accountMenuItemsAuthenticated = (
+const accountMenuItemsAuthenticated = () => (
   <>
     <MenuItem icon="wrench" to="/account/settings" data-cy="settings">
       Settings
@@ -17,7 +17,7 @@ const accountMenuItemsAuthenticated = (
   </>
 );
 
-const accountMenuItems = (
+const accountMenuItems = () => (
   <>
     <MenuItem id="login-item" icon="sign-in-alt" to="/login" data-cy="login">
       Sign in
@@ -30,7 +30,7 @@ const accountMenuItems = (
 
 export const AccountMenu = ({ isAuthenticated = false }) => (
   <NavDropdown icon="user" name="Account" id="account-menu" data-cy="accountMenu">
-    {isAuthenticated ? accountMenuItemsAuthenticated : accountMenuItems}
+    {isAuthenticated ? accountMenuItemsAuthenticated() : accountMenuItems()}
   </NavDropdown>
 );
 

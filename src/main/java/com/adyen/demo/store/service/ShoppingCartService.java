@@ -62,30 +62,28 @@ public class ShoppingCartService {
 
         return shoppingCartRepository
             .findById(shoppingCart.getId())
-            .map(
-                existingShoppingCart -> {
-                    if (shoppingCart.getPlacedDate() != null) {
-                        existingShoppingCart.setPlacedDate(shoppingCart.getPlacedDate());
-                    }
-                    if (shoppingCart.getStatus() != null) {
-                        existingShoppingCart.setStatus(shoppingCart.getStatus());
-                    }
-                    if (shoppingCart.getTotalPrice() != null) {
-                        existingShoppingCart.setTotalPrice(shoppingCart.getTotalPrice());
-                    }
-                    if (shoppingCart.getPaymentMethod() != null) {
-                        existingShoppingCart.setPaymentMethod(shoppingCart.getPaymentMethod());
-                    }
-                    if (shoppingCart.getPaymentReference() != null) {
-                        existingShoppingCart.setPaymentReference(shoppingCart.getPaymentReference());
-                    }
-                    if (shoppingCart.getPaymentModificationReference() != null) {
-                        existingShoppingCart.setPaymentModificationReference(shoppingCart.getPaymentModificationReference());
-                    }
-
-                    return existingShoppingCart;
+            .map(existingShoppingCart -> {
+                if (shoppingCart.getPlacedDate() != null) {
+                    existingShoppingCart.setPlacedDate(shoppingCart.getPlacedDate());
                 }
-            )
+                if (shoppingCart.getStatus() != null) {
+                    existingShoppingCart.setStatus(shoppingCart.getStatus());
+                }
+                if (shoppingCart.getTotalPrice() != null) {
+                    existingShoppingCart.setTotalPrice(shoppingCart.getTotalPrice());
+                }
+                if (shoppingCart.getPaymentMethod() != null) {
+                    existingShoppingCart.setPaymentMethod(shoppingCart.getPaymentMethod());
+                }
+                if (shoppingCart.getPaymentReference() != null) {
+                    existingShoppingCart.setPaymentReference(shoppingCart.getPaymentReference());
+                }
+                if (shoppingCart.getPaymentModificationReference() != null) {
+                    existingShoppingCart.setPaymentModificationReference(shoppingCart.getPaymentModificationReference());
+                }
+
+                return existingShoppingCart;
+            })
             .map(shoppingCartRepository::save);
     }
 

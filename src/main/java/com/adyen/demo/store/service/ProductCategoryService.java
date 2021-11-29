@@ -47,18 +47,16 @@ public class ProductCategoryService {
 
         return productCategoryRepository
             .findById(productCategory.getId())
-            .map(
-                existingProductCategory -> {
-                    if (productCategory.getName() != null) {
-                        existingProductCategory.setName(productCategory.getName());
-                    }
-                    if (productCategory.getDescription() != null) {
-                        existingProductCategory.setDescription(productCategory.getDescription());
-                    }
-
-                    return existingProductCategory;
+            .map(existingProductCategory -> {
+                if (productCategory.getName() != null) {
+                    existingProductCategory.setName(productCategory.getName());
                 }
-            )
+                if (productCategory.getDescription() != null) {
+                    existingProductCategory.setDescription(productCategory.getDescription());
+                }
+
+                return existingProductCategory;
+            })
             .map(productCategoryRepository::save);
     }
 
