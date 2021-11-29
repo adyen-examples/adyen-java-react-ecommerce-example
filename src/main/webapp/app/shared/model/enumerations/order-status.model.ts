@@ -1,0 +1,15 @@
+export enum OrderStatus {
+  REFUND_INITIATED = 'REFUND_INITIATED',
+
+  REFUND_FAILED = 'REFUND_FAILED',
+
+  PAID = 'PAID',
+
+  PENDING = 'PENDING',
+
+  OPEN = 'OPEN',
+
+  CANCELLED = 'CANCELLED',
+
+  REFUNDED = 'REFUNDED',
+}
