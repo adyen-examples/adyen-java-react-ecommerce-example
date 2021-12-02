@@ -99,59 +99,59 @@ export const RegisterPage = () => {
               }}
               data-cy="secondPassword"
             />
-            <AvField
+            <ValidatedField
               name="firstName"
               label="First Name"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
-            <AvField
+            <ValidatedField
               name="lastName"
               label="Last Name"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
-            <AvField name="gender" label="Gender" type="select">
+            <ValidatedField name="gender" label="Gender" type="select">
               <option value=""></option>
               <option value="MALE">MALE</option>
               <option value="FEMALE">FEMALE</option>
               <option value="OTHER">OTHER</option>
-            </AvField>
-            <AvField
+            </ValidatedField>
+            <ValidatedField
               name="phone"
               label="Phone"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
-            <AvField
+            <ValidatedField
               name="addressLine1"
               label="Address Line 1"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
-            <AvField type="text" label="Address Line 2" name="addressLine2" />
-            <AvField
+            <ValidatedField type="text" label="Address Line 2" name="addressLine2" />
+            <ValidatedField
               name="city"
               label="City"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
-            <AvField
+            <ValidatedField
               name="country"
               label="Country"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
             <Button id="register-submit" color="primary" type="submit">

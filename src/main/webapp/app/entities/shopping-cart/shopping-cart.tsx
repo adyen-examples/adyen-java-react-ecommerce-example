@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { Translate, TextFormat } from 'react-jhipster';
+import { TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { getEntities } from './shopping-cart.reducer';
-import { IShoppingCart } from 'app/shared/model/shopping-cart.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { OrderStatus } from 'app/shared/model/enumerations/order-status.model';
+import { refundPayment } from 'app/modules/checkout/checkout.reducer';
 
 export const ShoppingCart = (props: RouteComponentProps<{ url: string }>) => {
   const dispatch = useAppDispatch();
@@ -20,7 +21,7 @@ export const ShoppingCart = (props: RouteComponentProps<{ url: string }>) => {
   }, []);
 
   const refund = ref => () => {
-    dispatch(refundPayment(ref, props.getEntities));
+    dispatch(refundPayment({ cart: ref, action: () => dispatch(getEntities({})) }));
   };
 
   const handleSyncList = () => {

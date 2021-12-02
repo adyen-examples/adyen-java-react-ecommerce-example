@@ -1,15 +1,7 @@
 import axios from 'axios';
-import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IShoppingCart } from 'app/shared/model/shopping-cart.model';
-import { IPayload, IPayloadResult } from 'react-jhipster';
-
-export const ACTION_TYPES = {
-  FETCH_CONFIG: 'checkout/FETCH_CONFIG',
-  FETCH_PAYMENTMETHODS: 'checkout/FETCH_PAYMENTMETHODS',
-  SUBMIT_PAYMENT: 'checkout/SUBMIT_PAYMENT',
-  REFUND_PAYMENT: 'checkout/REFUND_PAYMENT',
-  SUBMIT_PAYMENTDETAILS: 'checkout/SUBMIT_PAYMENTDETAILS',
-};
+import { AnyAction, createAsyncThunk, createSlice, isPending, isRejected } from '@reduxjs/toolkit';
+import { serializeAxiosError } from 'app/shared/reducers/reducer.utils';
 
 const initialState = {
   loading: false,
@@ -33,106 +25,89 @@ const initialState = {
   },
 };
 
-export type CheckoutState = Readonly<typeof initialState>;
-
-// Reducer
-
-export default (state: CheckoutState = initialState, action): CheckoutState => {
-  switch (action.type) {
-    case REQUEST(ACTION_TYPES.FETCH_CONFIG):
-    case REQUEST(ACTION_TYPES.FETCH_PAYMENTMETHODS):
-    case REQUEST(ACTION_TYPES.SUBMIT_PAYMENT):
-    case REQUEST(ACTION_TYPES.SUBMIT_PAYMENTDETAILS):
-      return {
-        ...state,
-        errorMessage: null,
-        loading: true,
-      };
-    case FAILURE(ACTION_TYPES.FETCH_CONFIG):
-    case FAILURE(ACTION_TYPES.FETCH_PAYMENTMETHODS):
-    case FAILURE(ACTION_TYPES.SUBMIT_PAYMENT):
-    case FAILURE(ACTION_TYPES.SUBMIT_PAYMENTDETAILS):
-      return {
-        ...state,
-        loading: false,
-        errorMessage: action.payload,
-      };
-    case SUCCESS(ACTION_TYPES.FETCH_CONFIG):
-      return {
-        ...state,
-        loading: false,
-        config: {
-          ...state.config,
-          ...action.payload.data,
-        },
-      };
-    case SUCCESS(ACTION_TYPES.FETCH_PAYMENTMETHODS):
-      return {
-        ...state,
-        loading: false,
-        paymentMethodsRes: action.payload.data,
-      };
-    case SUCCESS(ACTION_TYPES.SUBMIT_PAYMENT):
-      return {
-        ...state,
-        loading: false,
-        paymentRes: action.payload.data,
-      };
-    case SUCCESS(ACTION_TYPES.SUBMIT_PAYMENTDETAILS):
-      return {
-        ...state,
-        loading: false,
-        paymentDetailsRes: action.payload.data,
-      };
-    default:
-      return state;
-  }
-};
-
 const apiUrl = 'api/checkout';
 
 // Actions
 
-export const getAdyenConfig = () => {
-  const requestUrl = `${apiUrl}/config`;
-  return {
-    type: ACTION_TYPES.FETCH_CONFIG,
-    payload: axios.get(requestUrl),
-  };
-};
+export const getAdyenConfig = createAsyncThunk(
+  'checkout/fetch_config',
+  async () => {
+    const requestUrl = `${apiUrl}/config`;
+    return axios.get<object>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
 
-export const getPaymentMethods = () => {
-  const requestUrl = `${apiUrl}/payment-methods`;
-  return {
-    type: ACTION_TYPES.FETCH_PAYMENTMETHODS,
-    payload: axios.post(requestUrl),
-  };
-};
+export const getPaymentMethods = createAsyncThunk(
+  'checkout/fetch_payment_methods',
+  async () => {
+    const requestUrl = `${apiUrl}/payment-methods`;
+    return axios.post<unknown>(requestUrl);
+  },
+  { serializeError: serializeAxiosError }
+);
 
-export const initiatePayment = data => {
-  const requestUrl = `${apiUrl}/initiate-payment`;
-  return {
-    type: ACTION_TYPES.SUBMIT_PAYMENT,
-    payload: axios.post(requestUrl, data),
-  };
-};
+export const initiatePayment = createAsyncThunk(
+  'checkout/submit_payment',
+  async (data: unknown) => {
+    const requestUrl = `${apiUrl}/initiate-payment`;
+    return axios.post<unknown>(requestUrl, data);
+  },
+  { serializeError: serializeAxiosError }
+);
 
-export const submitAdditionalDetails = data => {
-  const requestUrl = `${apiUrl}/submit-additional-details`;
-  return {
-    type: ACTION_TYPES.SUBMIT_PAYMENTDETAILS,
-    payload: axios.post(requestUrl, data),
-  };
-};
+export const submitAdditionalDetails = createAsyncThunk(
+  'checkout/submit_payment_details',
+  async (data: unknown) => {
+    const requestUrl = `${apiUrl}/submit-additional-details`;
+    return axios.post<unknown>(requestUrl, data);
+  },
+  { serializeError: serializeAxiosError }
+);
 
-export const refundPayment: (cart: IShoppingCart, action: () => void) => IPayload<string> | IPayloadResult<string> = (
-  cart: IShoppingCart,
-  action: () => void
-) => async dispatch => {
-  const requestUrl = `${apiUrl}/refund-payment`;
-  await dispatch({
-    type: ACTION_TYPES.REFUND_PAYMENT,
-    payload: axios.post(requestUrl, cart),
-  });
-  return dispatch(action());
-};
+export const refundPayment = createAsyncThunk(
+  'checkout/refund_payment',
+  async ({ cart, action }: { cart: IShoppingCart; action: () => void }, thunkAPI) => {
+    const requestUrl = `${apiUrl}/refund-payment`;
+    await axios.post(requestUrl, cart);
+    action();
+  },
+  { serializeError: serializeAxiosError }
+);
+
+// slice
+
+export const CheckoutSlice = createSlice({
+  name: 'checkout',
+  initialState,
+  reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(submitAdditionalDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        state.paymentDetailsRes = action.payload.data;
+      })
+      .addCase(initiatePayment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.paymentRes = action.payload.data;
+      })
+      .addCase(getPaymentMethods.fulfilled, (state, action) => {
+        state.loading = false;
+        state.paymentMethodsRes = action.payload.data;
+      })
+      .addCase(getAdyenConfig.fulfilled, (state, action) => {
+        state.loading = false;
+        state.config = { ...state.config, ...action.payload.data };
+      })
+      .addMatcher(isRejected(submitAdditionalDetails, initiatePayment, getPaymentMethods, getAdyenConfig), (state, action) => {
+        state.loading = false;
+        state.errorMessage = action.payload;
+      })
+      .addMatcher(isPending(submitAdditionalDetails, initiatePayment, getPaymentMethods, getAdyenConfig), state => {
+        state.loading = true;
+        state.errorMessage = null;
+      });
+  },
+});
+
+export default CheckoutSlice.reducer;

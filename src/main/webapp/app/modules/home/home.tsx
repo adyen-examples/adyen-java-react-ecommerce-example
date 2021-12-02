@@ -1,36 +1,45 @@
 import './home.scss';
 
-import React , { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 
 import { Row, Col, Alert, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getSortState, JhiItemCount, JhiPagination } from 'react-jhipster';
 
-import { useAppSelector } from 'app/config/store';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import { createEntity, getEntities } from 'app/entities/product/product.reducer';
+import { IProduct } from 'app/shared/model/product.model';
+import { addProduct } from 'app/entities/shopping-cart/shopping-cart.reducer';
 
 export const Home = () => {
+  const location = useLocation();
+  const history = useHistory();
+
   const account = useAppSelector(state => state.authentication.account);
 
-  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
-  const productList = useAppSelector(state => product.entities);
-  const loading = useAppSelector(product.loading);
-  const totalItems = useAppSelector(product.totalItems);
-  const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE, 'id'));
+  const productList = useAppSelector(state => state.product.entities);
+  const loading = useAppSelector(state => state.product.loading);
+  const totalItems = useAppSelector(state => state.product.totalItems);
+  const [paginationState, setPaginationState] = useState(getSortState(location, ITEMS_PER_PAGE, 'id'));
   const [filterState, setFilterState] = useState('');
 
   const dispatch = useAppDispatch();
 
   const getAllEntities = () => {
-    dispatch(getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`));
+    dispatch(
+      getEntities({
+        page: paginationState.activePage - 1,
+        size: paginationState.itemsPerPage,
+        sort: `${paginationState.sort},${paginationState.order}`,
+      })
+    );
   };
 
   const sortEntities = () => {
     getAllEntities();
-    // TODO: Fixme!
-    props.history.push(
-      `${props.location.pathname}?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`
-    );
+    history.push(`${location.pathname}?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`);
   };
 
   useEffect(() => {
@@ -55,9 +64,7 @@ export const Home = () => {
 
   const handleFilter = evt => setFilterState(evt.target.value);
 
-  const addToCart = (p: IProduct) => () => props.addProduct(p);
-
-  const { account, productList, match, loading, totalItems } = props;
+  const addToCart = (p: IProduct) => () => dispatch(addProduct(p));
 
   return (
     <Row className="d-flex justify-content-center">
@@ -151,7 +158,7 @@ export const Home = () => {
                           onSelect={handlePagination}
                           maxButtons={5}
                           itemsPerPage={paginationState.itemsPerPage}
-                          totalItems={props.totalItems}
+                          totalItems={totalItems}
                         />
                       </Row>
                     </Col>

@@ -1,7 +1,10 @@
 package com.adyen.demo.store.config;
 
 import com.adyen.demo.store.security.*;
+import com.adyen.demo.store.security.AuthoritiesConstants;
 import com.adyen.demo.store.security.jwt.*;
+import com.adyen.demo.store.security.jwt.JWTConfigurer;
+import com.adyen.demo.store.security.jwt.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
@@ -17,9 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.filter.CorsFilter;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
-import com.adyen.demo.store.security.AuthoritiesConstants;
-import com.adyen.demo.store.security.jwt.JWTConfigurer;
-import com.adyen.demo.store.security.jwt.TokenProvider;
 import tech.jhipster.config.JHipsterProperties;
 
 @EnableWebSecurity
@@ -76,7 +76,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(problemSupport)
         .and()
             .headers()
-            // TODO: Set custom csp!
             .contentSecurityPolicy(jHipsterProperties.getSecurity().getContentSecurityPolicy())
         .and()
             .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)

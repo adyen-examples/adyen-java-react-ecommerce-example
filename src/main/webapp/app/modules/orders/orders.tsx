@@ -1,24 +1,27 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Row, Col, Alert, Button, Badge } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { TextFormat } from 'react-jhipster';
 
-import { IRootState } from 'app/shared/reducers';
 import { getCartsForCurrentUser } from 'app/entities/shopping-cart/shopping-cart.reducer';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import { refundPayment } from 'app/modules/checkout/checkout.reducer';
 import { OrderStatus } from 'app/shared/model/enumerations/order-status.model';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export type IOrdersProp = StateProps & DispatchProps;
+export const Orders = () => {
+  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
+  const carts = useAppSelector(state => state.shoppingCart.entities);
+  const loading = useAppSelector(state => state.shoppingCart.loading);
 
-export const Orders = (props: IOrdersProp) => {
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
-    props.getCartsForCurrentUser();
-  }, []);
+    dispatch(getCartsForCurrentUser());
+  }, [dispatch]);
 
   const refund = ref => () => {
-    props.refundPayment(ref, props.getCartsForCurrentUser);
+    dispatch(refundPayment({ cart: ref, action: () => dispatch(getCartsForCurrentUser()) }));
   };
 
   const getStatusAction = cart => {
@@ -37,8 +40,6 @@ export const Orders = (props: IOrdersProp) => {
     }
   };
 
-  const { isAuthenticated, carts, loading } = props;
-
   return (
     <Row className="d-flex justify-content-center">
       <Col lg="9" md="12">
@@ -46,7 +47,7 @@ export const Orders = (props: IOrdersProp) => {
           <>
             <h2>
               Your Orders
-              <Button color="primary" className="float-right jh-create-entity" onClick={() => props.getCartsForCurrentUser()}>
+              <Button color="primary" className="float-right jh-create-entity" onClick={() => dispatch(getCartsForCurrentUser())}>
                 <FontAwesomeIcon icon="sync" />
                 &nbsp; Refresh
               </Button>
@@ -100,18 +101,4 @@ export const Orders = (props: IOrdersProp) => {
   );
 };
 
-const mapStateToProps = ({ authentication, shoppingCart }: IRootState) => ({
-  isAuthenticated: authentication.isAuthenticated,
-  carts: shoppingCart.entities,
-  loading: shoppingCart.loading,
-});
-
-const mapDispatchToProps = {
-  getCartsForCurrentUser,
-  refundPayment,
-};
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(Orders);
+export default Orders;

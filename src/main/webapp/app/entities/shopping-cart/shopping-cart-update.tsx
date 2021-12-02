@@ -1,18 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
+import { Button, Col, FormText, Row } from 'reactstrap';
 import { isNumber, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { ICustomerDetails } from 'app/shared/model/customer-details.model';
 import { getEntities as getCustomerDetails } from 'app/entities/customer-details/customer-details.reducer';
-import { getEntity, updateEntity, createEntity, reset } from './shopping-cart.reducer';
-import { IShoppingCart } from 'app/shared/model/shopping-cart.model';
+import { createEntity, getEntity, reset, updateEntity } from './shopping-cart.reducer';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { OrderStatus } from 'app/shared/model/enumerations/order-status.model';
-import { PaymentMethod } from 'app/shared/model/enumerations/payment-method.model';
 
 export const ShoppingCartUpdate = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
@@ -24,8 +18,6 @@ export const ShoppingCartUpdate = (props: RouteComponentProps<{ id: string }>) =
   const loading = useAppSelector(state => state.shoppingCart.loading);
   const updating = useAppSelector(state => state.shoppingCart.updating);
   const updateSuccess = useAppSelector(state => state.shoppingCart.updateSuccess);
-  const orderStatusValues = Object.keys(OrderStatus);
-  const paymentMethodValues = Object.keys(PaymentMethod);
   const handleClose = () => {
     props.history.push('/shopping-cart');
   };
@@ -91,26 +83,28 @@ export const ShoppingCartUpdate = (props: RouteComponentProps<{ id: string }>) =
           ) : (
             <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
               {!isNew ? (
-                <ValidatedField name="id" required readOnly id="shopping-cart-id" label="ID" validate={{ required: true }} />
+                <ValidatedField name="id" required readonly id="shopping-cart-id" label="ID" validate={{ required: true }} />
               ) : null}
-              {/* TODO: Fixme */}
               <ValidatedField
                 label="Placed Date"
                 id="shopping-cart-placedDate"
                 name="placedDate"
                 data-cy="placedDate"
                 type="datetime-local"
+                className="form-control"
                 placeholder="YYYY-MM-DD HH:mm"
                 validate={{
                   required: { value: true, message: 'This field is required.' },
                 }}
               />
               <ValidatedField label="Status" id="shopping-cart-status" name="status" data-cy="status" type="select">
-                {orderStatusValues.map(orderStatus => (
-                  <option value={orderStatus} key={orderStatus}>
-                    {orderStatus}
-                  </option>
-                ))}
+                <option value="REFUND_INITIATED">REFUND_INITIATED</option>
+                <option value="REFUND_FAILED">REFUND_FAILED</option>
+                <option value="PAID">PAID</option>
+                <option value="PENDING">PENDING</option>
+                <option value="OPEN">OPEN</option>
+                <option value="CANCELLED">CANCELLED</option>
+                <option value="REFUNDED">REFUNDED</option>
               </ValidatedField>
               <ValidatedField
                 label="Total Price"
@@ -131,11 +125,8 @@ export const ShoppingCartUpdate = (props: RouteComponentProps<{ id: string }>) =
                 data-cy="paymentMethod"
                 type="select"
               >
-                {paymentMethodValues.map(paymentMethod => (
-                  <option value={paymentMethod} key={paymentMethod}>
-                    {paymentMethod}
-                  </option>
-                ))}
+                <option value="CREDIT_CARD">scheme</option>
+                <option value="IDEAL">ideal</option>
               </ValidatedField>
               <ValidatedField
                 label="Payment Reference"
