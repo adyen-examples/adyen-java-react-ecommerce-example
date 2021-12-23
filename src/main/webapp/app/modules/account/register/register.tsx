@@ -1,30 +1,36 @@
 import React, { useState, useEffect } from 'react';
-
-import { connect } from 'react-redux';
-import { AvForm, AvField } from 'availity-reactstrap-validation';
+import { ValidatedField, ValidatedForm, isEmail } from 'react-jhipster';
 import { Row, Col, Alert, Button } from 'reactstrap';
+import { toast } from 'react-toastify';
 
 import PasswordStrengthBar from 'app/shared/layout/password/password-strength-bar';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { handleRegister, reset } from './register.reducer';
 
-export type IRegisterProps = DispatchProps;
-
-export const RegisterPage = (props: IRegisterProps) => {
+export const RegisterPage = () => {
   const [password, setPassword] = useState('');
+  const dispatch = useAppDispatch();
 
   useEffect(
     () => () => {
-      props.reset();
+      dispatch(reset());
     },
     []
   );
 
-  const handleValidSubmit = (event, values) => {
-    props.handleRegister(values);
-    event.preventDefault();
+  const handleValidSubmit = ({ username, email, firstPassword }) => {
+    dispatch(handleRegister({ login: username, email, password: firstPassword, langKey: 'en' }));
   };
 
   const updatePassword = event => setPassword(event.target.value);
+
+  const successMessage = useAppSelector(state => state.register.successMessage);
+
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+    }
+  }, [successMessage]);
 
   return (
     <div>
@@ -37,120 +43,121 @@ export const RegisterPage = (props: IRegisterProps) => {
       </Row>
       <Row className="justify-content-center">
         <Col md="8">
-          <AvForm id="register-form" onValidSubmit={handleValidSubmit}>
-            <AvField
+          <ValidatedForm id="register-form" onSubmit={handleValidSubmit}>
+            <ValidatedField
               name="username"
               label="Username"
               placeholder={'Your username'}
               validate={{
-                required: { value: true, errorMessage: 'Your username is required.' },
+                required: { value: true, message: 'Your username is required.' },
                 pattern: {
-                  value: '^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$',
-                  errorMessage: 'Your username is invalid.',
+                  value: /^[a-zA-Z0-9!$&*+=?^_`{|}~.-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$|^[_.@A-Za-z0-9-]+$/,
+                  message: 'Your username is invalid.',
                 },
-                minLength: { value: 1, errorMessage: 'Your username is required to be at least 1 character.' },
-                maxLength: { value: 50, errorMessage: 'Your username cannot be longer than 50 characters.' },
+                minLength: { value: 1, message: 'Your username is required to be at least 1 character.' },
+                maxLength: { value: 50, message: 'Your username cannot be longer than 50 characters.' },
               }}
               data-cy="username"
             />
-            <AvField
+            <ValidatedField
               name="email"
               label="Email"
               placeholder={'Your email'}
               type="email"
               validate={{
-                required: { value: true, errorMessage: 'Your email is required.' },
-                minLength: { value: 5, errorMessage: 'Your email is required to be at least 5 characters.' },
-                maxLength: { value: 254, errorMessage: 'Your email cannot be longer than 50 characters.' },
+                required: { value: true, message: 'Your email is required.' },
+                minLength: { value: 5, message: 'Your email is required to be at least 5 characters.' },
+                maxLength: { value: 254, message: 'Your email cannot be longer than 50 characters.' },
+                validate: v => isEmail(v) || 'Your email is invalid.',
               }}
               data-cy="email"
             />
-            <AvField
+            <ValidatedField
               name="firstPassword"
               label="New password"
               placeholder={'New password'}
               type="password"
               onChange={updatePassword}
               validate={{
-                required: { value: true, errorMessage: 'Your password is required.' },
-                minLength: { value: 4, errorMessage: 'Your password is required to be at least 4 characters.' },
-                maxLength: { value: 50, errorMessage: 'Your password cannot be longer than 50 characters.' },
+                required: { value: true, message: 'Your password is required.' },
+                minLength: { value: 4, message: 'Your password is required to be at least 4 characters.' },
+                maxLength: { value: 50, message: 'Your password cannot be longer than 50 characters.' },
               }}
               data-cy="firstPassword"
             />
             <PasswordStrengthBar password={password} />
-            <AvField
+            <ValidatedField
               name="secondPassword"
               label="New password confirmation"
               placeholder="Confirm the new password"
               type="password"
               validate={{
-                required: { value: true, errorMessage: 'Your confirmation password is required.' },
-                minLength: { value: 4, errorMessage: 'Your confirmation password is required to be at least 4 characters.' },
-                maxLength: { value: 50, errorMessage: 'Your confirmation password cannot be longer than 50 characters.' },
-                match: { value: 'firstPassword', errorMessage: 'The password and its confirmation do not match!' },
+                required: { value: true, message: 'Your confirmation password is required.' },
+                minLength: { value: 4, message: 'Your confirmation password is required to be at least 4 characters.' },
+                maxLength: { value: 50, message: 'Your confirmation password cannot be longer than 50 characters.' },
+                validate: v => v === password || 'The password and its confirmation do not match!',
               }}
               data-cy="secondPassword"
             />
-            <AvField
+            <ValidatedField
               name="firstName"
               label="First Name"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
-            <AvField
+            <ValidatedField
               name="lastName"
               label="Last Name"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
-            <AvField name="gender" label="Gender" type="select">
+            <ValidatedField name="gender" label="Gender" type="select">
               <option value=""></option>
               <option value="MALE">MALE</option>
               <option value="FEMALE">FEMALE</option>
               <option value="OTHER">OTHER</option>
-            </AvField>
-            <AvField
+            </ValidatedField>
+            <ValidatedField
               name="phone"
               label="Phone"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
-            <AvField
+            <ValidatedField
               name="addressLine1"
               label="Address Line 1"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
-            <AvField type="text" label="Address Line 2" name="addressLine2" />
-            <AvField
+            <ValidatedField type="text" label="Address Line 2" name="addressLine2" />
+            <ValidatedField
               name="city"
               label="City"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
-            <AvField
+            <ValidatedField
               name="country"
               label="Country"
               type="text"
               validate={{
-                required: { value: true, errorMessage: 'This field is required.' }
+                required: { value: true, message: 'This field is required.' },
               }}
             />
             <Button id="register-submit" color="primary" type="submit">
               Register
             </Button>
-          </AvForm>
+          </ValidatedForm>
           <p>&nbsp;</p>
           <Alert color="warning">
             <span>If you want to</span>
@@ -167,7 +174,4 @@ export const RegisterPage = (props: IRegisterProps) => {
   );
 };
 
-const mapDispatchToProps = { handleRegister, reset };
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(null, mapDispatchToProps)(RegisterPage);
+export default RegisterPage;

@@ -47,30 +47,28 @@ public class ProductService {
 
         return productRepository
             .findById(product.getId())
-            .map(
-                existingProduct -> {
-                    if (product.getName() != null) {
-                        existingProduct.setName(product.getName());
-                    }
-                    if (product.getDescription() != null) {
-                        existingProduct.setDescription(product.getDescription());
-                    }
-                    if (product.getPrice() != null) {
-                        existingProduct.setPrice(product.getPrice());
-                    }
-                    if (product.getItemSize() != null) {
-                        existingProduct.setItemSize(product.getItemSize());
-                    }
-                    if (product.getImage() != null) {
-                        existingProduct.setImage(product.getImage());
-                    }
-                    if (product.getImageContentType() != null) {
-                        existingProduct.setImageContentType(product.getImageContentType());
-                    }
-
-                    return existingProduct;
+            .map(existingProduct -> {
+                if (product.getName() != null) {
+                    existingProduct.setName(product.getName());
                 }
-            )
+                if (product.getDescription() != null) {
+                    existingProduct.setDescription(product.getDescription());
+                }
+                if (product.getPrice() != null) {
+                    existingProduct.setPrice(product.getPrice());
+                }
+                if (product.getItemSize() != null) {
+                    existingProduct.setItemSize(product.getItemSize());
+                }
+                if (product.getImage() != null) {
+                    existingProduct.setImage(product.getImage());
+                }
+                if (product.getImageContentType() != null) {
+                    existingProduct.setImageContentType(product.getImageContentType());
+                }
+
+                return existingProduct;
+            })
             .map(productRepository::save);
     }
 

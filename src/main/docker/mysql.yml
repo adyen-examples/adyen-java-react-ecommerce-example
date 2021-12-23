@@ -2,7 +2,7 @@
 version: '3.8'
 services:
   store-mysql:
-    image: mysql:8.0.23
+    image: mysql:8.0.27
     # volumes:
     #   - ~/volumes/jhipster/store/mysql/:/var/lib/mysql/
     environment:

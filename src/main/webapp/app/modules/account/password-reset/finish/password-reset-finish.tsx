@@ -1,66 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import { Col, Row, Button } from 'reactstrap';
-import { AvForm, AvField } from 'availity-reactstrap-validation';
-import { getUrlParameter } from 'react-jhipster';
+import { getUrlParameter, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { RouteComponentProps } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 import { handlePasswordResetFinish, reset } from '../password-reset.reducer';
 import PasswordStrengthBar from 'app/shared/layout/password/password-strength-bar';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export interface IPasswordResetFinishProps extends DispatchProps, RouteComponentProps<{ key: string }> {}
-
-export const PasswordResetFinishPage = (props: IPasswordResetFinishProps) => {
+export const PasswordResetFinishPage = (props: RouteComponentProps<{ key: string }>) => {
   const [password, setPassword] = useState('');
   const [key] = useState(getUrlParameter('key', props.location.search));
+  const dispatch = useAppDispatch();
 
   useEffect(
     () => () => {
-      props.reset();
+      dispatch(reset());
     },
     []
   );
 
-  const handleValidSubmit = (event, values) => props.handlePasswordResetFinish(key, values.newPassword);
+  const handleValidSubmit = ({ newPassword }) => dispatch(handlePasswordResetFinish({ key, newPassword }));
 
   const updatePassword = event => setPassword(event.target.value);
 
   const getResetForm = () => {
     return (
-      <AvForm onValidSubmit={handleValidSubmit}>
-        <AvField
+      <ValidatedForm onSubmit={handleValidSubmit}>
+        <ValidatedField
           name="newPassword"
           label="New password"
           placeholder={'New password'}
           type="password"
           validate={{
-            required: { value: true, errorMessage: 'Your password is required.' },
-            minLength: { value: 4, errorMessage: 'Your password is required to be at least 4 characters.' },
-            maxLength: { value: 50, errorMessage: 'Your password cannot be longer than 50 characters.' },
+            required: { value: true, message: 'Your password is required.' },
+            minLength: { value: 4, message: 'Your password is required to be at least 4 characters.' },
+            maxLength: { value: 50, message: 'Your password cannot be longer than 50 characters.' },
           }}
           onChange={updatePassword}
           data-cy="resetPassword"
         />
         <PasswordStrengthBar password={password} />
-        <AvField
+        <ValidatedField
           name="confirmPassword"
           label="New password confirmation"
           placeholder="Confirm the new password"
           type="password"
           validate={{
-            required: { value: true, errorMessage: 'Your confirmation password is required.' },
-            minLength: { value: 4, errorMessage: 'Your confirmation password is required to be at least 4 characters.' },
-            maxLength: { value: 50, errorMessage: 'Your confirmation password cannot be longer than 50 characters.' },
-            match: { value: 'newPassword', errorMessage: 'The password and its confirmation do not match!' },
+            required: { value: true, message: 'Your confirmation password is required.' },
+            minLength: { value: 4, message: 'Your confirmation password is required to be at least 4 characters.' },
+            maxLength: { value: 50, message: 'Your confirmation password cannot be longer than 50 characters.' },
+            validate: v => v === password || 'The password and its confirmation do not match!',
           }}
           data-cy="confirmResetPassword"
         />
         <Button color="success" type="submit" data-cy="submit">
           Validate new password
         </Button>
-      </AvForm>
+      </ValidatedForm>
     );
   };
+
+  const successMessage = useAppSelector(state => state.passwordReset.successMessage);
+
+  useEffect(() => {
+    if (successMessage) {
+      toast.success(successMessage);
+    }
+  }, [successMessage]);
 
   return (
     <div>
@@ -74,8 +81,4 @@ export const PasswordResetFinishPage = (props: IPasswordResetFinishProps) => {
   );
 };
 
-const mapDispatchToProps = { handlePasswordResetFinish, reset };
-
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(null, mapDispatchToProps)(PasswordResetFinishPage);
+export default PasswordResetFinishPage;

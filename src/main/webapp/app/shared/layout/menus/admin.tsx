@@ -4,7 +4,7 @@ import { DropdownItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NavDropdown } from './menu-components';
 
-const adminMenuItems = (
+const adminMenuItems = () => (
   <>
     <MenuItem icon="users" to="/admin/user-management">
       User management
@@ -25,24 +25,24 @@ const adminMenuItems = (
   </>
 );
 
-const openAPIItem = (
+const openAPIItem = () => (
   <MenuItem icon="book" to="/admin/docs">
     API
   </MenuItem>
 );
 
-const databaseItem = (
-  <DropdownItem tag="a" href="./h2-console" target="_tab">
+const databaseItem = () => (
+  <DropdownItem tag="a" href="./h2-console/" target="_tab">
     <FontAwesomeIcon icon="database" fixedWidth /> Database
   </DropdownItem>
 );
 
 export const AdminMenu = ({ showOpenAPI, showDatabase }) => (
   <NavDropdown icon="users-cog" name="Administration" id="admin-menu" data-cy="adminMenu">
-    {adminMenuItems}
-    {showOpenAPI && openAPIItem}
+    {adminMenuItems()}
+    {showOpenAPI && openAPIItem()}
 
-    {showDatabase && databaseItem}
+    {showDatabase && databaseItem()}
   </NavDropdown>
 );
 

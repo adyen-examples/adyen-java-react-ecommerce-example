@@ -24,7 +24,7 @@
     "websocket": false,
     "packageName": "com.adyen.demo.store",
     "packageFolder": "com/adyen/demo/store",
-    "jhipsterVersion": "7.0.0",
+    "jhipsterVersion": "7.4.0",
     "skipServer": false,
     "clientPackageManager": "npm",
     "dtoSuffix": "DTO",
@@ -45,6 +45,8 @@
     "lastLiquibaseTimestamp": 1616596655000,
     "herokuAppName": "deepu-ecom-test-888",
     "herokuDeployType": "jar",
-    "herokuJavaVersion": "11"
+    "herokuJavaVersion": "11",
+    "enableGradleEnterprise": false,
+    "devServerPort": 9060
   }
 }

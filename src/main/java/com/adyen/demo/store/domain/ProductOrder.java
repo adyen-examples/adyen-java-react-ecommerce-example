@@ -22,6 +22,7 @@ public class ProductOrder implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -45,17 +46,18 @@ public class ProductOrder implements Serializable {
     private ShoppingCart cart;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public ProductOrder id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public ProductOrder id(Long id) {
-        this.id = id;
-        return this;
     }
 
     public Integer getQuantity() {
@@ -63,7 +65,7 @@ public class ProductOrder implements Serializable {
     }
 
     public ProductOrder quantity(Integer quantity) {
-        this.quantity = quantity;
+        this.setQuantity(quantity);
         return this;
     }
 
@@ -76,7 +78,7 @@ public class ProductOrder implements Serializable {
     }
 
     public ProductOrder totalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
+        this.setTotalPrice(totalPrice);
         return this;
     }
 
@@ -88,26 +90,26 @@ public class ProductOrder implements Serializable {
         return this.product;
     }
 
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
     public ProductOrder product(Product product) {
         this.setProduct(product);
         return this;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     public ShoppingCart getCart() {
         return this.cart;
     }
 
+    public void setCart(ShoppingCart shoppingCart) {
+        this.cart = shoppingCart;
+    }
+
     public ProductOrder cart(ShoppingCart shoppingCart) {
         this.setCart(shoppingCart);
         return this;
-    }
-
-    public void setCart(ShoppingCart shoppingCart) {
-        this.cart = shoppingCart;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

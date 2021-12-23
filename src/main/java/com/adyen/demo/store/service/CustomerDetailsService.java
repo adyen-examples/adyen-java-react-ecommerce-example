@@ -47,30 +47,28 @@ public class CustomerDetailsService {
 
         return customerDetailsRepository
             .findById(customerDetails.getId())
-            .map(
-                existingCustomerDetails -> {
-                    if (customerDetails.getGender() != null) {
-                        existingCustomerDetails.setGender(customerDetails.getGender());
-                    }
-                    if (customerDetails.getPhone() != null) {
-                        existingCustomerDetails.setPhone(customerDetails.getPhone());
-                    }
-                    if (customerDetails.getAddressLine1() != null) {
-                        existingCustomerDetails.setAddressLine1(customerDetails.getAddressLine1());
-                    }
-                    if (customerDetails.getAddressLine2() != null) {
-                        existingCustomerDetails.setAddressLine2(customerDetails.getAddressLine2());
-                    }
-                    if (customerDetails.getCity() != null) {
-                        existingCustomerDetails.setCity(customerDetails.getCity());
-                    }
-                    if (customerDetails.getCountry() != null) {
-                        existingCustomerDetails.setCountry(customerDetails.getCountry());
-                    }
-
-                    return existingCustomerDetails;
+            .map(existingCustomerDetails -> {
+                if (customerDetails.getGender() != null) {
+                    existingCustomerDetails.setGender(customerDetails.getGender());
                 }
-            )
+                if (customerDetails.getPhone() != null) {
+                    existingCustomerDetails.setPhone(customerDetails.getPhone());
+                }
+                if (customerDetails.getAddressLine1() != null) {
+                    existingCustomerDetails.setAddressLine1(customerDetails.getAddressLine1());
+                }
+                if (customerDetails.getAddressLine2() != null) {
+                    existingCustomerDetails.setAddressLine2(customerDetails.getAddressLine2());
+                }
+                if (customerDetails.getCity() != null) {
+                    existingCustomerDetails.setCity(customerDetails.getCity());
+                }
+                if (customerDetails.getCountry() != null) {
+                    existingCustomerDetails.setCountry(customerDetails.getCountry());
+                }
+
+                return existingCustomerDetails;
+            })
             .map(customerDetailsRepository::save);
     }
 

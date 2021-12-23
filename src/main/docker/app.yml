@@ -15,11 +15,10 @@ services:
     ports:
       - 127.0.0.1:8080:8080
   store-mysql:
-    image: mysql:8.0.23
+    image: mysql:8.0.27
     # volumes:
     #   - ~/volumes/jhipster/store/mysql/:/var/lib/mysql/
     environment:
-      - MYSQL_USER=root
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=store
     # If you want to expose these ports outside your dev PC,

@@ -1,24 +1,25 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
 import { Row, Col, Alert, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IRootState } from 'app/shared/reducers';
 import { getActiveCartForCurrentUser, removeOrder } from 'app/entities/shopping-cart/shopping-cart.reducer';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-export type ICartProp = StateProps & DispatchProps;
+export const Cart = () => {
+  const dispatch = useAppDispatch();
 
-export const Cart = (props: ICartProp) => {
+  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
+  const cart = useAppSelector(state => state.shoppingCart.entity);
+  const loading = useAppSelector(state => state.shoppingCart.loading);
+
   useEffect(() => {
-    props.getActiveCartForCurrentUser();
+    dispatch(getActiveCartForCurrentUser());
   }, []);
 
   const remove = id => () => {
-    props.removeOrder(id);
+    dispatch(removeOrder(id));
   };
-
-  const { isAuthenticated, cart, loading } = props;
 
   return (
     <Row className="d-flex justify-content-center">
@@ -90,18 +91,4 @@ export const Cart = (props: ICartProp) => {
   );
 };
 
-const mapStateToProps = ({ authentication, shoppingCart }: IRootState) => ({
-  isAuthenticated: authentication.isAuthenticated,
-  cart: shoppingCart.entity,
-  loading: shoppingCart.loading
-});
-
-const mapDispatchToProps = {
-  getActiveCartForCurrentUser,
-  removeOrder
-};
-
-type StateProps = ReturnType<typeof mapStateToProps>;
-type DispatchProps = typeof mapDispatchToProps;
-
-export default connect(mapStateToProps, mapDispatchToProps)(Cart);
+export default Cart;

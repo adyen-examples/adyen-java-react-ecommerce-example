@@ -37,7 +37,7 @@ management:
       liveness:
         include: livenessState
       readiness:
-        include: readinessState,datasource
+        include: readinessState,db
     mail:
       enabled: false # When using the MailService, configure an SMTP server and set this to true
   metrics:
@@ -150,7 +150,7 @@ jhipster:
     name: 'storeApp'
   # By default CORS is disabled. Uncomment to enable.
   # cors:
-  #   allowed-origins: "*"
+  #   allowed-origins: "http://localhost:8100,http://localhost:9000"
   #   allowed-methods: "*"
   #   allowed-headers: "*"
   #   exposed-headers: "Authorization,Link,X-Total-Count,X-${jhipster.clientApp.name}-alert,X-${jhipster.clientApp.name}-error,X-${jhipster.clientApp.name}-params"
@@ -161,8 +161,8 @@ jhipster:
   api-docs:
     default-include-pattern: ${server.servlet.context-path:}/api/.*
     management-include-pattern: ${server.servlet.context-path:}/management/.*
-    title: store API
-    description: store API documentation
+    title: Store API
+    description: Store API documentation
     version: 0.0.1
     terms-of-service-url:
     contact-name:
@@ -170,6 +170,8 @@ jhipster:
     contact-email:
     license: unlicensed
     license-url:
+  security:
+    content-security-policy: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://storage.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://checkoutshopper-test.adyen.com https://pal-test.adyen.com; connect-src 'self' data: https://checkoutshopper-test.adyen.com https://pal-test.adyen.com; default-src 'self'; frame-src 'self' data: https://checkoutshopper-test.adyen.com https://pal-test.adyen.com; font-src 'self' data:"
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

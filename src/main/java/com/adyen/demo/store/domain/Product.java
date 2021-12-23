@@ -23,6 +23,7 @@ public class Product implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @NotNull
@@ -55,17 +56,18 @@ public class Product implements Serializable {
     private ProductCategory productCategory;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
     public Long getId() {
-        return id;
+        return this.id;
+    }
+
+    public Product id(Long id) {
+        this.setId(id);
+        return this;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Product id(Long id) {
-        this.id = id;
-        return this;
     }
 
     public String getName() {
@@ -73,7 +75,7 @@ public class Product implements Serializable {
     }
 
     public Product name(String name) {
-        this.name = name;
+        this.setName(name);
         return this;
     }
 
@@ -86,7 +88,7 @@ public class Product implements Serializable {
     }
 
     public Product description(String description) {
-        this.description = description;
+        this.setDescription(description);
         return this;
     }
 
@@ -99,7 +101,7 @@ public class Product implements Serializable {
     }
 
     public Product price(BigDecimal price) {
-        this.price = price;
+        this.setPrice(price);
         return this;
     }
 
@@ -112,7 +114,7 @@ public class Product implements Serializable {
     }
 
     public Product itemSize(Size itemSize) {
-        this.itemSize = itemSize;
+        this.setItemSize(itemSize);
         return this;
     }
 
@@ -125,7 +127,7 @@ public class Product implements Serializable {
     }
 
     public Product image(byte[] image) {
-        this.image = image;
+        this.setImage(image);
         return this;
     }
 
@@ -150,13 +152,13 @@ public class Product implements Serializable {
         return this.productCategory;
     }
 
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
+    }
+
     public Product productCategory(ProductCategory productCategory) {
         this.setProductCategory(productCategory);
         return this;
-    }
-
-    public void setProductCategory(ProductCategory productCategory) {
-        this.productCategory = productCategory;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

@@ -371,7 +371,7 @@ public class ProductResourceIT {
         Product partialUpdatedProduct = new Product();
         partialUpdatedProduct.setId(product.getId());
 
-        partialUpdatedProduct.price(UPDATED_PRICE).image(UPDATED_IMAGE).imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
+        partialUpdatedProduct.image(UPDATED_IMAGE).imageContentType(UPDATED_IMAGE_CONTENT_TYPE);
 
         restProductMockMvc
             .perform(
@@ -387,7 +387,7 @@ public class ProductResourceIT {
         Product testProduct = productList.get(productList.size() - 1);
         assertThat(testProduct.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testProduct.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testProduct.getPrice()).isEqualByComparingTo(UPDATED_PRICE);
+        assertThat(testProduct.getPrice()).isEqualByComparingTo(DEFAULT_PRICE);
         assertThat(testProduct.getItemSize()).isEqualTo(DEFAULT_ITEM_SIZE);
         assertThat(testProduct.getImage()).isEqualTo(UPDATED_IMAGE);
         assertThat(testProduct.getImageContentType()).isEqualTo(UPDATED_IMAGE_CONTENT_TYPE);
