@@ -51,7 +51,7 @@ export const getCartsForCurrentUser = createAsyncThunk(
   'shoppingCart/get_carts_for_current_user',
   async () => {
     const requestUrl = `${apiUrl}/current-user`;
-    return axios.get<IShoppingCart>(requestUrl);
+    return axios.get<IShoppingCart[]>(requestUrl);
   },
   { serializeError: serializeAxiosError }
 );
@@ -140,7 +140,7 @@ export const ShoppingCartSlice = createEntitySlice({
         state.updateSuccess = true;
         state.entity = {};
       })
-      .addMatcher(isFulfilled(getEntities), (state, action) => {
+      .addMatcher(isFulfilled(getEntities, getCartsForCurrentUser), (state, action) => {
         return {
           ...state,
           loading: false,
